@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "esnext",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "skipLibCheck": true,
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
+}
