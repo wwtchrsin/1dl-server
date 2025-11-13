@@ -1,19 +1,56 @@
+import { limits } from "./limits"
+
+const regions = limits.messages.regions.map(r => `'${r}'`).join(", ")
+
+const sqlAddConstraints = `
+  ALTER TABLE messages ADD CONSTRAINT region_check
+    CHECK (region IN (${regions}));
+  ALTER TABLE messages ADD CONSTRAINT district_check
+    CHECK (district BETWEEN ${limits.messages.districtMin} AND ${limits.messages.districtMax});
+  ALTER TABLE messages ADD CONSTRAINT room_check
+    CHECK (room BETWEEN ${limits.messages.roomMin} AND ${limits.messages.roomMax});
+  ALTER TABLE messages ADD CONSTRAINT index_check
+    CHECK (index BETWEEN ${limits.messages.indexMin} AND ${limits.messages.indexMax});
+  ALTER TABLE messages ALTER COLUMN text TYPE VARCHAR(${limits.messages.textLenMax}),
+    ALTER COLUMN text SET NOT NULL;
+  ALTER TABLE messages ADD CONSTRAINT text_check
+    CHECK(LENGTH(text) >= ${limits.messages.textLenMin});
+  ALTER TABLE users ALTER COLUMN login TYPE VARCHAR(${limits.users.loginLenMax}),
+    ALTER COLUMN login SET NOT NULL;
+  ALTER TABLE users ADD CONSTRAINT login_check
+    CHECK(LENGTH(login) >= ${limits.users.loginLenMin});
+  ALTER TABLE users ALTER COLUMN name TYPE VARCHAR(${limits.users.nameLenMax}),
+    ALTER COLUMN name SET NOT NULL;
+  ALTER TABLE users ADD CONSTRAINT name_check
+    CHECK(LENGTH(name) >= ${limits.users.nameLenMin});
+`
+
+const sqlDeleteConstraints = `
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS region_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS district_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS room_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS index_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS text_check;
+  ALTER TABLE users DROP CONSTRAINT IF EXISTS login_check;
+  ALTER TABLE users DROP CONSTRAINT IF EXISTS name_check;
+`
+
 const sqlCreateTables = `
   CREATE TABLE IF NOT EXISTS messages (
     region VARCHAR NOT NULL,
     district INTEGER NOT NULL,
     room INTEGER NOT NULL,
     index INTEGER NOT NULL,
-    text VARCHAR NOT NULL,
+    text VARCHAR(${limits.messages.textLenMax}) NOT NULL,
     userid UUID,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY(region, district, room, index)
   );
   CREATE TABLE IF NOT EXISTS users (
     userid UUID NOT NULL PRIMARY KEY,
-    login VARCHAR NOT NULL,
+    login VARCHAR(${limits.users.loginLenMax}) NOT NULL,
     password CHAR(128) NOT NULL,
-    name VARCHAR NOT NULL,
+    name VARCHAR(${limits.users.nameLenMax}) NOT NULL,
     timestamp BIGINT NOT NULL
   );
   CREATE TABLE IF NOT EXISTS sessions (
@@ -28,6 +65,8 @@ const sqlCreateTables = `
     ON users(timestamp);
   CREATE INDEX IF NOT EXISTS idx_sessions_timestamp
     ON sessions(timestamp);
+  ${sqlDeleteConstraints}
+  ${sqlAddConstraints}
 `
 
 const sqlDeleteTables = `
@@ -44,10 +83,16 @@ const sqlResetTables = `
   ${sqlCreateTables}
 `
 
+const sqlResetConstraints = `
+  ${sqlDeleteConstraints}
+  ${sqlAddConstraints}
+`
+
 export const sql = {
   createTables: sqlCreateTables,
   resetTables: sqlResetTables,
   deleteTables: sqlDeleteTables,
+  resetConstraints: sqlResetConstraints,
 }
 
 
