@@ -1,4 +1,4 @@
-export const limits = {
+export default {
   messages: {
     regions: ["en", "ru"],
     districtMin: 0,
@@ -9,13 +9,30 @@ export const limits = {
     indexMax: 299,
     textLenMin: 16,
     textLenMax: 128,
+    colors: [
+      "black",
+      "red",
+      "orange",
+      "yellow",
+      "green",
+      "aqua",
+      "blue",
+      "purple",
+      "pink",
+    ],
   },
   users: {
     loginLenMax: 8,
     loginLenMin: 16,
+    loginPattern: "^[A-Za-z0-9_-]+$",
     passwordLenMin: 8,
     passwordLenMax: 24,
+    passwordPattern: "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*+=_-])[A-Za-z\d@#$%^&*+=_-]+$",
     nameLenMin: 8,
     nameLenMax: 16,
   }
 }
+
+
+
+

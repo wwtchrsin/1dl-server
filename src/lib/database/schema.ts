@@ -1,6 +1,7 @@
 import { limits } from "./limits"
 
 const regions = limits.messages.regions.map(r => `'${r}'`).join(", ")
+const colors = limits.messages.colors.map(r => `'${r}'`).join(", ")
 
 const sqlAddConstraints = `
   ALTER TABLE messages ADD CONSTRAINT region_check
@@ -14,15 +15,17 @@ const sqlAddConstraints = `
   ALTER TABLE messages ALTER COLUMN text TYPE VARCHAR(${limits.messages.textLenMax}),
     ALTER COLUMN text SET NOT NULL;
   ALTER TABLE messages ADD CONSTRAINT text_check
-    CHECK(LENGTH(text) >= ${limits.messages.textLenMin});
+    CHECK (LENGTH(text) >= ${limits.messages.textLenMin});
+  ALTER TABLE messages ADD CONSTRAINT color_check
+    CHECK (color IN (${colors}));
   ALTER TABLE users ALTER COLUMN login TYPE VARCHAR(${limits.users.loginLenMax}),
     ALTER COLUMN login SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT login_check
-    CHECK(LENGTH(login) >= ${limits.users.loginLenMin});
+    CHECK (LENGTH(login) >= ${limits.users.loginLenMin});
   ALTER TABLE users ALTER COLUMN name TYPE VARCHAR(${limits.users.nameLenMax}),
     ALTER COLUMN name SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT name_check
-    CHECK(LENGTH(name) >= ${limits.users.nameLenMin});
+    CHECK (LENGTH(name) >= ${limits.users.nameLenMin});
 `
 
 const sqlDeleteConstraints = `
@@ -31,6 +34,7 @@ const sqlDeleteConstraints = `
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS room_check;
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS index_check;
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS text_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS color_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS login_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS name_check;
 `
@@ -42,6 +46,7 @@ const sqlCreateTables = `
     room INTEGER NOT NULL,
     index INTEGER NOT NULL,
     text VARCHAR(${limits.messages.textLenMax}) NOT NULL,
+    color VARCHAR NOT NULL,
     userid UUID,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY(region, district, room, index)
