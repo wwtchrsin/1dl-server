@@ -22,14 +22,19 @@ export default {
     ],
   },
   users: {
-    loginLenMax: 8,
-    loginLenMin: 16,
+    loginLenMin: 8,
+    loginLenMax: 16,
     loginPattern: "^[A-Za-z0-9_-]+$",
     passwordLenMin: 8,
     passwordLenMax: 24,
     passwordPattern: "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*+=_-])[A-Za-z\d@#$%^&*+=_-]+$",
     nameLenMin: 8,
     nameLenMax: 16,
+    states: [
+      "inactive",
+      "active",
+      "suspended",
+    ]
   }
 }
 

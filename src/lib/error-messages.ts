@@ -99,3 +99,10 @@ export const wrongValues: WrongValueMessages = {
     },
   },
 }
+
+export const databaseError = {
+  messages: {
+    en: "Impossible to get the list of messages",
+    ru: "Невозможно получить список сообщений",
+  }
+}

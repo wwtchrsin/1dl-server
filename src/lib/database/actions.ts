@@ -1,40 +1,36 @@
-import type { Client, Pool } from "pg"
-import limits from "./limits"
-import { wrongValues } from "../error-messages"
+import { checkRoomParams } from "./checkers"
+import { queryDatabase } from "./query"
+import { databaseError } from "../error-messages"
+import type { RoomParams, MessageList } from "./interfaces"
 import type { TextResource } from "../langs"
 
-type PgClient = Client | Pool
-
-export interface RoomReqParams {
-  region: string
-  district: string
-  room: string
-}
-
-export interface RoomParams {
-  region: string
-  district: number
-  room: number
-}
-
-export const castRoomParams = (req: RoomReqParams):
-  [undefined, RoomParams] | [TextResource, undefined] => {
-    let region = req.region?.toLowerCase()
-    if ( !limits.messages.regions.includes(region) ) {
-      return [wrongValues.messages.region, undefined]
+export const getMessages = async (req: any): 
+  Promise<{ error: TextResource | undefined, data: MessageList | undefined }> => {
+    let errorMessage = checkRoomParams(req)
+    if ( errorMessage !== undefined ) {
+      return { 
+        error: errorMessage,
+        data: undefined,
+      }
     }
-    let district = Number(req.district)
-    if ( isNaN(district) || district < limits.messages.districtMin ||
-      district > limits.messages.districtMax || 
-      Math.round(district) !== district ) {
-        return [wrongValues.messages.district, undefined]
+    let { region, district, room } = req as RoomParams
+    let query = `
+      SELECT region, district, room, index, text, color, 
+          name as username, messages.timestamp as timestamp  
+        FROM messages, users WHERE
+        messages.userid = users.userid AND 
+        region = $1 AND district = $2 AND room = $3
+    `
+    let result = await queryDatabase(query, [region, district, room])
+    if ( !result?.rows ) {
+      return {
+        error: databaseError.messages,
+        data: undefined
       }
-    let room = Number(req.room)
-    if ( isNaN(room) || room < limits.messages.roomMin || 
-      room > limits.messages.roomMax ||
-      Math.round(room) !== room ) {
-        return [wrongValues.messages.room, undefined]
-      }
-    return [undefined, { region, district, room }]
+    }
+    return {
+      error: undefined,
+      data: result.rows as MessageList
+    }
   }
 

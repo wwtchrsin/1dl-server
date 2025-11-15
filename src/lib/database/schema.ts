@@ -1,7 +1,8 @@
-import { limits } from "./limits"
+import limits from "./limits"
 
 const regions = limits.messages.regions.map(r => `'${r}'`).join(", ")
 const colors = limits.messages.colors.map(r => `'${r}'`).join(", ")
+const states = limits.users.states.map(r => `'${r}'`).join(", ")
 
 const sqlAddConstraints = `
   ALTER TABLE messages ADD CONSTRAINT region_check
@@ -21,11 +22,14 @@ const sqlAddConstraints = `
   ALTER TABLE users ALTER COLUMN login TYPE VARCHAR(${limits.users.loginLenMax}),
     ALTER COLUMN login SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT login_check
-    CHECK (LENGTH(login) >= ${limits.users.loginLenMin});
+    CHECK (LENGTH(login) >= ${limits.users.loginLenMin} AND 
+    login ~ '${limits.users.loginPattern}');
   ALTER TABLE users ALTER COLUMN name TYPE VARCHAR(${limits.users.nameLenMax}),
     ALTER COLUMN name SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT name_check
     CHECK (LENGTH(name) >= ${limits.users.nameLenMin});
+  ALTER TABLE users ADD CONSTRAINT state_check
+    CHECK (state IN (${states}));
 `
 
 const sqlDeleteConstraints = `
@@ -37,6 +41,7 @@ const sqlDeleteConstraints = `
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS color_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS login_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS name_check;
+  ALTER TABLE users DROP CONSTRAINT IF EXISTS state_check;
 `
 
 const sqlCreateTables = `
@@ -49,20 +54,26 @@ const sqlCreateTables = `
     color VARCHAR NOT NULL,
     userid UUID,
     timestamp BIGINT NOT NULL,
-    PRIMARY KEY(region, district, room, index)
+    PRIMARY KEY(region, district, room, index),
+    UNIQUE(region, district, room, index)
   );
   CREATE TABLE IF NOT EXISTS users (
     userid UUID NOT NULL PRIMARY KEY,
     login VARCHAR(${limits.users.loginLenMax}) NOT NULL,
     password CHAR(128) NOT NULL,
     name VARCHAR(${limits.users.nameLenMax}) NOT NULL,
-    timestamp BIGINT NOT NULL
+    state VARCHAR NOT NULL,
+    timestamp BIGINT NOT NULL,
+    UNIQUE(userid),
+    UNIQUE(login)
   );
   CREATE TABLE IF NOT EXISTS sessions (
     userid UUID NOT NULL,
     sessionid UUID NOT NULL,
     timestamp BIGINT NOT NULL,
-    PRIMARY KEY(userid, sessionid)
+    PRIMARY KEY(userid),
+    UNIQUE(userid),
+    UNIQUE(sessionid)
   );
   CREATE INDEX IF NOT EXISTS idx_messages_timestamp 
     ON messages(timestamp);
