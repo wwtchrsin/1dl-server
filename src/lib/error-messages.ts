@@ -40,21 +40,21 @@ export const wrongValues: WrongValueMessages = {
         limits.messages.regions.join(", ") + ".",
     },
     district: {
-      en: getErrorCause("en", "district") + 
+      en: getErrorCause("en", "district") + " " +
         getCorrectRange("en", limits.messages.districtMin, limits.messages.districtMax),
-      ru: getErrorCause("ru", "district") + 
+      ru: getErrorCause("ru", "district") + " " + 
         getCorrectRange("ru", limits.messages.districtMin, limits.messages.districtMax),
     },
     room: {
-      en: getErrorCause("en", "room") + 
+      en: getErrorCause("en", "room") + " " + 
         getCorrectRange("en", limits.messages.roomMin, limits.messages.roomMax),
-      ru: getErrorCause("ru", "room") + 
+      ru: getErrorCause("ru", "room") + " " + 
         getCorrectRange("ru", limits.messages.roomMin, limits.messages.roomMax),
     },
     index: {
-      en: getErrorCause("en", "index") + 
+      en: getErrorCause("en", "index") + " " + 
         getCorrectRange("en", limits.messages.indexMin, limits.messages.indexMax),
-      ru: getErrorCause("ru", "index") + 
+      ru: getErrorCause("ru", "index") + " " + 
         getCorrectRange("ru", limits.messages.indexMin, limits.messages.indexMax),
     },
     text: {
@@ -101,8 +101,12 @@ export const wrongValues: WrongValueMessages = {
 }
 
 export const databaseError = {
-  messages: {
+  getMessages: {
     en: "Impossible to get the list of messages",
     ru: "Невозможно получить список сообщений",
+  },
+  createMessage: {
+    en: "Impossible to save the message",
+    ru: "Невозможно сохранить сообщение",
   }
 }
