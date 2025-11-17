@@ -1,3 +1,5 @@
+const passwordSymbols = "!@#$%^&*+=_-"
+
 export default {
   messages: {
     regions: ["en", "ru"],
@@ -27,7 +29,9 @@ export default {
     loginPattern: "^[A-Za-z0-9_-]+$",
     passwordLenMin: 8,
     passwordLenMax: 24,
-    passwordPattern: "^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*+=_-])[A-Za-z\d@#$%^&*+=_-]+$",
+    passwordSymbols: passwordSymbols.split(""),
+    passwordPattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${passwordSymbols}])` +
+      `[A-Za-z\\d${passwordSymbols}]+$`,
     nameLenMin: 8,
     nameLenMax: 16,
     states: [

@@ -1,5 +1,7 @@
 import { Client, Pool } from "pg"
+import type { Result } from "pg"
 import env from "../env"
+
 
 export const pool = new Pool({
   user: env.pg.user,
@@ -19,3 +21,13 @@ export const getClient = async () => {
     database: env.pg.database,
   })
 }
+
+export const queryDatabase = async (queryString: string, queryParams: string[]):
+  Promise<Result | undefined> => {
+    try {
+      let result = await pool.query(queryString, queryParams)
+      return result
+    } catch (err) {
+      return undefined
+    }
+  }

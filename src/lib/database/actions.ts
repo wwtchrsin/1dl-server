@@ -1,12 +1,19 @@
-import { checkRoomIds, checkMessageContent } from "./checkers"
-import { queryDatabase } from "./query"
-import { databaseError } from "../error-messages"
+import { checkRoomIds, checkMessageIds, checkMessageContent } from "./checkers"
+import { queryDatabase } from "./conn"
+import { databaseErrors, databaseConflicts } from "../error-messages"
 import type { TextResource } from "../langs"
 
 export type RoomIds = {
   region: string,
   district: string,
   room: string,
+}
+
+export type MessageIds = {
+  region: string,
+  district: string,
+  room: string,
+  index: string,
 }
 
 export type MessageContent = {
@@ -46,13 +53,49 @@ export const getMessages = async (req: any):
     let result = await queryDatabase(query, [region, district, room])
     if ( !result?.rows ) {
       return {
-        error: databaseError.getMessages,
+        error: databaseErrors.getMessages,
         data: undefined
       }
     }
     return {
       error: undefined,
-      data: result.rows as ResponseMessage
+      data: result.rows as ResponseMessage[]
+    }
+  }
+
+export const getMessage = async (req: any):
+  Promise<{ error: TextResource | undefined, data: ResponseMessage | undefined }> => {
+    let errorMessage = checkMessageIds(req)
+    if ( errorMessage !== undefined ) {
+      return {
+        error: errorMessage,
+        data: undefined,
+      }
+    }
+    let { region, district, room, index } = req as MessageIds
+    let query = `
+      SELECT region, district, room, index, text, color, 
+          name as username, messages.timestamp as timestamp  
+        FROM messages, users WHERE
+        messages.userid = users.userid AND 
+        region = $1 AND district = $2 AND room = $3 AND index = $4
+    `
+    let result = await queryDatabase(query, [region, district, room, index])
+    if ( result === undefined ) {
+      return {
+        error: databaseErrors.getMessage,
+        data: undefined,
+      }
+    }
+    if ( result?.rows?.length !== 1 ) {
+      return {
+        error: databaseConflict.messageNotFound,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0] as ResponseMessage,
     }
   }
 
@@ -66,6 +109,13 @@ export const createMessage = async (userid: string, req: any):
       }
     }
     let { region, district, room, index, text, color } = req as MessageContent
+    let message = await getMessage({ region, district, room, index })
+    if ( message.data !== undefined ) {
+      return {
+        error: databaseConflicts.messageAlreadyExists,
+        data: undefined,
+      }
+    }
     let timestamp = (new Date()).valueOf()
     let query = `
       INSERT INTO messages VALUES 
@@ -76,7 +126,7 @@ export const createMessage = async (userid: string, req: any):
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       return {
-        error: databaseError.createMessage,
+        error: databaseErrors.createMessage,
         data: undefined,
       }
     }
@@ -85,3 +135,4 @@ export const createMessage = async (userid: string, req: any):
       data: result.rows[0] as CreatedMessage,
     }
   }
+

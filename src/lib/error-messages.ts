@@ -1,6 +1,8 @@
 import limits from "./database/limits"
 import type { TextResource } from "./langs"
 
+const passwordSymbols = limits.users.passwordSymbols.map(r => `"${r}"`).join(", ")
+
 const getErrorCause = (lang: string, parameter: string) => {
   if ( lang === "ru" ) {
     return `Следующему параметру задано неверное значение: ${parameter}.`
@@ -81,12 +83,12 @@ export const wrongValues: WrongValueMessages = {
     },
     password: {
       en: "Password not accepted. The password can only contain latin letters, " +
-        'digits and special symbols ("!", "@", "#", "$", "%", "^", "&", "*", "+", "=", "_", "-"), ' +
+        `digits and special symbols (${passwordSymbols}), ` +
         "and must contain at least one lowercase letter, one uppercase letter, " +
         "one digit and one special symbol. The password length must be between " +
         `${limits.users.passwordLenMin} and ${limits.users.passwordLenMax} symbols.`,
       ru: "Пароль не принят. Пароль может содержать только латинские буквы, цифры, " +
-        'и специальные символы ("!", "@", "#", "$", "%", "^", "&", "*", "+", "=", "_", "-"), ' +
+        `и специальные символы (${passwordSymbols}), ` +
         "и должен содержать хотя бы одну строчную букву, одну заглавную букву, " +
         "одну цифру и один специальный символ. Длина пароля должна находиться в интервале от " +
         `${limits.users.passwordLenMin} до ${limits.users.passwordLenMax} символов.`
@@ -100,13 +102,28 @@ export const wrongValues: WrongValueMessages = {
   },
 }
 
-export const databaseError = {
+export const databaseErrors = {
   getMessages: {
     en: "Impossible to get the list of messages",
     ru: "Невозможно получить список сообщений",
   },
+  getMessage: {
+    en: "Impossible to get the message requested",
+    ru: "Невозможно получить запрошенное сообщение",
+  },
   createMessage: {
     en: "Impossible to save the message",
     ru: "Невозможно сохранить сообщение",
-  }
+  },
+}
+
+export const databaseConflicts = {
+  messageNotFound: {
+    en: "Message not found",
+    ru: "Сообщение не найдено",
+  },
+  messageAlreadyExists: {
+    en: "Message already exists",
+    ru: "Сообщение уже существует",
+  },
 }
