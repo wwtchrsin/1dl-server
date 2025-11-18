@@ -115,6 +115,10 @@ export const databaseErrors = {
     en: "Impossible to save the message",
     ru: "Невозможно сохранить сообщение",
   },
+  checkUserExists: {
+    en: "Impossible to check if user exists",
+    ru: "Невозможно проверить существует ли пользователь",
+  },
 }
 
 export const databaseConflicts = {
@@ -126,4 +130,19 @@ export const databaseConflicts = {
     en: "Message already exists",
     ru: "Сообщение уже существует",
   },
+}
+
+export const errorsEqual = (errA: TextResource | undefined, errB: TextResource | undefined): boolean => {
+  if ( errA === undefined && errB === undefined ) {
+    return true
+  }
+  if ( errA === undefined || errB === undefined ) {
+    return false
+  }
+  for ( let lang in errA ) {
+    if ( errA[lang] !== errB[lang] ) {
+      return false
+    }
+  }
+  return true
 }

@@ -38,7 +38,7 @@ describe("testing database queries...", () => {
       data: [],
     },
   }, {
-    tag: 2,
+    tag: 3,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin + 1}`,
@@ -54,7 +54,7 @@ describe("testing database queries...", () => {
       data: [],
     },
   }, {
-    tag: 3,
+    tag: 4,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin}`,
@@ -68,7 +68,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 4,
+    tag: 5,
     args: {
       region: "abcdefg",
       district: `${limits.messages.districtMin}`,
@@ -82,7 +82,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 5,
+    tag: 6,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin - 1}`,
@@ -96,7 +96,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 6,
+    tag: 7,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin}`,

@@ -78,4 +78,4 @@ export const checkUserData = (req: any): TextResource | undefined => {
     }
   return undefined
 }
-  
+

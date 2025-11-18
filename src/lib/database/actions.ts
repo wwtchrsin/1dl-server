@@ -1,6 +1,6 @@
 import { checkRoomIds, checkMessageIds, checkMessageContent } from "./checkers"
 import { queryDatabase } from "./conn"
-import { databaseErrors, databaseConflicts } from "../error-messages"
+import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import type { TextResource } from "../langs"
 
 export type RoomIds = {
@@ -81,15 +81,15 @@ export const getMessage = async (req: any):
         region = $1 AND district = $2 AND room = $3 AND index = $4
     `
     let result = await queryDatabase(query, [region, district, room, index])
-    if ( result === undefined ) {
+    if ( result === undefined || result?.rows?.length > 1 ) {
       return {
         error: databaseErrors.getMessage,
         data: undefined,
       }
     }
-    if ( result?.rows?.length !== 1 ) {
+    if ( result?.rows?.length === 0 ) {
       return {
-        error: databaseConflict.messageNotFound,
+        error: databaseConflicts.messageNotFound,
         data: undefined,
       }
     }
@@ -110,6 +110,12 @@ export const createMessage = async (userid: string, req: any):
     }
     let { region, district, room, index, text, color } = req as MessageContent
     let message = await getMessage({ region, district, room, index })
+    if ( errorsEqual(message.error, databaseErrors.getMessage) ) {
+      return {
+        error: databaseErrors.createMessage,
+        data: undefined,
+      }
+    }
     if ( message.data !== undefined ) {
       return {
         error: databaseConflicts.messageAlreadyExists,
@@ -135,4 +141,37 @@ export const createMessage = async (userid: string, req: any):
       data: result.rows[0] as CreatedMessage,
     }
   }
+
+export const useridExists = async (userid: string): 
+  Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
+    let query = "SELECT userid FROM users WHERE userid = $1"
+    let result = await queryDatabase(query, [userid])
+    if ( result === undefined || result?.rows?.length > 1 ) {
+      return {
+        error: databaseErrors.checkUserExists,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result?.rows?.length === 1,
+    }
+  }
+
+export const loginExists = async (login: string):
+  Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
+    let query = "SELECT login FROM users WHERE login = $1"
+    let result = await queryDatabase(query, [login])
+    if ( result === undefined || result?.rows?.length > 1 ) {
+      return {
+        error: databaseErrors.checkUserExists,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result?.rows?.length === 1,
+    }
+  }
+  
 

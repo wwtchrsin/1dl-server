@@ -97,6 +97,40 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
+        region: limits.messages.regions[limits.messages.regions.length - 1],
+        district: `${limits.messages.districtMax}`,
+        room: `${limits.messages.roomMax}`,
+        index: `${limits.messages.indexMax}`,
+        text: "1".repeat(limits.messages.textLenMax),
+        color: limits.messages.colors[limits.messages.colors.length - 1],
+      },
+    ],
+    mocks: {
+      getMessage: {
+        error: databaseErrors.getMessage,
+        data: undefined,
+      },
+      queryDatabase: {
+        rows: [{
+          region: limits.messages.regions[limits.messages.regions.length - 1],
+          district: limits.messages.districtMax,
+          room: limits.messages.roomMax,
+          index: limits.messages.indexMax,
+          text: "1".repeat(limits.messages.textLenMax),
+          color: limits.messages.colors[limits.messages.colors.length - 1],
+          timestamp: `${timestamp}`,
+        }],
+      },
+    },
+    expres: {
+      error: databaseErrors.createMessage,
+      data: undefined,
+    },
+  }, {
+    tag: 4,
+    args: [
+      userid,
+      {
         region: "12345678",
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
@@ -114,7 +148,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 4,
+    tag: 5,
     args: [
       userid,
       {
@@ -135,7 +169,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 5,
+    tag: 6,
     args: [
       userid,
       {
@@ -156,7 +190,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 6,
+    tag: 7,
     args: [
       userid,
       {
@@ -177,7 +211,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 7,
+    tag: 8,
     args: [
       userid,
       {
@@ -198,7 +232,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 8,
+    tag: 9,
     args: [
       userid,
       {
@@ -219,7 +253,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 9,
+    tag: 10,
     args: [
       userid,
       {
@@ -240,7 +274,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 10,
+    tag: 11,
     args: [
       userid,
       {
@@ -274,7 +308,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 11,
+    tag: 12,
     args: [
       "abcdefg",
       {
