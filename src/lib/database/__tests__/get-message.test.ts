@@ -1,4 +1,4 @@
-import * as actions from "../actions"
+import * as messages from "../messages"
 import * as conn from "../conn"
 import limits from "../limits"
 import { databaseErrors, databaseConflicts } from "../../error-messages"
@@ -218,7 +218,7 @@ describe("testing database queries...", () => {
     let { args, expres, tag, mocks } = testcase
     test(`Function getMessages. Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await actions.getMessage(args)
+      let result = await messages.getMessage(args)
       expect(result).toStrictEqual(expres)
     })
   }

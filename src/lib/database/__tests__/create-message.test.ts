@@ -1,5 +1,5 @@
 import * as conn from "../conn"
-import * as actions from "../actions"
+import * as messages from "../messages"
 import limits from "../limits"
 import { databaseErrors, databaseConflicts } from "../../error-messages"
 import { wrongValues } from "../../error-messages"
@@ -338,9 +338,9 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function createMessage. Test #${tag}`, async () => {
-      jest.spyOn(actions, "getMessage").mockResolvedValue(mocks.getMessage)
+      jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
       jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
-      let result = await actions.createMessage(args[0], args[1])
+      let result = await messages.createMessage(args[0], args[1])
       expect(result).toStrictEqual(expres)
     })
   }

@@ -10,6 +10,7 @@ export const pool = new Pool({
   port: env.pg.port,
   database: env.pg.database,
   max: 20,
+  options: `--search_path=${env.pg.schema}`,
 })
 
 export const getClient = async () => {
@@ -19,6 +20,7 @@ export const getClient = async () => {
     host: env.pg.host,
     port: env.pg.port,
     database: env.pg.database,
+    options: `--search_path=${env.pg.schema}`,
   })
 }
 

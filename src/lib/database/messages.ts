@@ -1,4 +1,4 @@
-import { checkRoomIds, checkMessageIds, checkMessageContent } from "./checkers"
+import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserData } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import type { TextResource } from "../langs"
@@ -122,7 +122,7 @@ export const createMessage = async (userid: string, req: any):
         data: undefined,
       }
     }
-    let timestamp = (new Date()).valueOf()
+    let timestamp = Math.floor((new Date()).valueOf() / 1000)
     let query = `
       INSERT INTO messages VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -143,4 +143,7 @@ export const createMessage = async (userid: string, req: any):
   }
 
 
+    
+  
+  
 

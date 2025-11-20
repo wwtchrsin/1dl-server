@@ -17,23 +17,12 @@ const getCorrectRange = (lang: string, min: number, max: number) => {
   return `The value must be an integer within the range [${min}, ${max}].`
 }
 
-export interface WrongValueMessages {
-  messages: {
-    region: TextResource
-    district: TextResource
-    room: TextResource
-    index: TextResource
-    text: TextResource
-    color: TextResource
-  },
-  users: {
-    login: TextResource,
-    password: TextResource,
-    name: TextResource,
-  },
+type WrongValues = {
+  messages: Record<string, TextResource>,
+  users: Record<string, TextResource>,
 }
-    
-export const wrongValues: WrongValueMessages = {
+
+export const wrongValues: WrongValues = {
   messages: {
     region: {
       en: getErrorCause("en", "region") + " Valid values: " + 
@@ -102,7 +91,7 @@ export const wrongValues: WrongValueMessages = {
   },
 }
 
-export const databaseErrors = {
+export const databaseErrors: Record<string, TextResource> = {
   getMessages: {
     en: "Impossible to get the list of messages",
     ru: "Невозможно получить список сообщений",
@@ -119,9 +108,13 @@ export const databaseErrors = {
     en: "Impossible to check if user exists",
     ru: "Невозможно проверить существует ли пользователь",
   },
+  createUser: {
+    en: "Impossible to add the user",
+    ru: "Невозможно добавить пользователя",
+  },
 }
 
-export const databaseConflicts = {
+export const databaseConflicts: Record<string, TextResource> = {
   messageNotFound: {
     en: "Message not found",
     ru: "Сообщение не найдено",
@@ -129,6 +122,10 @@ export const databaseConflicts = {
   messageAlreadyExists: {
     en: "Message already exists",
     ru: "Сообщение уже существует",
+  },
+  loginTaken: {
+    en: "The login is already taken",
+    ru: "Логин уже используется",
   },
 }
 

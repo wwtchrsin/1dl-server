@@ -9,6 +9,7 @@ const env = {
     host: process.env.PG_HOST ?? "http://127.0.0.1",
     port: Number(process.env.PG_PORT ?? "5432"),
     database: process.env.PG_DBNAME,
+    schema: process.env.PG_SCHEMA ?? "public",
   },
   redis: {
     user: process.env.REDIS_USER ?? "default",
@@ -17,7 +18,8 @@ const env = {
     port: Number(process.env.REDIS_PORT ?? "6379"),
     database: Number(process.env.REDIS_DATABASE ?? "11"),
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
-  }
+  },
+  passwordSalt: process.env.PASSWORD_SALT ?? "",
 }
 
 if ( isNaN(env.httpPort) || isNaN(env.wsPort) || isNaN(env.pg.port) ||
