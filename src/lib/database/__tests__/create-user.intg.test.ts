@@ -34,7 +34,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }],
     table: [{
@@ -54,7 +61,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMax),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }],
     table: [{
@@ -74,7 +88,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin + 1),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }],
     table: [{
@@ -94,7 +115,8 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: wrongValues.users.login
+        error: wrongValues.users.login,
+        data: undefined,
       },
     }],
     table: [],
@@ -107,20 +129,8 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: wrongValues.users.password
-      },
-    }],
-    table: [],
-  }, {
-    tag: 5,
-    calls: [{
-      args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin - 1),
-      },
-      expres: {
-        error: wrongValues.users.name
+        error: wrongValues.users.password,
+        data: undefined,
       },
     }],
     table: [],
@@ -130,10 +140,31 @@ describe("testing database queries...", () => {
       args: {
         login: "1".repeat(limits.users.loginLenMin),
         password: "Aa!11111",
+        name: "1".repeat(limits.users.nameLenMin - 1),
+      },
+      expres: {
+        error: wrongValues.users.name,
+        data: undefined,
+      },
+    }],
+    table: [],
+  }, {
+    tag: 7,
+    calls: [{
+      args: {
+        login: "1".repeat(limits.users.loginLenMin),
+        password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }, {
       args: {
@@ -142,7 +173,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        }
       },
     }],
     table: [{
@@ -161,7 +199,7 @@ describe("testing database queries...", () => {
       timestamp: timestampPattern,
     }],
   }, {
-    tag: 6,
+    tag: 8,
     calls: [{
       args: {
         login: "1".repeat(limits.users.loginLenMin),
@@ -169,7 +207,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        }
       },
     }, {
       args: {
@@ -178,7 +223,8 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: databaseConflicts.loginTaken
+        error: databaseConflicts.loginTaken,
+        data: undefined,
       },
     }],
     table: [{
@@ -190,7 +236,7 @@ describe("testing database queries...", () => {
       timestamp: timestampPattern,
     }],
   }, {
-    tag: 7,
+    tag: 9,
     calls: [{
       args: {
         login: "1".repeat(limits.users.loginLenMin),
@@ -198,7 +244,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }, {
       args: {
@@ -207,7 +260,8 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: databaseConflicts.loginTaken
+        error: databaseConflicts.loginTaken,
+        data: undefined,
       },
     }, {
       args: {
@@ -216,7 +270,14 @@ describe("testing database queries...", () => {
         name: "1".repeat(limits.users.nameLenMin),
       },
       expres: {
-        error: undefined
+        error: undefined,
+        data: {
+          userid: useridPattern,
+          login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
+          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
+          state: new RegExp("^" + "inactive" + "$"),
+          timestamp: timestampPattern,
+        },
       },
     }],
     table: [{
@@ -241,14 +302,23 @@ describe("testing database queries...", () => {
       for ( let call of calls ) {
         let { args, expres } = call
         let result = await createUser(args)
-        expect(result).toStrictEqual(expres)
+        if ( expres.error !== undefined ) {
+          expect(result.error).toStrictEqual(expres.error)
+          expect(result.data).toBeUndefined()
+          continue
+        }
+        expect(result.error).toBeUndefined()
+        expect(result.data).toBeDefined()
+        for ( let key in expres.data ) {
+          expect(`${result.data[key]}`).toMatch(expres.data[key])
+        }
       }
       let result = await pool.query("SELECT * FROM users")
       expect(result).toBeDefined()
       expect(result.rows).toHaveLength(table.length)
       for ( let i=0; i < table.length; i++ ) {
         for ( let column in table[i] ) {
-          expect(result.rows[i][column]).toMatch(table[i][column])
+          expect(`${result.rows[i][column]}`).toMatch(table[i][column])
         }
       }
     })

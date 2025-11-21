@@ -108,6 +108,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to check if user exists",
     ru: "Невозможно проверить существует ли пользователь",
   },
+  checkMessage: {
+    en: "Impossible to check the message",
+    ru: "Невозможно проверить сообщение",
+  },
   createUser: {
     en: "Impossible to add the user",
     ru: "Невозможно добавить пользователя",

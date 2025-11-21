@@ -32,12 +32,10 @@ describe("testing database queries...", () => {
       password: "Aa!11111",
       name: username,
     }
-    let expres = {
-      error: undefined
-    }
     let result = await createUser(args)
     let table = await pool.query("SELECT userid FROM users")
-    expect(result).toStrictEqual(expres)
+    expect(result.error).toBeUndefined()
+    expect(result.data).toBeDefined()
     expect(table).toBeDefined()
     expect(table.rows).toHaveLength(1)
     expect(table.rows[0].userid).toMatch(useridPattern)

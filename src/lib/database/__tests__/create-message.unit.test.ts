@@ -123,7 +123,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: databaseErrors.createMessage,
+      error: databaseErrors.checkMessage,
       data: undefined,
     },
   }, {
@@ -337,7 +337,7 @@ describe("testing database queries...", () => {
   })
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
-    test(`Function createMessage. Test #${tag}`, async () => {
+    test(`Function createMessage. Unit Test #${tag}`, async () => {
       jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
       jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
       let result = await messages.createMessage(args[0], args[1])

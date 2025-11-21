@@ -18,23 +18,29 @@ export type MessageIds = {
 
 export type MessageContent = {
   region: string,
+  district: string,
+  room: string,
+  index: string,
+  text: string,
+  color: string,
+}
+
+export type CreatedMessage = {
+  region: string,
   district: number,
   room: number,
   index: number,
   text: string,
   color: string,
-}
-
-export type CreatedMessage = MessageContent & {
   timestamp: string
 }
 
-export type ResponseMessage = CreatedMessage & {
+export type Message = CreatedMessage & {
   username: string
 }
 
 export const getMessages = async (req: any): 
-  Promise<{ error: TextResource | undefined, data: ResponseMessage[] | undefined }> => {
+  Promise<{ error: TextResource | undefined, data: Message[] | undefined }> => {
     let errorMessage = checkRoomIds(req)
     if ( errorMessage !== undefined ) {
       return { 
@@ -59,12 +65,12 @@ export const getMessages = async (req: any):
     }
     return {
       error: undefined,
-      data: result.rows as ResponseMessage[]
+      data: result.rows as Message[]
     }
   }
 
 export const getMessage = async (req: any):
-  Promise<{ error: TextResource | undefined, data: ResponseMessage | undefined }> => {
+  Promise<{ error: TextResource | undefined, data: Message | undefined }> => {
     let errorMessage = checkMessageIds(req)
     if ( errorMessage !== undefined ) {
       return {
@@ -95,7 +101,7 @@ export const getMessage = async (req: any):
     }
     return {
       error: undefined,
-      data: result.rows[0] as ResponseMessage,
+      data: result.rows[0] as Message,
     }
   }
 
@@ -112,7 +118,7 @@ export const createMessage = async (userid: string, req: any):
     let message = await getMessage({ region, district, room, index })
     if ( errorsEqual(message.error, databaseErrors.getMessage) ) {
       return {
-        error: databaseErrors.createMessage,
+        error: databaseErrors.checkMessage,
         data: undefined,
       }
     }
