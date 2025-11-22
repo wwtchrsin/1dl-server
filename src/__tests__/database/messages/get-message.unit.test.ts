@@ -1,11 +1,13 @@
-import * as messages from "../messages"
-import * as conn from "../conn"
-import limits from "../limits"
-import { databaseErrors, databaseConflicts } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import * as messages from "../../../lib/database/messages"
+import * as conn from "../../../lib/database/conn"
+import limits from "../../../lib/database/limits"
+import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
 let text = "abcd efg hijk lmnop"
-let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
+let color = limits.messages.colors[0]
+let puid = "53e291f8-522b-43b8-a5f5-84795b887a81"
+let username = "12345678"
 let timestamp = 123456789
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
@@ -15,8 +17,10 @@ let returnOneMessage = (queryString: string, queryParams: string[]) => {
     district: Number(district),
     room: Number(room),
     index: Number(index),
-    text: text, 
-    userid: userid,
+    text: text,
+    color: color,
+    puid: puid,
+    username: username,
     timestamp: timestamp,
   }
   return Promise.resolve({ rows: [message] })
@@ -29,8 +33,10 @@ let returnTwoMessages = (queryString: string, queryParams: string[]) => {
     district: Number(district),
     room: Number(room),
     index: Number(index),
-    text: text, 
-    userid: userid,
+    text: text,
+    color: color,
+    puid: puid,
+    username: username,
     timestamp: timestamp,
   }
   return Promise.resolve({ rows: [message, message] })
@@ -60,7 +66,7 @@ describe("testing database queries...", () => {
         district: limits.messages.districtMin,
         room: limits.messages.roomMin,
         index: limits.messages.indexMin,
-        text, userid, timestamp,
+        text, color, puid, username, timestamp,
       },
     },
   }, {
@@ -81,7 +87,7 @@ describe("testing database queries...", () => {
         district: limits.messages.districtMax,
         room: limits.messages.roomMax,
         index: limits.messages.indexMax,
-        text, userid, timestamp,
+        text, color, puid, username, timestamp,
       },
     },
   }, {
@@ -102,7 +108,7 @@ describe("testing database queries...", () => {
         district: limits.messages.districtMin + 1,
         room: limits.messages.roomMin + 1,
         index: limits.messages.indexMin + 1,
-        text, userid, timestamp,
+        text, color, puid, username, timestamp,
       },
     },
   }, {

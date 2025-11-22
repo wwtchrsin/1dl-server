@@ -36,7 +36,8 @@ export type CreatedMessage = {
 }
 
 export type Message = CreatedMessage & {
-  username: string
+  puid: string,
+  username: string,
 }
 
 export const getMessages = async (req: any): 
@@ -51,7 +52,7 @@ export const getMessages = async (req: any):
     let { region, district, room } = req as RoomIds
     let query = `
       SELECT region, district, room, index, text, color, 
-          name as username, messages.timestamp as timestamp  
+          users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 
         region = $1 AND district = $2 AND room = $3
@@ -81,7 +82,7 @@ export const getMessage = async (req: any):
     let { region, district, room, index } = req as MessageIds
     let query = `
       SELECT region, district, room, index, text, color, 
-          name as username, messages.timestamp as timestamp  
+          users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 
         region = $1 AND district = $2 AND room = $3 AND index = $4

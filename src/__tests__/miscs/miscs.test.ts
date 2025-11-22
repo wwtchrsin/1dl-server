@@ -1,4 +1,4 @@
-import { errorsEqual, databaseErrors } from "../error-messages"
+import { errorsEqual, databaseErrors } from "../../lib/error-messages"
 
 describe("testing auxilliary functions...", () => {
   let testcases = [{

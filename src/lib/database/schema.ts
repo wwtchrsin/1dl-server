@@ -63,8 +63,10 @@ const sqlCreateTables = `
     password CHAR(128) NOT NULL,
     name VARCHAR(${limits.users.nameLenMax}) NOT NULL,
     state VARCHAR NOT NULL,
+    puid UUID NOT NULL,
     timestamp BIGINT NOT NULL,
     UNIQUE(userid),
+    UNIQUE(puid),
     UNIQUE(login)
   );
   CREATE TABLE IF NOT EXISTS sessions (

@@ -1,8 +1,8 @@
-import * as conn from "../conn"
-import * as messages from "../messages"
-import limits from "../limits"
-import { databaseErrors, databaseConflicts } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import * as conn from "../../../lib/database/conn"
+import * as messages from "../../../lib/database/messages"
+import limits from "../../../lib/database/limits"
+import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
 let timestamp = 123456789
 let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"

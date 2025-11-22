@@ -1,12 +1,12 @@
 process.env.PG_SCHEMA = "getMessagesTest"
 
-import { pool, queryDatabase } from "../conn"
-import { getMessages, createMessage } from "../messages"
-import { createUser } from "../users"
-import { sql } from "../schema"
-import limits from "../limits"
-import { databaseErrors, databaseConflicts } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import { pool, queryDatabase } from "../../../lib/database/conn"
+import { getMessages, createMessage } from "../../../lib/database/messages"
+import { createUser } from "../../../lib/database/users"
+import { sql } from "../../../lib/database/schema"
+import limits from "../../../lib/database/limits"
+import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -18,14 +18,11 @@ afterAll(async () => {
   await pool.end()
 })
 
-let useridPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
+let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 let timestampPattern = /^[1-9][0-9]{9,10}$/
-
-let messages = []
 
 describe("testing database queries...", () => {
   let userids = []
-  let usernames = []
   let testcases = [{
     tag: 1,
     args: {
@@ -33,7 +30,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
     },
-    expres: [[0, {
+    init: [[0, {
       region: limits.messages.regions[0],
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
@@ -55,6 +52,7 @@ describe("testing database queries...", () => {
       text: "A".repeat(limits.messages.textLenMin + 1),
       color: limits.messages.colors[1],
     }]],
+    expres: [],
   }, {
     tag: 2,
     args: {
@@ -62,7 +60,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
     },
-    expres: [[1, {
+    init: [[1, {
       region: limits.messages.regions[0],
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
@@ -77,6 +75,7 @@ describe("testing database queries...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[limits.messages.colors.length - 2],
     }]],
+    expres: [],
   }, {
     tag: 3,
     args: {
@@ -84,7 +83,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
     },
-    expres: [[0, {
+    init: [[0, {
       region: limits.messages.regions[1],
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
@@ -112,7 +111,8 @@ describe("testing database queries...", () => {
       index: limits.messages.indexMax,
       text: "%".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[0],
-    }]]
+    }]],
+    expres: [],
   }]
   test("Function createMessage. Preparing database...", async () => {
     let users = [{
@@ -124,29 +124,44 @@ describe("testing database queries...", () => {
       password: "Aa!11111",
       name: "2".repeat(limits.users.nameLenMin),
     }]
-    expect(true).toBe(true)
+    let puids = []
+    let usernames = []
     for ( let user of users ) {
       let result = await createUser(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(useridPattern)
+      expect(result.data.userid).toMatch(uuidPattern)
+      expect(result.data.puid).toMatch(uuidPattern)
       userids.push(result.data.userid)
+      puids.push(result.data.puid)
       usernames.push(user.name)
     }
     
     let msgCount = 0
     for ( let testcase of testcases ) {
-      let { expres } = testcase 
-      for ( let data of expres ) {
+      let { init, expres } = testcase 
+      for ( let data of init ) {
         let result = await createMessage(userids[data[0]], data[1])
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        expect(result.data.region).toBeDefined()
-        expect(result.data.district).toBeDefined()
-        expect(result.data.room).toBeDefined()
-        expect(result.data.index).toBeDefined()
-        expect(result.data.text).toBeDefined()
+        expect(result.data.region).toBe(data[1].region)
+        expect(result.data.district).toBe(data[1].district)
+        expect(result.data.room).toBe(data[1].room)
+        expect(result.data.index).toBe(data[1].index)
+        expect(result.data.text).toBe(data[1].text)
+        expect(result.data.color).toBe(data[1].color)
         expect(result.data.timestamp).toBeDefined()
+        expres.push({
+          region: data[1].region,
+          district: data[1].district,
+          room: data[1].room,
+          index: data[1].index,
+          text: data[1].text,
+          color: data[1].color,
+          puid: puids[data[0]],
+          username: usernames[data[0]],
+          timestamp: result.data.timestamp,
+        })
         msgCount++
       }
     }
@@ -165,14 +180,9 @@ describe("testing database queries...", () => {
         expect(result.data[i]).toBeDefined()
         expect(result.data[i].index).toBeDefined()
         let index = result.data[i].index
-        let exp = expres.find(entry => entry[1].index === index)[1]
+        let exp = expres.find(entry => entry.index === index)
         expect(exp).toBeDefined()
-        expect(result.data[i].region).toBe(exp.region)
-        expect(result.data[i].district).toBe(exp.district)
-        expect(result.data[i].room).toBe(exp.room)
-        expect(result.data[i].text).toBe(exp.text)
-        expect(result.data[i].timestamp).toMatch(timestampPattern)
-        expect(result.data[i].username).toBe(usernames[expres[i][0]])
+        expect(result.data[i]).toStrictEqual(exp)
       }
     })
   }

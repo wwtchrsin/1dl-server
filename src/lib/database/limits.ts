@@ -26,12 +26,12 @@ export default {
   users: {
     loginLenMin: 8,
     loginLenMax: 16,
-    loginPattern: "^[A-Za-z0-9_-]+$",
+    loginPattern: "^[A-Za-z0-9_-]{8,16}$",
     passwordLenMin: 8,
     passwordLenMax: 24,
     passwordSymbols: passwordSymbols.split(""),
     passwordPattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${passwordSymbols}])` +
-      `[A-Za-z\\d${passwordSymbols}]+$`,
+      `[A-Za-z\\d${passwordSymbols}]{8,24}$`,
     nameLenMin: 8,
     nameLenMax: 16,
     states: [

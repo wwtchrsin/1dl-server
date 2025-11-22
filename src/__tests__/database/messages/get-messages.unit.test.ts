@@ -1,8 +1,8 @@
-import * as messages from "../messages"
-import * as conn from "../conn"
-import limits from "../limits"
-import { databaseErrors } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import * as messages from "../../../lib/database/messages"
+import * as conn from "../../../lib/database/conn"
+import limits from "../../../lib/database/limits"
+import { databaseErrors } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
 describe("testing database queries...", () => {
   let testcases = [{

@@ -16,24 +16,9 @@ export type CreatedUser = {
   login: string,
   name: string,
   state: string,
+  publicid: string,
   timestamp: string,
 }
-
-export const useridExists = async (userid: string): 
-  Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
-    let query = "SELECT userid FROM users WHERE userid = $1"
-    let result = await queryDatabase(query, [userid])
-    if ( result === undefined || result?.rows?.length > 1 ) {
-      return {
-        error: databaseErrors.checkUserExists,
-        data: undefined,
-      }
-    }
-    return {
-      error: undefined,
-      data: result?.rows?.length === 1,
-    }
-  }
 
 export const loginExists = async (login: string):
   Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
@@ -78,13 +63,14 @@ export const createUser = async(req: string):
     let timestamp = Math.floor((new Date()).valueOf() / 1000)
     let state = "inactive"
     let userid = randomUUID()
+    let puid = randomUUID()
     let passwordHash = hashPassword(login, password)
     let query = `
       INSERT INTO users VALUES
-        ($1, $2, $3, $4, $5, $6)
-        RETURNING userid, login, name, state, timestamp
+        ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING userid, login, name, state, puid, timestamp
     `
-    let queryParams = [userid, login, passwordHash, name, state, timestamp]
+    let queryParams = [userid, login, passwordHash, name, state, puid, timestamp]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       return {

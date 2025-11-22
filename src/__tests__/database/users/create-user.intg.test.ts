@@ -1,11 +1,11 @@
 process.env.PG_SCHEMA = "createUserTest"
 
-import { pool, queryDatabase } from "../conn"
-import { createUser } from "../users"
-import { sql } from "../schema"
-import limits from "../limits"
-import { databaseErrors, databaseConflicts } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import { pool, queryDatabase } from "../../../lib/database/conn"
+import { createUser } from "../../../lib/database/users"
+import { sql } from "../../../lib/database/schema"
+import limits from "../../../lib/database/limits"
+import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -17,7 +17,7 @@ afterAll(async () => {
   await pool.end()
 })
 
-let useridPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
+let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 let passwordPattern = /^[0-9A-Fa-f]{128}$/
 let timestampPattern = /^[1-9][0-9]{9,10}$/
 
@@ -25,6 +25,15 @@ describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
   })
+  let databaseCheck = {
+    userid: uuidPattern,
+    login: limits.users.loginPattern,
+    password: passwordPattern,
+    name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
+    state: new RegExp("^" + "inactive" + "$"),
+    puid: uuidPattern,
+    timestamp: timestampPattern,
+  }
   let testcases = [{
     tag: 1,
     calls: [{
@@ -36,22 +45,16 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 1,
   }, {
     tag: 2,
     calls: [{
@@ -63,22 +66,16 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 1,
   }, {
     tag: 3,
     calls: [{
@@ -90,22 +87,16 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 1,
   }, {
     tag: 4,
     calls: [{
@@ -119,7 +110,7 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    table: [],
+    exprows: 0,
   }, {
     tag: 5,
     calls: [{
@@ -133,7 +124,7 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    table: [],
+    exprows: 0,
   }, {
     tag: 6,
     calls: [{
@@ -147,7 +138,7 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    table: [],
+    exprows: 0,
   }, {
     tag: 7,
     calls: [{
@@ -159,10 +150,11 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
@@ -175,29 +167,16 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         }
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }, {
-      userid: useridPattern,
-      login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 2,
   }, {
     tag: 8,
     calls: [{
@@ -209,10 +188,11 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         }
       },
@@ -227,14 +207,7 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 1,
   }, {
     tag: 9,
     calls: [{
@@ -246,10 +219,11 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
@@ -272,32 +246,19 @@ describe("testing database queries...", () => {
       expres: {
         error: undefined,
         data: {
-          userid: useridPattern,
+          userid: uuidPattern,
           login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
           name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
           state: new RegExp("^" + "inactive" + "$"),
+          puid: uuidPattern,
           timestamp: timestampPattern,
         },
       },
     }],
-    table: [{
-      userid: useridPattern,
-      login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }, {
-      userid: useridPattern,
-      login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
-      password: passwordPattern,
-      name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-      state: new RegExp("^" + "inactive" + "$"),
-      timestamp: timestampPattern,
-    }],
+    exprows: 2,
   }]
   for ( let testcase of testcases ) {
-    let { calls, table, tag } = testcase
+    let { calls, exprows, tag } = testcase
     test(`Function createUser. Intg Test #${tag}`, async () => {
       for ( let call of calls ) {
         let { args, expres } = call
@@ -315,10 +276,10 @@ describe("testing database queries...", () => {
       }
       let result = await pool.query("SELECT * FROM users")
       expect(result).toBeDefined()
-      expect(result.rows).toHaveLength(table.length)
-      for ( let i=0; i < table.length; i++ ) {
-        for ( let column in table[i] ) {
-          expect(`${result.rows[i][column]}`).toMatch(table[i][column])
+      expect(result.rows).toHaveLength(exprows)
+      for ( let i=0; i < result.rows; i++ ) {
+        for ( let column in databaseCheck ) {
+          expect(`${result.rows[i][column]}`).toMatch(databaseCheck[column])
         }
       }
     })

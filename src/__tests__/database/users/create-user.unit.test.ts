@@ -1,10 +1,10 @@
-import * as users from "../users"
-import * as conn from "../conn"
-import limits from "../limits"
-import { databaseErrors, databaseConflicts } from "../../error-messages"
-import { wrongValues } from "../../error-messages"
+import * as users from "../../../lib/database/users"
+import * as conn from "../../../lib/database/conn"
+import limits from "../../../lib/database/limits"
+import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
+import { wrongValues } from "../../../lib/error-messages"
 
-let useridPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
+let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 let timestampPattern = /^[1-9][0-9]{9,10}$/
 
 let loginDoesntExist = () => {
@@ -20,8 +20,8 @@ let loginCheckError = () => {
 }
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
-  let [userid, login, password, name, state, timestamp] = queryParams
-  let user = { userid, login, name, state, timestamp }
+  let [userid, login, password, name, state, puid, timestamp] = queryParams
+  let user = { userid, login, name, state, puid, timestamp }
   return Promise.resolve({ rows: [user] })
 }
 
@@ -48,10 +48,11 @@ describe("testing database queries...", () => {
     expres: {
       error: undefined,
       data: {
-        userid: useridPattern,
+        userid: uuidPattern,
         login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
         name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
         state: "inactive",
+        puid: uuidPattern,
         timestamp: timestampPattern,
       },
     },
@@ -69,10 +70,11 @@ describe("testing database queries...", () => {
     expres: {
       error: undefined,
       data: {
-        userid: useridPattern,
+        userid: uuidPattern,
         login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
         name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
         state: "inactive",
+        puid: uuidPattern,
         timestamp: timestampPattern,
       },
     },
@@ -90,10 +92,11 @@ describe("testing database queries...", () => {
     expres: {
       error: undefined,
       data: {
-        userid: useridPattern,
+        userid: uuidPattern,
         login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
         name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
         state: "inactive",
+        puid: uuidPattern,
         timestamp: timestampPattern,
       },
     },

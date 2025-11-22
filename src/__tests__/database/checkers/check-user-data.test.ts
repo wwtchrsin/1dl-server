@@ -1,6 +1,6 @@
-import { checkUserData } from "../checkers"
-import limits from "../limits"
-import { wrongValues } from "../../error-messages"
+import { checkUserData } from "../../../lib/database/checkers"
+import limits from "../../../lib/database/limits"
+import { wrongValues } from "../../../lib/error-messages"
 
 describe("testing query validators...", () => {
   let testcases = [{
