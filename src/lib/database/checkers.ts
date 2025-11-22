@@ -3,6 +3,7 @@ import { wrongValues } from "../error-messages"
 
 const loginPattern = new RegExp(limits.users.loginPattern)
 const passwordPattern = new RegExp(limits.users.passwordPattern)
+const uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 
 export const checkRoomIds = (req: any): TextResource | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
@@ -76,6 +77,13 @@ export const checkUserData = (req: any): TextResource | undefined => {
     typeof req?.name !== "string" ) {
       return wrongValues.users.name
     }
+  return undefined
+}
+
+export const checkUserId = (userid: string): TestResource | undefined => {
+  if ( !uuidPattern.test(userid) ) {
+    return wrongValues.users.userid
+  }
   return undefined
 }
 

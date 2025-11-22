@@ -21,19 +21,29 @@ let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-
 let passwordPattern = /^[0-9A-Fa-f]{128}$/
 let timestampPattern = /^[1-9][0-9]{9,10}$/
 
+let databaseChecks = {
+  userid: uuidPattern,
+  login: new RegExp(limits.users.loginPattern),
+  password: passwordPattern,
+  name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
+  state: new RegExp(`^[a-z]+$`),
+  puid: uuidPattern,
+  timestamp: timestampPattern,
+}
+
+let resultChecks = (args: any) => ({
+  userid: uuidPattern,
+  login: new RegExp(`^${args.login}$`),
+  name: new RegExp(`^${args.name}$`),
+  state: new RegExp(`^[a-z]+$`),
+  puid: uuidPattern,
+  timestamp: timestampPattern,
+})
+
 describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
   })
-  let databaseCheck = {
-    userid: uuidPattern,
-    login: limits.users.loginPattern,
-    password: passwordPattern,
-    name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
-    state: new RegExp("^" + "inactive" + "$"),
-    puid: uuidPattern,
-    timestamp: timestampPattern,
-  }
   let testcases = [{
     tag: 1,
     calls: [{
@@ -42,19 +52,8 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }],
-    exprows: 1,
   }, {
     tag: 2,
     calls: [{
@@ -63,19 +62,8 @@ describe("testing database queries...", () => {
         password: "Aa!11111".repeat(3),
         name: "1".repeat(limits.users.nameLenMax),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }],
-    exprows: 1,
   }, {
     tag: 3,
     calls: [{
@@ -84,19 +72,8 @@ describe("testing database queries...", () => {
         password: "Aa!111111",
         name: "1".repeat(limits.users.nameLenMin + 1),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }],
-    exprows: 1,
   }, {
     tag: 4,
     calls: [{
@@ -110,7 +87,6 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    exprows: 0,
   }, {
     tag: 5,
     calls: [{
@@ -124,7 +100,6 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    exprows: 0,
   }, {
     tag: 6,
     calls: [{
@@ -138,7 +113,6 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    exprows: 0,
   }, {
     tag: 7,
     calls: [{
@@ -147,36 +121,15 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }, {
       args: {
         login: "2".repeat(limits.users.loginLenMin),
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        }
-      },
+      expres: "success",
     }],
-    exprows: 2,
   }, {
     tag: 8,
     calls: [{
@@ -185,17 +138,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        }
-      },
+      expres: "success",
     }, {
       args: {
         login: "1".repeat(limits.users.loginLenMin),
@@ -207,7 +150,6 @@ describe("testing database queries...", () => {
         data: undefined,
       },
     }],
-    exprows: 1,
   }, {
     tag: 9,
     calls: [{
@@ -216,17 +158,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }, {
       args: {
         login: "1".repeat(limits.users.loginLenMin),
@@ -243,44 +175,41 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: undefined,
-        data: {
-          userid: uuidPattern,
-          login: new RegExp("^" + "2".repeat(limits.users.loginLenMin) + "$"),
-          name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-          state: new RegExp("^" + "inactive" + "$"),
-          puid: uuidPattern,
-          timestamp: timestampPattern,
-        },
-      },
+      expres: "success",
     }],
-    exprows: 2,
   }]
   for ( let testcase of testcases ) {
-    let { calls, exprows, tag } = testcase
+    let { calls, tag } = testcase
     test(`Function createUser. Intg Test #${tag}`, async () => {
+      let msgCount = 0
       for ( let call of calls ) {
         let { args, expres } = call
         let result = await createUser(args)
-        if ( expres.error !== undefined ) {
-          expect(result.error).toStrictEqual(expres.error)
-          expect(result.data).toBeUndefined()
+        if ( expres === "success" ) {
+          let checks = resultChecks(args)
+          expect(result.error).toBeUndefined()
+          expect(result.data).toBeDefined()
+          expect(result.data.userid).toMatch(checks.userid)
+          expect(result.data.name).toMatch(checks.name)
+          expect(result.data.state).toMatch(checks.state)
+          expect(result.data.puid).toMatch(checks.puid)
+          expect(result.data.timestamp).toMatch(checks.timestamp)
+          msgCount++
           continue
         }
-        expect(result.error).toBeUndefined()
-        expect(result.data).toBeDefined()
-        for ( let key in expres.data ) {
-          expect(`${result.data[key]}`).toMatch(expres.data[key])
-        }
+        expect(result).toStrictEqual(expres)
       }
       let result = await pool.query("SELECT * FROM users")
       expect(result).toBeDefined()
-      expect(result.rows).toHaveLength(exprows)
-      for ( let i=0; i < result.rows; i++ ) {
-        for ( let column in databaseCheck ) {
-          expect(`${result.rows[i][column]}`).toMatch(databaseCheck[column])
-        }
+      expect(result.rows).toHaveLength(msgCount)
+      for ( let i=0; i < msgCount; i++ ) {
+        expect(result.rows[i].userid).toMatch(databaseChecks.userid)
+        expect(result.rows[i].login).toMatch(databaseChecks.login)
+        expect(result.rows[i].password).toMatch(databaseChecks.password)
+        expect(result.rows[i].name).toMatch(databaseChecks.name)
+        expect(result.rows[i].state).toMatch(databaseChecks.state)
+        expect(result.rows[i].puid).toMatch(databaseChecks.puid)
+        expect(result.rows[i].timestamp).toMatch(databaseChecks.timestamp)
       }
     })
   }

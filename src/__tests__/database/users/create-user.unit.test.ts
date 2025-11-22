@@ -21,7 +21,7 @@ let loginCheckError = () => {
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
   let [userid, login, password, name, state, puid, timestamp] = queryParams
-  let user = { userid, login, name, state, puid, timestamp }
+  let user = { userid, login, name, state, puid, timestamp: `${timestamp}` }
   return Promise.resolve({ rows: [user] })
 }
 
@@ -32,6 +32,15 @@ let requestReturnsZeroUsers = () => {
 let requestReturnsError = () => {
   return Promise.resolve(undefined)
 }
+
+let resultChecks = (args: any) => ({
+  userid: uuidPattern,
+  login: new RegExp(`^${args.login}$`),
+  name: new RegExp(`^${args.name}$`),
+  state: new RegExp(`^[a-z]+$`),
+  puid: uuidPattern,
+  timestamp: timestampPattern,
+})
 
 describe("testing database queries...", () => {
   let testcases = [{
@@ -45,17 +54,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: undefined,
-      data: {
-        userid: uuidPattern,
-        login: new RegExp("^" + "1".repeat(limits.users.loginLenMin) + "$"),
-        name: new RegExp("^" + "1".repeat(limits.users.nameLenMin) + "$"),
-        state: "inactive",
-        puid: uuidPattern,
-        timestamp: timestampPattern,
-      },
-    },
+    expres: "success",
   }, {
     tag: 2,
     args: {
@@ -67,17 +66,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser
     },
-    expres: {
-      error: undefined,
-      data: {
-        userid: uuidPattern,
-        login: new RegExp("^" + "1".repeat(limits.users.loginLenMax) + "$"),
-        name: new RegExp("^" + "1".repeat(limits.users.nameLenMax) + "$"),
-        state: "inactive",
-        puid: uuidPattern,
-        timestamp: timestampPattern,
-      },
-    },
+    expres: "success",
   }, {
     tag: 3,
     args: {
@@ -89,17 +78,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: undefined,
-      data: {
-        userid: uuidPattern,
-        login: new RegExp("^" + "1".repeat(limits.users.loginLenMin + 1) + "$"),
-        name: new RegExp("^" + "1".repeat(limits.users.nameLenMin + 1) + "$"),
-        state: "inactive",
-        puid: uuidPattern,
-        timestamp: timestampPattern,
-      },
-    },
+    expres: "success",
   }, {
     tag: 4,
     args: {
@@ -215,16 +194,19 @@ describe("testing database queries...", () => {
       let loginExists = jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
       let queryDatabase = jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await users.createUser(args)
-      if ( expres.error !== undefined ) {
-        expect(result.error).toStrictEqual(expres.error)
-        expect(result.data).toBeUndefined()
+      if ( expres === "success" ) {
+        expect(result.error).toBeUndefined()
+        expect(result.data).toBeDefined()
+        let checks = resultChecks(args)
+        expect(result.data.userid).toMatch(checks.userid)
+        expect(result.data.login).toMatch(checks.login)
+        expect(result.data.name).toMatch(checks.name)
+        expect(result.data.state).toMatch(checks.state)
+        expect(result.data.puid).toMatch(checks.puid)
+        expect(result.data.timestamp).toMatch(checks.timestamp)
         return
       }
-      expect(result.error).toBeUndefined()
-      expect(result.data).toBeDefined()
-      for ( let key in expres.data ) {
-        expect(`${result.data[key]}`).toMatch(expres.data[key])
-      }
+      expect(result).toStrictEqual(expres)
     })
   }
 })

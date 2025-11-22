@@ -1,4 +1,4 @@
-import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserData } from "./checkers"
+import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserId } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import type { TextResource } from "../langs"
@@ -108,6 +108,13 @@ export const getMessage = async (req: any):
 
 export const createMessage = async (userid: string, req: any): 
   Promise<{ error: TextResource | undefined, data: CreatedMessage | undefined }> => {
+    let useridCheckError = checkUserId(userid)
+    if ( useridCheckError !== undefined ) {
+      return {
+        error: useridCheckError,
+        data: undefined,
+      }
+    }
     let errorMessage = checkMessageContent(req)
     if ( errorMessage !== undefined ) {
       return {

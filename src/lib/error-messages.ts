@@ -88,6 +88,10 @@ export const wrongValues: WrongValues = {
       ru: "Недопустимое имя пользователя. Длина имени должна находиться в интервале от " +
         `${limits.users.nameLenMin} до ${limits.users.nameLenMax} символов.`,
     },
+    userid: {
+      en: "Wrong user identifier",
+      ru: "Недопустимый идентификатор пользователя",
+    },
   },
 }
 

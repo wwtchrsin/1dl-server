@@ -7,13 +7,44 @@ import { wrongValues } from "../../../lib/error-messages"
 let timestamp = 123456789
 let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
 
+let returnOneMessage = (queryString: string, queryParams: string[]) => {
+  let [region, district, room, index, text, color, userid] = queryParams
+  let message = {
+    region: region, 
+    district: Number(district),
+    room: Number(room),
+    index: Number(index),
+    text: text,
+    color: color,
+    timestamp: timestamp,
+  }
+  return Promise.resolve({ rows: [message] })
+}
+
+let returnZeroMessages = () => Promise.resolve({ rows: [] })
+
+let returnError = () => Promise.resolve(undefined)
+
+let success = (args: any) => ({
+  error: undefined,
+  data: {
+    region: args.region,
+    district: Number(args.district),
+    room: Number(args.room),
+    index: Number(args.index),
+    text: args.text,
+    color: args.color,
+    timestamp: timestamp,
+  }
+})
+
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -26,30 +57,9 @@ describe("testing database queries...", () => {
         error: databaseConflicts.messageNotFound,
         data: undefined,
       },
-      queryDatabase: {
-        rows: [{
-          region: limits.messages.regions[limits.messages.regions.length - 1],
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
-          index: limits.messages.indexMin,
-          text: "1".repeat(limits.messages.textLenMin),
-          color: limits.messages.colors[0],
-          timestamp: `${timestamp}`,
-        }],
-      },
+      queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: undefined,
-      data: {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
-        district: limits.messages.districtMin,
-        room: limits.messages.roomMin,
-        index: limits.messages.indexMin,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
-        timestamp: `${timestamp}`,
-      },
-    },
+    expres: "success",
   }, {
     tag: 2,
     args: [
@@ -68,30 +78,9 @@ describe("testing database queries...", () => {
         error: databaseConflicts.messageNotFound,
         data: undefined,
       },
-      queryDatabase: {
-        rows: [{
-          region: limits.messages.regions[limits.messages.regions.length - 1],
-          district: limits.messages.districtMax,
-          room: limits.messages.roomMax,
-          index: limits.messages.indexMax,
-          text: "1".repeat(limits.messages.textLenMax),
-          color: limits.messages.colors[limits.messages.colors.length - 1],
-          timestamp: `${timestamp}`,
-        }],
-      },
+      queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: undefined,
-      data: {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
-        district: limits.messages.districtMax,
-        room: limits.messages.roomMax,
-        index: limits.messages.indexMax,
-        text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
-        timestamp: `${timestamp}`,
-      },
-    },
+    expres: "success",
   }, {
     tag: 3,
     args: [
@@ -110,17 +99,7 @@ describe("testing database queries...", () => {
         error: databaseErrors.getMessage,
         data: undefined,
       },
-      queryDatabase: {
-        rows: [{
-          region: limits.messages.regions[limits.messages.regions.length - 1],
-          district: limits.messages.districtMax,
-          room: limits.messages.roomMax,
-          index: limits.messages.indexMax,
-          text: "1".repeat(limits.messages.textLenMax),
-          color: limits.messages.colors[limits.messages.colors.length - 1],
-          timestamp: `${timestamp}`,
-        }],
-      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: databaseErrors.checkMessage,
@@ -140,8 +119,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.region,
@@ -161,8 +143,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.district,
@@ -173,7 +158,7 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin - 1}`,
         index: `${limits.messages.indexMin}`,
@@ -182,8 +167,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.room,
@@ -194,7 +182,7 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin - 1}`,
@@ -203,8 +191,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.index,
@@ -215,7 +206,7 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -224,8 +215,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.text,
@@ -236,7 +230,7 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -245,8 +239,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.text,
@@ -257,7 +254,7 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -266,8 +263,11 @@ describe("testing database queries...", () => {
       },
     ],
     mocks: {
-      getMessage: {},
-      queryDatabase: {},
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: wrongValues.messages.color,
@@ -301,7 +301,7 @@ describe("testing database queries...", () => {
           }]
         }
       },
-      queryDatabase: {},
+      queryDatabase: returnOneMessage,
     },
     expres: {
       error: databaseConflicts.messageAlreadyExists,
@@ -312,7 +312,7 @@ describe("testing database queries...", () => {
     args: [
       "abcdefg",
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -325,7 +325,55 @@ describe("testing database queries...", () => {
         error: databaseConflicts.messageNotFound,
         data: undefined,
       },
-      queryDatabase: undefined,
+      queryDatabase: returnOneMessage,
+    },
+    expres: {
+      error: wrongValues.users.userid,
+      data: undefined,
+    },
+  }, {
+    tag: 13,
+    args: [
+      userid,
+      {
+        region: limits.messages.regions[0],
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+        text: "1".repeat(limits.messages.textLenMin),
+        color: limits.messages.colors[0],
+      },
+    ],
+    mocks: {
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnZeroMessages,
+    },
+    expres: {
+      error: databaseErrors.createMessage,
+      data: undefined,
+    },
+  }, {
+    tag: 14,
+    args: [
+      userid,
+      {
+        region: limits.messages.regions[0],
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+        text: "1".repeat(limits.messages.textLenMin),
+        color: limits.messages.colors[0],
+      },
+    ],
+    mocks: {
+      getMessage: {
+        error: databaseConflicts.messageNotFound,
+        data: undefined,
+      },
+      queryDatabase: returnError,
     },
     expres: {
       error: databaseErrors.createMessage,
@@ -339,8 +387,12 @@ describe("testing database queries...", () => {
     let { args, expres, tag, mocks } = testcase
     test(`Function createMessage. Unit Test #${tag}`, async () => {
       jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
-      jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
+      jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await messages.createMessage(args[0], args[1])
+      if ( expres === "success" ) {
+        expect(result).toStrictEqual(success(args[1]))
+        return
+      }
       expect(result).toStrictEqual(expres)
     })
   }

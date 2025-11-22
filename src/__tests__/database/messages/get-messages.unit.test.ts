@@ -4,6 +4,34 @@ import limits from "../../../lib/database/limits"
 import { databaseErrors } from "../../../lib/error-messages"
 import { wrongValues } from "../../../lib/error-messages"
 
+let text = "1".repeat(limits.messages.textLenMin)
+let timestamp = "123456789"
+
+let getMessage = (args: any) => ({
+  region: args.region,
+  district: Number(args.district),
+  room: Number(args.room),
+  index: 0,
+  text: "1".repeat(limits.messages.textLenMin),
+  color: limits.messages.colors[0],
+  timestamp: timestamp,
+})
+
+let returnMessage = (queryString: string, queryParams: string[]) => {
+  let [region, district, room] = queryParams
+  let message = getMessage({ region, district, room })
+  return Promise.resolve({ rows: [message] })
+}
+
+let returnZeroMessages = () => Promise.resolve({ rows: [] })
+
+let returnError = () => Promise.resolve(undefined)
+
+let success = (args: any) => ({
+  error: undefined,
+  data: [getMessage(args)],
+})
+
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
@@ -13,14 +41,9 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMin}`,
     },
     mocks: {
-      queryDatabase: {
-        rows: [],
-      },
+      queryDatabase: returnMessage,
     },
-    expres: {
-      error: undefined,
-      data: [],
-    },
+    expres: "success",
   }, {
     tag: 2,
     args: {
@@ -29,14 +52,9 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMax}`,
     },
     mocks: {
-      queryDatabase: {
-        rows: [],
-      },
+      queryDatabase: returnMessage,
     },
-    expres: {
-      error: undefined,
-      data: [],
-    },
+    expres: "success",
   }, {
     tag: 3,
     args: {
@@ -45,9 +63,18 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMin + 1}`,
     },
     mocks: {
-      queryDatabase: {
-        rows: [],
-      },
+      queryDatabase: returnMessage,
+    },
+    expres: "success",
+  }, {
+    tag: 4,
+    args: {
+      region: limits.messages.regions[0],
+      district: `${limits.messages.districtMin}`,
+      room: `${limits.messages.roomMin}`,
+    },
+    mocks: {
+      queryDatabase: returnZeroMessages,
     },
     expres: {
       error: undefined,
@@ -61,7 +88,7 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMin}`,
     },
     mocks: {
-      queryDatabase: undefined,
+      queryDatabase: returnError,
     },
     expres: {
       error: databaseErrors.getMessages,
@@ -75,7 +102,7 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMin}`,
     },
     mocks: {
-      queryDatabase: {},
+      queryDatabase: returnMessage,
     },
     expres: {
       error: wrongValues.messages.region,
@@ -89,7 +116,7 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMin}`,
     },
     mocks: {
-      queryDatabase: {},
+      queryDatabase: returnMessage,
     },
     expres: {
       error: wrongValues.messages.district,
@@ -103,7 +130,7 @@ describe("testing database queries...", () => {
       room: `${limits.messages.roomMax + 1}`,
     },
     mocks: {
-      queryDatabase: {},
+      queryDatabase: returnMessage,
     },
     expres: {
       error: wrongValues.messages.room,
@@ -116,8 +143,12 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function getMessages. Test #${tag}`, async () => {
-      jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
+      jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await messages.getMessages(args)
+      if ( expres === "success" ) {
+        expect(result).toStrictEqual(success(args))
+        return
+      }
       expect(result).toStrictEqual(expres)
     })
   }

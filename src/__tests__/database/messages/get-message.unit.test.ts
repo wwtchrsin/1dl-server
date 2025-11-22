@@ -42,10 +42,20 @@ let returnTwoMessages = (queryString: string, queryParams: string[]) => {
   return Promise.resolve({ rows: [message, message] })
 }
 
-
 let returnEmptyList = () => Promise.resolve({ rows: [] })
 
 let returnError = () => Promise.resolve(undefined)
+
+let success = (args: any) => ({
+  error: undefined,
+  data: {
+    region: args.region,
+    district: Number(args.district),
+    room: Number(args.room),
+    index: Number(args.index),
+    text, color, puid, username, timestamp,
+  }
+})
 
 describe("testing database queries...", () => {
   let testcases = [{
@@ -59,16 +69,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: undefined,
-      data: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
-        room: limits.messages.roomMin,
-        index: limits.messages.indexMin,
-        text, color, puid, username, timestamp,
-      },
-    },
+    expres: "success",
   }, {
     tag: 2,
     args: {
@@ -80,16 +81,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: undefined,
-      data: {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
-        district: limits.messages.districtMax,
-        room: limits.messages.roomMax,
-        index: limits.messages.indexMax,
-        text, color, puid, username, timestamp,
-      },
-    },
+    expres: "success",
   }, {
     tag: 3,
     args: {
@@ -101,16 +93,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: undefined,
-      data: {
-        region: limits.messages.regions[1],
-        district: limits.messages.districtMin + 1,
-        room: limits.messages.roomMin + 1,
-        index: limits.messages.indexMin + 1,
-        text, color, puid, username, timestamp,
-      },
-    },
+    expres: "success",
   }, {
     tag: 4,
     args: {
@@ -225,6 +208,10 @@ describe("testing database queries...", () => {
     test(`Function getMessages. Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await messages.getMessage(args)
+      if ( expres === "success" ) {
+        expect(result).toStrictEqual(success(args))
+        return
+      }
       expect(result).toStrictEqual(expres)
     })
   }
