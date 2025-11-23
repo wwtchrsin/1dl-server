@@ -120,6 +120,14 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to add the user",
     ru: "Невозможно добавить пользователя",
   },
+  deleteSession: {
+    en: "Impossible to delete the session",
+    ru: "Невозможно удалить сессию",
+  },
+  createSession: {
+    en: "Impossible to create a session",
+    ru: "Невозможно создать сессию",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {
@@ -134,6 +142,10 @@ export const databaseConflicts: Record<string, TextResource> = {
   loginTaken: {
     en: "The login is already taken",
     ru: "Логин уже используется",
+  },
+  sessionNotFound: {
+    en: "Session not found",
+    ru: "Сессия не найдена",
   },
 }
 

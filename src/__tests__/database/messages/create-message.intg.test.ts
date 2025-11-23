@@ -49,7 +49,7 @@ describe("testing database queries...", () => {
     expect(result.data).toBeDefined()
     expect(table).toBeDefined()
     expect(table.rows).toHaveLength(1)
-    expect(table.rows[0].userid).toMatch(uuidPattern)
+    expect(table.rows[0].userid).toMatch(limits.patterns.uuid)
     userid = table.rows[0].userid
   })
   let testcases = [{
@@ -305,7 +305,7 @@ describe("testing database queries...", () => {
         expect(result.rows[i].index).toBeLessThanOrEqual(limits.messages.indexMax)
         expect(result.rows[i].text).toBeDefined()
         expect(limits.messages.colors).toContain(result.rows[i].color)
-        expect(result.rows[i].userid).toMatch(uuidPattern)
+        expect(result.rows[i].userid).toMatch(limits.patterns.uuid)
         expect(result.rows[i].timestamp).toMatch(timestampPattern)
       }
     })

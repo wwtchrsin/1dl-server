@@ -6,4 +6,6 @@ export const hashPassword = (login: string, password: string) => {
   return createHash("sha512").update(data).digest("hex")
 }
 
+export const getTimestamp = () => Math.floor((new Date()).valueOf() / 1000)
+
 

@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto"
-import { checkUserData } from "./checkers"
+import { checkUserData, checkUserId } from "./checkers"
 import { queryDatabase } from "./conn"
-import { databaseErrors, databaseConflicts } from "../error-messages"
-import { hashPassword } from "./miscs"
+import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
+import { hashPassword, getTimestamp } from "./miscs"
 import type { TextResource } from "../langs"
 
 export type UserData = {
@@ -60,7 +60,6 @@ export const createUser = async(req: string):
         data: undefined,
       }
     }
-    let timestamp = Math.floor((new Date()).valueOf() / 1000)
     let state = "inactive"
     let userid = randomUUID()
     let puid = randomUUID()
@@ -70,7 +69,7 @@ export const createUser = async(req: string):
         ($1, $2, $3, $4, $5, $6, $7)
         RETURNING userid, login, name, state, puid, timestamp
     `
-    let queryParams = [userid, login, passwordHash, name, state, puid, timestamp]
+    let queryParams = [userid, login, passwordHash, name, state, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       return {
@@ -83,6 +82,70 @@ export const createUser = async(req: string):
       data: result!.rows![0] as CreatedUser,
     }
   }
+
+export const deleteSession = async (userid: string): 
+  Promise<{ error: TextResource | undefined, data: string | undefined }> => {
+    let useridCheckError = checkUserId(userid)
+    if ( useridCheckError !== undefined ) {
+      return {
+        error: useridCheckError,
+        data: undefined,
+      }
+    }
+    let query = "DELETE FROM sessions WHERE userid = $1 RETURNING sessionid"
+    let result = await queryDatabase(query, [userid])
+    if ( !result?.rows || result.rows.length > 1 ) {
+      return {
+        error: databaseErrors.deleteSession,
+        data: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      return {
+        error: databaseConflicts.sessionNotFound,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0].sessionid,
+    }
+  }
+
+export const createSession = async (userid: string): 
+  Promise<{ error: TextResource | undefined, data: string | undefined }> => {
+    let useridCheckError = checkUserId(userid)
+    if ( useridCheckError !== undefined ) {
+      return {
+        error: useridCheckError,
+        data: undefined,
+      }
+    }
+    let delres = await deleteSession(userid)
+    if ( delres.error !== undefined && !errorsEqual(delres.error, 
+      databaseConflicts.sessionNotFound) ) {
+        return {
+          error: delres.error,
+          data: undefined,
+        }
+      }
+    let sessionid = randomUUID()
+    let query = "INSERT INTO sessions VALUES($1, $2, $3) RETURNING *"
+    let queryParams = [userid, sessionid, getTimestamp()]
+    let result = await queryDatabase(query, queryParams)
+    if ( result?.rows?.length !== 1 ) {
+      return {
+        error: databaseErrors.createSession,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: sessionid,
+    }
+  }
+    
+    
 
   
     

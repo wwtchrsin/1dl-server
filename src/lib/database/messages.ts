@@ -1,6 +1,7 @@
 import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserId } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
+import { getTimestamp } from "./miscs"
 import type { TextResource } from "../langs"
 
 export type RoomIds = {
@@ -136,13 +137,12 @@ export const createMessage = async (userid: string, req: any):
         data: undefined,
       }
     }
-    let timestamp = Math.floor((new Date()).valueOf() / 1000)
     let query = `
       INSERT INTO messages VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING region, district, room, index, text, color, timestamp
     `
-    let queryParams = [region, district, room, index, text, color, userid, timestamp]
+    let queryParams = [region, district, room, index, text, color, userid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       return {

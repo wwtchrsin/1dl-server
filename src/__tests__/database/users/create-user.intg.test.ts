@@ -17,27 +17,23 @@ afterAll(async () => {
   await pool.end()
 })
 
-let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
-let passwordPattern = /^[0-9A-Fa-f]{128}$/
-let timestampPattern = /^[1-9][0-9]{9,10}$/
-
 let databaseChecks = {
-  userid: uuidPattern,
+  userid: limits.patterns.uuid,
   login: new RegExp(limits.users.loginPattern),
-  password: passwordPattern,
+  password: limits.patterns.passwordHash,
   name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: uuidPattern,
-  timestamp: timestampPattern,
+  puid: limits.patterns.uuid,
+  timestamp: limits.patterns.timestamp,
 }
 
 let resultChecks = (args: any) => ({
-  userid: uuidPattern,
+  userid: limits.patterns.uuid,
   login: new RegExp(`^${args.login}$`),
   name: new RegExp(`^${args.name}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: uuidPattern,
-  timestamp: timestampPattern,
+  puid: limits.patterns.uuid,
+  timestamp: limits.patterns.timestamp,
 })
 
 describe("testing database queries...", () => {
