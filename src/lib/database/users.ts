@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import { checkUserData, checkUserId } from "./checkers"
+import { checkUserData, checkUserId, checkSessionId } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import { hashPassword, getTimestamp } from "./miscs"
@@ -11,14 +11,15 @@ export type UserData = {
   name: string,
 }
 
-export type CreatedUser = {
+export type User = {
   userid: string,
   login: string,
   name: string,
   state: string,
-  publicid: string,
+  puid: string,
   timestamp: string,
 }
+
 
 export const loginExists = async (login: string):
   Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
@@ -38,7 +39,7 @@ export const loginExists = async (login: string):
 
 
 export const createUser = async(req: string):
-  Promise<{ error: TextResource | undefined, data: CreatedUser | undefined }> => {
+  Promise<{ error: TextResource | undefined, data: User | undefined }> => {
     let errorMessage = checkUserData(req)
     if ( errorMessage !== undefined ) {
       return {
@@ -79,7 +80,7 @@ export const createUser = async(req: string):
     }
     return {
       error: undefined,
-      data: result!.rows![0] as CreatedUser,
+      data: result!.rows![0] as User,
     }
   }
 
@@ -144,8 +145,41 @@ export const createSession = async (userid: string):
       data: sessionid,
     }
   }
-    
-    
+
+export const getUserBySessionId = async (sessionid: string): 
+  Promise<{ error: TextResource | undefined, data: User | undefined }> => {
+    let sessionidCheckError = checkSessionId(sessionid)
+    if ( sessionidCheckError !== undefined ) {
+      return {
+        error: sessionidCheckError,
+        data: undefined,
+      }
+    }
+    let query = `
+      SELECT users.userid as userid, login, name, 
+        state, puid, users.timestamp as timestamp
+        FROM users, sessions WHERE
+          sessions.userid = users.userid AND
+          sessions.sessionid = $1
+    `
+    let result = await queryDatabase(query, [sessionid])
+    if ( !result?.rows || result.rows.length > 1 ) {
+      return {
+        error: databaseErrors.getUser,
+        data: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      return {
+        error: databaseConflicts.userNotFound,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0] as User,
+    }
+  }
 
   
     

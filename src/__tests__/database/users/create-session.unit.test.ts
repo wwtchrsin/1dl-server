@@ -7,6 +7,9 @@ import { wrongValues } from "../../../lib/error-messages"
 let uuid = "53e291f8-522b-43b8-a5f5-84795b887a81"
 
 describe("testing database queries...", () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   let testcases = [{
     tag: 1,
     args: uuid,

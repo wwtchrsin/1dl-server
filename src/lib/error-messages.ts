@@ -92,6 +92,10 @@ export const wrongValues: WrongValues = {
       en: "Wrong user identifier",
       ru: "Недопустимый идентификатор пользователя",
     },
+    sessionid: {
+      en: "Wrong session identifier",
+      ru: "Недопустимый идентификатор сессии",
+    },
   },
 }
 
@@ -128,6 +132,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to create a session",
     ru: "Невозможно создать сессию",
   },
+  getUser: {
+    en: "Impossible to retrieve user data",
+    ru: "Невозможно извлечь данные пользователя",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {
@@ -146,6 +154,10 @@ export const databaseConflicts: Record<string, TextResource> = {
   sessionNotFound: {
     en: "Session not found",
     ru: "Сессия не найдена",
+  },
+  userNotFound: {
+    en: "User not found",
+    ru: "Пользователь не найден",
   },
 }
 

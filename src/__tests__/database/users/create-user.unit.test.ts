@@ -40,6 +40,9 @@ let resultChecks = (args: any) => ({
 })
 
 describe("testing database queries...", () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   let testcases = [{
     tag: 1,
     args: {
@@ -161,9 +164,6 @@ describe("testing database queries...", () => {
     },
     expres: databaseErrors.createUser,
   }]
-  afterEach(() => {
-    jest.restoreAllMocks()
-  })
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function createUser. Unit Test #${tag}`, async () => {
