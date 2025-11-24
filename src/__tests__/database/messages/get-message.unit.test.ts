@@ -105,10 +105,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnEmptyList,
     },
-    expres: {
-      error: databaseConflicts.messageNotFound,
-      data: undefined,
-    },
+    expres: databaseConflicts.messageNotFound,
   }, {
     tag: 5,
     args: {
@@ -120,10 +117,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnTwoMessages,
     },
-    expres: {
-      error: databaseErrors.getMessage,
-      data: undefined,
-    },
+    expres: databaseErrors.getMessage,
   }, {
     tag: 6,
     args: {
@@ -135,10 +129,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnError,
     },
-    expres: {
-      error: databaseErrors.getMessage,
-      data: undefined,
-    },
+    expres: databaseErrors.getMessage,
   }, {
     tag: 7,
     args: {
@@ -150,10 +141,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.region,
-      data: undefined,
-    },
+    expres: wrongValues.messages.region,
   }, {
     tag: 8,
     args: {
@@ -165,10 +153,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.district,
-      data: undefined,
-    },
+    expres: wrongValues.messages.district,
   }, {
     tag: 9,
     args: {
@@ -180,10 +165,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.room,
-      data: undefined,
-    },
+    expres: wrongValues.messages.room,
   }, {
     tag: 10,
     args: {
@@ -195,10 +177,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.index,
-      data: undefined,
-    },
+    expres: wrongValues.messages.index,
   }]
   afterEach(() => {
     jest.restoreAllMocks()
@@ -212,7 +191,8 @@ describe("testing database queries...", () => {
         expect(result).toStrictEqual(success(args))
         return
       }
-      expect(result).toStrictEqual(expres)
+      expect(result.error).toStrictEqual(expres)
+      expect(result.data).toBeUndefined()
     })
   }
 })

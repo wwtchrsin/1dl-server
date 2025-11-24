@@ -7,8 +7,6 @@ import limits from "../../../lib/database/limits"
 import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
 import { wrongValues } from "../../../lib/error-messages"
 
-
-
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)

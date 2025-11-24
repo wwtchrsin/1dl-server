@@ -4,9 +4,6 @@ import limits from "../../../lib/database/limits"
 import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
 import { wrongValues } from "../../../lib/error-messages"
 
-let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
-let timestampPattern = /^[1-9][0-9]{9,10}$/
-
 let loginDoesntExist = () => {
   return Promise.resolve({ error: undefined, data: false })
 }
@@ -34,12 +31,12 @@ let requestReturnsError = () => {
 }
 
 let resultChecks = (args: any) => ({
-  userid: uuidPattern,
+  userid: limits.patterns.uuid,
   login: new RegExp(`^${args.login}$`),
   name: new RegExp(`^${args.name}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: uuidPattern,
-  timestamp: timestampPattern,
+  puid: limits.patterns.uuid,
+  timestamp: limits.patterns.timestamp,
 })
 
 describe("testing database queries...", () => {
@@ -90,10 +87,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: wrongValues.users.login,
-      data: undefined,
-    },
+    expres: wrongValues.users.login,
   }, {
     tag: 5,
     args: {
@@ -105,10 +99,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: wrongValues.users.password,
-      data: undefined,
-    },
+    expres: wrongValues.users.password,
   }, {
     tag: 6,
     args: {
@@ -120,10 +111,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: wrongValues.users.name,
-      data: undefined,
-    },
+    expres: wrongValues.users.name,
   }, {
     tag: 7,
     args: {
@@ -135,10 +123,7 @@ describe("testing database queries...", () => {
       loginExists: loginExists,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: databaseConflicts.loginTaken,
-      data: undefined,
-    },
+    expres: databaseConflicts.loginTaken,
   }, {
     tag: 8,
     args: {
@@ -150,10 +135,7 @@ describe("testing database queries...", () => {
       loginExists: loginCheckError,
       queryDatabase: requestReturnsUser,
     },
-    expres: {
-      error: databaseErrors.checkUserExists,
-      data: undefined,
-    },
+    expres: databaseErrors.checkUserExists,
   }, {
     tag: 9,
     args: {
@@ -165,10 +147,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
     },
-    expres: {
-      error: databaseErrors.createUser,
-      data: undefined,
-    },
+    expres: databaseErrors.createUser,
   }, {
     tag: 10,
     args: {
@@ -180,10 +159,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
     },
-    expres: {
-      error: databaseErrors.createUser,
-      data: undefined,
-    },
+    expres: databaseErrors.createUser,
   }]
   afterEach(() => {
     jest.restoreAllMocks()
@@ -206,7 +182,8 @@ describe("testing database queries...", () => {
         expect(result.data.timestamp).toMatch(checks.timestamp)
         return
       }
-      expect(result).toStrictEqual(expres)
+      expect(result.error).toStrictEqual(expres)
+      expect(result.data).toBeUndefined()
     })
   }
 })

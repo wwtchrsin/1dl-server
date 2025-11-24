@@ -24,10 +24,10 @@ export const getClient = async () => {
   })
 }
 
-export const queryDatabase = async (queryString: string, queryParams: string[]):
+export const queryDatabase = async (queryString: string, queryParams: string[] | undefined):
   Promise<Result | undefined> => {
     try {
-      let result = await pool.query(queryString, queryParams)
+      let result = await pool.query(queryString, queryParams ?? [])
       return result
     } catch (err) {
       return undefined

@@ -10,8 +10,6 @@ import { wrongValues } from "../../../lib/error-messages"
 
 let userid = ""
 let username = "abcd 123"
-let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
-let timestampPattern = /^[1-9][0-9]{9,10}$/
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -30,7 +28,7 @@ let resultChecks = (args: any) => ({
   index: new RegExp(`^${args.index}$`),
   text: new RegExp(`^${args.text}$`),
   color: new RegExp(`^${args.color}$`),
-  timestamp: timestampPattern,
+  timestamp: limits.patterns.timestamp,
 })
 
 describe("testing database queries...", () => {
@@ -306,7 +304,7 @@ describe("testing database queries...", () => {
         expect(result.rows[i].text).toBeDefined()
         expect(limits.messages.colors).toContain(result.rows[i].color)
         expect(result.rows[i].userid).toMatch(limits.patterns.uuid)
-        expect(result.rows[i].timestamp).toMatch(timestampPattern)
+        expect(result.rows[i].timestamp).toMatch(limits.patterns.timestamp)
       }
     })
   }

@@ -18,9 +18,6 @@ afterAll(async () => {
   await pool.end()
 })
 
-let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
-let timestampPattern = /^[1-9][0-9]{9,10}$/
-
 describe("testing database queries...", () => {
   let userids = []
   let testcases = [{
@@ -130,8 +127,8 @@ describe("testing database queries...", () => {
       let result = await createUser(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(uuidPattern)
-      expect(result.data.puid).toMatch(uuidPattern)
+      expect(result.data.userid).toMatch(limits.patterns.uuid)
+      expect(result.data.puid).toMatch(limits.patterns.uuid)
       userids.push(result.data.userid)
       puids.push(result.data.puid)
       usernames.push(user.name)

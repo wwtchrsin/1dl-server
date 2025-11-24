@@ -10,7 +10,6 @@ import { wrongValues } from "../../../lib/error-messages"
 
 let userid = ""
 let username = "abcd 123"
-let useridPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -21,8 +20,6 @@ afterAll(async () => {
   await pool.query(`DROP SCHEMA ${process.env.PG_SCHEMA} CASCADE`)
   await pool.end()
 })
-
-let uuidPattern = /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/
 
 describe("testing database queries...", () => {
   let userids = []
@@ -94,8 +91,8 @@ describe("testing database queries...", () => {
       let result = await createUser(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(uuidPattern)
-      expect(result.data.puid).toMatch(uuidPattern)
+      expect(result.data.userid).toMatch(limits.patterns.uuid)
+      expect(result.data.puid).toMatch(limits.patterns.uuid)
       userids.push(result.data.userid)
       puids.push(result.data.puid)
       usernames.push(user.name)

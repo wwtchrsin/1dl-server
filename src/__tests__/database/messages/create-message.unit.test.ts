@@ -101,10 +101,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: databaseErrors.checkMessage,
-      data: undefined,
-    },
+    expres: databaseErrors.checkMessage,
   }, {
     tag: 4,
     args: [
@@ -125,10 +122,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.region,
-      data: undefined,
-    },
+    expres: wrongValues.messages.region,
   }, {
     tag: 5,
     args: [
@@ -149,10 +143,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.district,
-      data: undefined,
-    },
+    expres: wrongValues.messages.district,
   }, {
     tag: 6,
     args: [
@@ -173,10 +164,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.room,
-      data: undefined,
-    },
+    expres: wrongValues.messages.room,
   }, {
     tag: 7,
     args: [
@@ -197,10 +185,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.index,
-      data: undefined,
-    },
+    expres: wrongValues.messages.index,
   }, {
     tag: 8,
     args: [
@@ -221,10 +206,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.text,
-      data: undefined,
-    },
+    expres: wrongValues.messages.text,
   }, {
     tag: 9,
     args: [
@@ -245,10 +227,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.text,
-      data: undefined,
-    },
+    expres: wrongValues.messages.text,
   }, {
     tag: 10,
     args: [
@@ -269,10 +248,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.messages.color,
-      data: undefined,
-    },
+    expres: wrongValues.messages.color,
   }, {
     tag: 11,
     args: [
@@ -303,10 +279,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: databaseConflicts.messageAlreadyExists,
-      data: undefined,
-    },
+    expres: databaseConflicts.messageAlreadyExists,
   }, {
     tag: 12,
     args: [
@@ -327,10 +300,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: {
-      error: wrongValues.users.userid,
-      data: undefined,
-    },
+    expres: wrongValues.users.userid,
   }, {
     tag: 13,
     args: [
@@ -351,10 +321,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnZeroMessages,
     },
-    expres: {
-      error: databaseErrors.createMessage,
-      data: undefined,
-    },
+    expres: databaseErrors.createMessage,
   }, {
     tag: 14,
     args: [
@@ -375,10 +342,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnError,
     },
-    expres: {
-      error: databaseErrors.createMessage,
-      data: undefined,
-    },
+    expres: databaseErrors.createMessage,
   }]
   afterEach(() => {
     jest.restoreAllMocks()
@@ -393,7 +357,8 @@ describe("testing database queries...", () => {
         expect(result).toStrictEqual(success(args[1]))
         return
       }
-      expect(result).toStrictEqual(expres)
+      expect(result.error).toStrictEqual(expres)
+      expect(result.data).toBeUndefined()
     })
   }
 })

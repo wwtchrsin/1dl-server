@@ -78,10 +78,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: wrongValues.users.login,
-        data: undefined,
-      },
+      expres: wrongValues.users.login,
     }],
   }, {
     tag: 5,
@@ -91,10 +88,7 @@ describe("testing database queries...", () => {
         password: "Aa!1111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: wrongValues.users.password,
-        data: undefined,
-      },
+      expres: wrongValues.users.password,
     }],
   }, {
     tag: 6,
@@ -104,10 +98,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin - 1),
       },
-      expres: {
-        error: wrongValues.users.name,
-        data: undefined,
-      },
+      expres: wrongValues.users.name,
     }],
   }, {
     tag: 7,
@@ -141,10 +132,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: databaseConflicts.loginTaken,
-        data: undefined,
-      },
+      expres: databaseConflicts.loginTaken,
     }],
   }, {
     tag: 9,
@@ -161,10 +149,7 @@ describe("testing database queries...", () => {
         password: "Aa!11111",
         name: "1".repeat(limits.users.nameLenMin),
       },
-      expres: {
-        error: databaseConflicts.loginTaken,
-        data: undefined,
-      },
+      expres: databaseConflicts.loginTaken,
     }, {
       args: {
         login: "2".repeat(limits.users.loginLenMin),
@@ -193,7 +178,8 @@ describe("testing database queries...", () => {
           msgCount++
           continue
         }
-        expect(result).toStrictEqual(expres)
+        expect(result.error).toStrictEqual(expres)
+        expect(result.data).toBeUndefined()
       }
       let result = await pool.query("SELECT * FROM users")
       expect(result).toBeDefined()
