@@ -79,6 +79,17 @@ export const checkUserData = (req: any): TextResource | undefined => {
   return undefined
 }
 
+export const checkUserCredentials = (req: any): TextResource | undefined => {
+  let { login, password } = req
+  if ( typeof login !== "string" ) {
+    return wrongValues.users.credentialsLogin
+  }
+  if ( typeof password !== "string" ) {
+    return wrongValues.users.credentialsPassword
+  }
+  return undefined
+}
+
 export const checkUserId = (userid: string): TestResource | undefined => {
   if ( !limits.patterns.uuid.test(userid) ) {
     return wrongValues.users.userid

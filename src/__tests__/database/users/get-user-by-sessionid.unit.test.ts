@@ -73,7 +73,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: databaseErrors.getUser,
+    expres: databaseErrors.getUserBySessionId,
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

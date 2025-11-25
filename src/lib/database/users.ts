@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto"
-import { checkUserData, checkUserId, checkSessionId } from "./checkers"
+import { checkUserData, checkUserId, checkSessionId, checkUserCredentials } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import { hashPassword, getTimestamp } from "./miscs"
@@ -20,6 +20,10 @@ export type User = {
   timestamp: string,
 }
 
+export type Credentials = {
+  login: string,
+  password: string,
+}
 
 export const loginExists = async (login: string):
   Promise<{ error: TextResource | undefined, data: boolean | undefined }> => {
@@ -36,7 +40,6 @@ export const loginExists = async (login: string):
       data: result?.rows?.length === 1,
     }
   }
-
 
 export const createUser = async(req: string):
   Promise<{ error: TextResource | undefined, data: User | undefined }> => {
@@ -165,7 +168,7 @@ export const getUserBySessionId = async (sessionid: string):
     let result = await queryDatabase(query, [sessionid])
     if ( !result?.rows || result.rows.length > 1 ) {
       return {
-        error: databaseErrors.getUser,
+        error: databaseErrors.getUserBySessionId,
         data: undefined,
       }
     }
@@ -181,6 +184,39 @@ export const getUserBySessionId = async (sessionid: string):
     }
   }
 
+export const getUserByCredentials = async (req: any):
+  Promise<{ error: TextResource | undefined, data: User | undefined }> => {
+    let credentialsError = checkUserCredentials(req)
+    if ( credentialsError !== undefined ) {
+      return {
+        error: credentialsError,
+        data: undefined,
+      }
+    }
+    let { login, password } = req as Credentials
+    let passwordHash = hashPassword(login, password)
+    let query = `
+      SELECT userid, login, name, state, puid, timestamp 
+        FROM users WHERE login = $1 AND password = $2
+    `
+    let result = await queryDatabase(query, [login, passwordHash])
+    if ( !result?.rows || result.rows.length > 1 ) {
+      return {
+        error: databaseErrors.getUserByCredentials,
+        data: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      return {
+        error: databaseConflicts.userNotFound,
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0] as User,
+    }
+  }
   
     
   

@@ -96,6 +96,14 @@ export const wrongValues: WrongValues = {
       en: "Wrong session identifier",
       ru: "Недопустимый идентификатор сессии",
     },
+    credentialsLogin: {
+      en: "Login is not set or incorrect",
+      ru: "Логин не задан или имеет некорректное значение",
+    },
+    credentialsPassword: {
+      en: "Password is not set or incorrect",
+      ru: "Пароль не задан или имеет некорректное значение",
+    },
   },
 }
 
@@ -132,9 +140,13 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to create a session",
     ru: "Невозможно создать сессию",
   },
-  getUser: {
-    en: "Impossible to retrieve user data",
-    ru: "Невозможно извлечь данные пользователя",
+  getUserBySessionId: {
+    en: "Impossible to retrieve user data (using session id)",
+    ru: "Невозможно извлечь данные пользователя (используя id сессии)",
+  },
+  getUserByCredentials: {
+    en: "Impossible to retrieve user data (using credentials)",
+    ru: "Невозможно извлечь данные пользователя (используя учетные данные)",
   },
 }
 
