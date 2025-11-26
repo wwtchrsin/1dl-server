@@ -1,6 +1,7 @@
 import { Client, Pool } from "pg"
 import type { Result } from "pg"
 import env from "../env"
+import logger from "../logger"
 
 
 export const pool = new Pool({
@@ -30,6 +31,12 @@ export const queryDatabase = async (queryString: string, queryParams: string[] |
       let result = await pool.query(queryString, queryParams ?? [])
       return result
     } catch (err) {
+      let errmsg = {
+        query: queryString,
+        params: queryParams?.length ?? 0,
+        stack: err.stack,
+      }
+      logger.error(errmsg, "db/conn/queryDatabase#Error")
       return undefined
     }
   }

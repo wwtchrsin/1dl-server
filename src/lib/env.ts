@@ -20,6 +20,7 @@ const env = {
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
   },
   passwordSalt: process.env.PASSWORD_SALT ?? "",
+  pinoLogLevel: process.env.PINO_LOGLEVEL ?? "error",
 }
 
 if ( isNaN(env.httpPort) || isNaN(env.wsPort) || isNaN(env.pg.port) ||

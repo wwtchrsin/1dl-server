@@ -2,6 +2,7 @@ import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserId } from 
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts, errorsEqual } from "../error-messages"
 import { getTimestamp } from "./miscs"
+import logger from "../logger"
 import type { TextResource } from "../langs"
 
 export type RoomIds = {
@@ -45,7 +46,8 @@ export const getMessages = async (req: any):
   Promise<{ error: TextResource | undefined, data: Message[] | undefined }> => {
     let errorMessage = checkRoomIds(req)
     if ( errorMessage !== undefined ) {
-      return { 
+      logger.warn(req, "db/messages/getMessages#ERROR_ARGS_CHECK")
+      return {
         error: errorMessage,
         data: undefined,
       }
@@ -60,6 +62,7 @@ export const getMessages = async (req: any):
     `
     let result = await queryDatabase(query, [region, district, room])
     if ( !result?.rows ) {
+      logger.error(req, "db/messages/getMessages#ERROR_DB_QUERY")
       return {
         error: databaseErrors.getMessages,
         data: undefined
@@ -75,6 +78,7 @@ export const getMessage = async (req: any):
   Promise<{ error: TextResource | undefined, data: Message | undefined }> => {
     let errorMessage = checkMessageIds(req)
     if ( errorMessage !== undefined ) {
+      logger.warn(req, "db/messages/getMessage#ERROR_ARGS_CHECK")
       return {
         error: errorMessage,
         data: undefined,
@@ -90,12 +94,14 @@ export const getMessage = async (req: any):
     `
     let result = await queryDatabase(query, [region, district, room, index])
     if ( result === undefined || result?.rows?.length > 1 ) {
+      logger.error(req, "db/messages/getMessage#ERROR_DB_QUERY")
       return {
         error: databaseErrors.getMessage,
         data: undefined,
       }
     }
     if ( result?.rows?.length === 0 ) {
+      logger.warn(req, "db/messages/getMessage#ERROR_NOT_FOUND")
       return {
         error: databaseConflicts.messageNotFound,
         data: undefined,
@@ -111,6 +117,7 @@ export const createMessage = async (userid: string, req: any):
   Promise<{ error: TextResource | undefined, data: CreatedMessage | undefined }> => {
     let useridCheckError = checkUserId(userid)
     if ( useridCheckError !== undefined ) {
+      logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_ID_CHECK")
       return {
         error: useridCheckError,
         data: undefined,
@@ -118,6 +125,7 @@ export const createMessage = async (userid: string, req: any):
     }
     let errorMessage = checkMessageContent(req)
     if ( errorMessage !== undefined ) {
+      logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_DATA_CHECK")
       return {
         error: errorMessage,
         data: undefined,
@@ -126,12 +134,14 @@ export const createMessage = async (userid: string, req: any):
     let { region, district, room, index, text, color } = req as MessageContent
     let message = await getMessage({ region, district, room, index })
     if ( errorsEqual(message.error, databaseErrors.getMessage) ) {
+      logger.error({ userid, ...req }, "db/messages/createMessage#ERROR_GET_MESSAGE")
       return {
         error: databaseErrors.checkMessage,
         data: undefined,
       }
     }
     if ( message.data !== undefined ) {
+      logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_MESSAGE_EXISTS")
       return {
         error: databaseConflicts.messageAlreadyExists,
         data: undefined,
@@ -145,6 +155,7 @@ export const createMessage = async (userid: string, req: any):
     let queryParams = [region, district, room, index, text, color, userid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
+      logger.error({ userid, ...req }, "db/messages/createMessage#ERROR_DB_QUERY")
       return {
         error: databaseErrors.createMessage,
         data: undefined,
