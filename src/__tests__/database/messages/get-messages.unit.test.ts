@@ -91,7 +91,7 @@ describe("testing database queries...", () => {
       queryDatabase: returnError,
     },
     expres: {
-      error: databaseErrors.getMessages,
+      error: "databaseErrors.getMessages",
       data: undefined,
     },
   }, {
@@ -105,7 +105,7 @@ describe("testing database queries...", () => {
       queryDatabase: returnMessage,
     },
     expres: {
-      error: wrongValues.messages.region,
+      error: "wrongValues.messages.region",
       data: undefined,
     },
   }, {
@@ -119,7 +119,7 @@ describe("testing database queries...", () => {
       queryDatabase: returnMessage,
     },
     expres: {
-      error: wrongValues.messages.district,
+      error: "wrongValues.messages.district",
       data: undefined,
     },
   }, {
@@ -133,7 +133,7 @@ describe("testing database queries...", () => {
       queryDatabase: returnMessage,
     },
     expres: {
-      error: wrongValues.messages.room,
+      error: "wrongValues.messages.room",
       data: undefined,
     },
   }]

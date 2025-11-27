@@ -22,27 +22,27 @@ describe("testing query validators...", () => {
     args: {
       password: "Aa!11111",
     },
-    expres: wrongValues.users.credentialsLogin,
+    expres: "wrongValues.users.credentialsLogin",
   }, {
     tag: 4,
     args: {
       login: "1".repeat(limits.users.loginLenMin),
     },
-    expres: wrongValues.users.credentialsPassword,
+    expres: "wrongValues.users.credentialsPassword",
   }, {
     tag: 5,
     args: {
       login: {},
       password: "Aa!11111",
     },
-    expres: wrongValues.users.credentialsLogin,
+    expres: "wrongValues.users.credentialsLogin",
   }, {
     tag: 6,
     args: {
       login: "1".repeat(limits.users.loginLenMin),
       password: {},
     },
-    expres: wrongValues.users.credentialsPassword,
+    expres: "wrongValues.users.credentialsPassword",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

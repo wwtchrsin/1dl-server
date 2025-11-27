@@ -144,10 +144,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
     },
-    expres: {
-      error: wrongValues.messages.region,
-      data: undefined,
-    },
+    expres: "wrongValues.messages.region",
   }, {
     tag: 5,
     args: {
@@ -156,10 +153,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
     },
-    expres: {
-      error: wrongValues.messages.district,
-      data: undefined,
-    },
+    expres: "wrongValues.messages.district",
   }, {
     tag: 6,
     args: {
@@ -168,10 +162,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin - 1,
       index: limits.messages.indexMin,
     },
-    expres: {
-      error: wrongValues.messages.room,
-      data: undefined,
-    },
+    expres: "wrongValues.messages.room",
   }, {
     tag: 7,
     args: {
@@ -180,10 +171,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
       index: limits.messages.indexMax + 1,
     },
-    expres: {
-      error: wrongValues.messages.index,
-      data: undefined,
-    },
+    expres: "wrongValues.messages.index",
   }, {
     tag: 8,
     args: {
@@ -192,16 +180,14 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin + 2,
       index: limits.messages.indexMax - 2,
     },
-    expres: {
-      error: databaseConflicts.messageNotFound,
-      data: undefined,
-    },
+    expres: "databaseConflicts.messageNotFound",
   }]
   for ( let testcase of failures ) {
     let { args, expres, tag } = testcase
     test(`Function getMessage. Intg Test #${tag}`, async () => {
       let result = await getMessage(args)
-      expect(result).toStrictEqual(expres)
+      expect(result.error).toStrictEqual(expres)
+      expect(result.data).toBeUndefined()
     })
   }
 })

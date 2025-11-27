@@ -57,7 +57,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     },
   }, {
@@ -70,7 +70,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     },
   }, {
@@ -83,7 +83,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     },
   }, {
@@ -96,7 +96,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     },
   }, {
@@ -108,7 +108,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: wrongValues.users.credentialsLogin,
+      error: "wrongValues.users.credentialsLogin",
       data: undefined,
     },
   }, {
@@ -121,7 +121,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: wrongValues.users.credentialsLogin,
+      error: "wrongValues.users.credentialsLogin",
       data: undefined,
     },
   }, {
@@ -133,7 +133,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: wrongValues.users.credentialsPassword,
+      error: "wrongValues.users.credentialsPassword",
       data: undefined,
     },
   }, {
@@ -146,7 +146,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: wrongValues.users.credentialsPassword,
+      error: "wrongValues.users.credentialsPassword",
       data: undefined,
     },
   }, {
@@ -159,7 +159,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestFails,
     },
     expres: {
-      error: databaseErrors.getUserByCredentials,
+      error: "databaseErrors.getUserByCredentials",
       data: undefined,
     },
   }]

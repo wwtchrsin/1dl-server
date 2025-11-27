@@ -35,7 +35,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.region,
+    expres: "wrongValues.messages.region",
   }, {
     tag: 4,
     args: {
@@ -46,7 +46,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.district,
+    expres: "wrongValues.messages.district",
   }, {
     tag: 5,
     args: {
@@ -57,7 +57,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.room,
+    expres: "wrongValues.messages.room",
   }, {
     tag: 6,
     args: {
@@ -68,7 +68,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.index,
+    expres: "wrongValues.messages.index",
   }, {
     tag: 7,
     args: {
@@ -79,7 +79,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin - 1),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.text,
+    expres: "wrongValues.messages.text",
   }, {
     tag: 8,
     args: {
@@ -90,7 +90,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMax + 1),
       color: limits.messages.colors[0],
     },
-    expres: wrongValues.messages.text,
+    expres: "wrongValues.messages.text",
   }, {
     tag: 9,
     args: {
@@ -112,7 +112,7 @@ describe("testing query validators...", () => {
       text: "1".repeat(limits.messages.textLenMin),
       color: "12345678",
     },
-    expres: wrongValues.messages.color,
+    expres: "wrongValues.messages.color",
   }, {
     tag: 11,
     args: {

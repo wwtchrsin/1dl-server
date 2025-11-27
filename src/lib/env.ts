@@ -16,7 +16,6 @@ const env = {
     password: process.env.REDIS_PASSWORD,
     host: process.env.REDIS_HOST ?? "http://127.0.0.1",
     port: Number(process.env.REDIS_PORT ?? "6379"),
-    database: Number(process.env.REDIS_DATABASE ?? "11"),
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
   },
   passwordSalt: process.env.PASSWORD_SALT ?? "",
@@ -24,7 +23,7 @@ const env = {
 }
 
 if ( isNaN(env.httpPort) || isNaN(env.wsPort) || isNaN(env.pg.port) ||
-  isNaN(env.redis.port) || isNaN(env.redis.database) ) {
+  isNaN(env.redis.port) ) {
     console.error("Error: Incorrect environment variables. Exit.")
     process.exit(1)
   }

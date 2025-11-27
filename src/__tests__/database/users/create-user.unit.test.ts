@@ -13,7 +13,7 @@ let loginExists = () => {
 }
 
 let loginCheckError = () => {
-  return Promise.resolve({ error: databaseErrors.checkUserExists, data: undefined })
+  return Promise.resolve({ error: "databaseErrors.checkUserExists", data: undefined })
 }
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
@@ -90,7 +90,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: wrongValues.users.login,
+    expres: "wrongValues.users.login",
   }, {
     tag: 5,
     args: {
@@ -102,7 +102,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: wrongValues.users.password,
+    expres: "wrongValues.users.password",
   }, {
     tag: 6,
     args: {
@@ -114,7 +114,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
     },
-    expres: wrongValues.users.name,
+    expres: "wrongValues.users.name",
   }, {
     tag: 7,
     args: {
@@ -126,7 +126,7 @@ describe("testing database queries...", () => {
       loginExists: loginExists,
       queryDatabase: requestReturnsUser,
     },
-    expres: databaseConflicts.loginTaken,
+    expres: "databaseConflicts.loginTaken",
   }, {
     tag: 8,
     args: {
@@ -138,7 +138,7 @@ describe("testing database queries...", () => {
       loginExists: loginCheckError,
       queryDatabase: requestReturnsUser,
     },
-    expres: databaseErrors.checkUserExists,
+    expres: "databaseErrors.checkUserExists",
   }, {
     tag: 9,
     args: {
@@ -150,7 +150,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
     },
-    expres: databaseErrors.createUser,
+    expres: "databaseErrors.createUser",
   }, {
     tag: 10,
     args: {
@@ -162,7 +162,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
     },
-    expres: databaseErrors.createUser,
+    expres: "databaseErrors.createUser",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
@@ -182,7 +182,7 @@ describe("testing database queries...", () => {
         expect(result.data.timestamp).toMatch(checks.timestamp)
         return
       }
-      expect(result.error).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
       expect(result.data).toBeUndefined()
     })
   }

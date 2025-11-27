@@ -29,7 +29,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: wrongValues.users.userid,
+      error: "wrongValues.users.userid",
       data: undefined,
     },
   }, {
@@ -41,7 +41,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: databaseConflicts.sessionNotFound,
+      error: "databaseConflicts.sessionNotFound",
       data: undefined,
     },
   }, {
@@ -53,7 +53,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: databaseErrors.deleteSession,
+      error: "databaseErrors.deleteSession",
       data: undefined,
     },
   }, {
@@ -63,7 +63,7 @@ describe("testing database queries...", () => {
       queryDatabase: undefined,
     },
     expres: {
-      error: databaseErrors.deleteSession,
+      error: "databaseErrors.deleteSession",
       data: undefined,
     },
   }]

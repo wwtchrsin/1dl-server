@@ -4,26 +4,26 @@ import { wrongValues } from "../error-messages"
 const loginPattern = new RegExp(limits.users.loginPattern)
 const passwordPattern = new RegExp(limits.users.passwordPattern)
 
-export const checkRoomIds = (req: any): TextResource | undefined => {
+export const checkRoomIds = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
-    return wrongValues.messages.region
+    return "wrongValues.messages.region"
   }
   let district = Number(req?.district)
   if ( isNaN(district) || district < limits.messages.districtMin ||
     district > limits.messages.districtMax || 
     Math.round(district) !== district ) {
-      return wrongValues.messages.district
+      return "wrongValues.messages.district"
     }
   let room = Number(req?.room)
   if ( isNaN(room) || room < limits.messages.roomMin || 
     room > limits.messages.roomMax ||
     Math.round(room) !== room ) {
-      return wrongValues.messages.room
+      return "wrongValues.messages.room"
     }
   return undefined
 }
 
-export const checkMessageIds = (req: any): TextResource | undefined => {
+export const checkMessageIds = (req: any): string | undefined => {
   let errorMessage = checkRoomIds(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
@@ -32,13 +32,13 @@ export const checkMessageIds = (req: any): TextResource | undefined => {
   if ( isNaN(index) || index < limits.messages.indexMin ||
     index > limits.messages.indexMax ||
     Math.round(index) !== index ) {
-      return wrongValues.messages.index
+      return "wrongValues.messages.index"
     }
 
   return undefined
 }
 
-export const checkMessageContent = (req: any): TextResource | undefined => {
+export const checkMessageContent = (req: any): string | undefined => {
   let errorMessage = checkMessageIds(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
@@ -47,59 +47,59 @@ export const checkMessageContent = (req: any): TextResource | undefined => {
   if ( isNaN(textLen) || textLen < limits.messages.textLenMin ||
     textLen > limits.messages.textLenMax ||
     typeof req?.text !== "string" ) {
-      return wrongValues.messages.text
+      return "wrongValues.messages.text"
     }
   if ( !limits.messages.colors.includes(req?.color) ) {
-    return wrongValues.messages.color
+    return "wrongValues.messages.color"
   }
   return undefined
 }
 
-export const checkUserData = (req: any): TextResource | undefined => {
+export const checkUserData = (req: any): string | undefined => {
   let loginLen = Number(req?.login?.length)
   if ( isNaN(loginLen) || loginLen < limits.users.loginLenMin ||
     loginLen > limits.users.loginLenMax ||
     typeof req?.login !== "string" ||
     !loginPattern.test(req?.login) ) {
-      return wrongValues.users.login
+      return "wrongValues.users.login"
     }
   let passwordLen = Number(req?.password?.length)
   if ( isNaN(passwordLen) || passwordLen < limits.users.passwordLenMin ||
     passwordLen > limits.users.passwordLenMax ||
     typeof req?.password !== "string" ||
     !passwordPattern.test(req?.password) ) {
-      return wrongValues.users.password
+      return "wrongValues.users.password"
     }
   let nameLen = Number(req?.name?.length)
   if ( isNaN(nameLen) || nameLen < limits.users.nameLenMin ||
     nameLen > limits.users.nameLenMax ||
     typeof req?.name !== "string" ) {
-      return wrongValues.users.name
+      return "wrongValues.users.name"
     }
   return undefined
 }
 
-export const checkUserCredentials = (req: any): TextResource | undefined => {
+export const checkUserCredentials = (req: any): string | undefined => {
   let { login, password } = req
   if ( typeof login !== "string" ) {
-    return wrongValues.users.credentialsLogin
+    return "wrongValues.users.credentialsLogin"
   }
   if ( typeof password !== "string" ) {
-    return wrongValues.users.credentialsPassword
+    return "wrongValues.users.credentialsPassword"
   }
   return undefined
 }
 
-export const checkUserId = (userid: string): TestResource | undefined => {
+export const checkUserId = (userid: string): string | undefined => {
   if ( !limits.patterns.uuid.test(userid) ) {
-    return wrongValues.users.userid
+    return "wrongValues.users.userid"
   }
   return undefined
 }
 
-export const checkSessionId = (sessionid: string): TestResource | undefined => {
+export const checkSessionId = (sessionid: string): string | undefined => {
   if ( !limits.patterns.uuid.test(sessionid) ) {
-    return wrongValues.users.sessionid
+    return "wrongValues.users.sessionid"
   }
   return undefined
 }

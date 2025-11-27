@@ -38,7 +38,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMax}`,
       index: `${limits.messages.indexMax}`,
     },
-    expres: wrongValues.messages.region
+    expres: "wrongValues.messages.region"
   }, {
     tag: 5,
     args: {
@@ -47,7 +47,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMax}`,
       index: `${limits.messages.indexMax}`,
     },
-    expres: wrongValues.messages.district
+    expres: "wrongValues.messages.district"
   }, {
     tag: 6,
     args: {
@@ -56,7 +56,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMin - 1}`,
       index: `${limits.messages.indexMin}`,
     },
-    expres: wrongValues.messages.room
+    expres: "wrongValues.messages.room"
   }, {
     tag: 7,
     args: {
@@ -65,7 +65,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin - 1}`,
     },
-    expres: wrongValues.messages.index
+    expres: "wrongValues.messages.index"
   }, {
     tag: 8,
     args: {
@@ -74,7 +74,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMax + 1}`,
     },
-    expres: wrongValues.messages.index
+    expres: "wrongValues.messages.index"
   }, {
     tag: 9,
     args: {
@@ -83,7 +83,7 @@ describe("testing query validators...", () => {
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin + 1.5}`,
     },
-    expres: wrongValues.messages.index
+    expres: "wrongValues.messages.index"
   }, {
     tag: 10,
     args: {

@@ -57,14 +57,14 @@ describe("testing database queries...", () => {
     tag: 4,
     calls: [{
       args: "abcd",
-      expres: wrongValues.users.userid,
+      expres: "wrongValues.users.userid",
     }],
     exprows: 0,
   }, {
     tag: 5,
     calls: [{
       args: "abcd",
-      expres: wrongValues.users.userid,
+      expres: "wrongValues.users.userid",
     }, {
       args: uuids[0],
       expres: "success",
@@ -82,7 +82,7 @@ describe("testing database queries...", () => {
           expect(result.data).toMatch(limits.patterns.uuid)
           continue
         }
-        expect(result.error).toStrictEqual(expres)
+        expect(result.error).toBe(expres)
         expect(result.data).toBeUndefined()
       }
       let result = await queryDatabase("SELECT * FROM sessions")

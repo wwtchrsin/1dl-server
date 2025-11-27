@@ -1,8 +1,6 @@
 import * as conn from "../../../lib/database/conn"
 import * as messages from "../../../lib/database/messages"
 import limits from "../../../lib/database/limits"
-import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let timestamp = 123456789
 let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
@@ -54,7 +52,7 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
@@ -75,7 +73,7 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
@@ -96,12 +94,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseErrors.getMessage,
+        error: "databaseErrors.getMessage",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: databaseErrors.checkMessage,
+    expres: "databaseErrors.checkMessage",
   }, {
     tag: 4,
     args: [
@@ -117,12 +115,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.region,
+    expres: "wrongValues.messages.region",
   }, {
     tag: 5,
     args: [
@@ -138,12 +136,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.district,
+    expres: "wrongValues.messages.district",
   }, {
     tag: 6,
     args: [
@@ -159,12 +157,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.room,
+    expres: "wrongValues.messages.room",
   }, {
     tag: 7,
     args: [
@@ -180,12 +178,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.index,
+    expres: "wrongValues.messages.index",
   }, {
     tag: 8,
     args: [
@@ -201,12 +199,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.text,
+    expres: "wrongValues.messages.text",
   }, {
     tag: 9,
     args: [
@@ -222,12 +220,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.text,
+    expres: "wrongValues.messages.text",
   }, {
     tag: 10,
     args: [
@@ -243,12 +241,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.color,
+    expres: "wrongValues.messages.color",
   }, {
     tag: 11,
     args: [
@@ -279,7 +277,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: databaseConflicts.messageAlreadyExists,
+    expres: "databaseConflicts.messageAlreadyExists",
   }, {
     tag: 12,
     args: [
@@ -295,12 +293,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.users.userid,
+    expres: "wrongValues.users.userid",
   }, {
     tag: 13,
     args: [
@@ -316,12 +314,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnZeroMessages,
     },
-    expres: databaseErrors.createMessage,
+    expres: "databaseErrors.createMessage",
   }, {
     tag: 14,
     args: [
@@ -337,12 +335,12 @@ describe("testing database queries...", () => {
     ],
     mocks: {
       getMessage: {
-        error: databaseConflicts.messageNotFound,
+        error: "databaseConflicts.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnError,
     },
-    expres: databaseErrors.createMessage,
+    expres: "databaseErrors.createMessage",
   }]
   afterEach(() => {
     jest.restoreAllMocks()
@@ -357,7 +355,7 @@ describe("testing database queries...", () => {
         expect(result).toStrictEqual(success(args[1]))
         return
       }
-      expect(result.error).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
       expect(result.data).toBeUndefined()
     })
   }

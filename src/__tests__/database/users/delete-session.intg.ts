@@ -35,12 +35,12 @@ describe("testing database queries...", () => {
     tag: 2,
     init: [userids[0]],
     args: "abcd",
-    expres: wrongValues.users.userid,
+    expres: "wrongValues.users.userid",
   }, {
     tag: 3,
     init: [userids[0]],
     args: userids[1],
-    expres: databaseConflicts.sessionNotFound,
+    expres: "databaseConflicts.sessionNotFound",
   }]
   for ( let testcase of testcases ) {
     let { init, args, expres, tag } = testcase
@@ -60,7 +60,7 @@ describe("testing database queries...", () => {
         expect(result.data).toBe(sessionids.get(args))
         rowCount--
       } else {
-        expect(result.error).toStrictEqual(expres)
+        expect(result.error).toBe(expres)
         expect(result.data).toBeUndefined()
       }
       let table = await queryDatabase("SELECT * FROM sessions")

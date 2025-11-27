@@ -191,7 +191,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
     },
     expres: {
-      error: wrongValues.messages.region,
+      error: "wrongValues.messages.region",
       data: undefined,
     },
   }, {
@@ -202,7 +202,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
     },
     expres: {
-      error: wrongValues.messages.district,
+      error: "wrongValues.messages.district",
       data: undefined,
     },
   }, {
@@ -213,7 +213,7 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMax + 1,
     },
     expres: {
-      error: wrongValues.messages.room,
+      error: "wrongValues.messages.room",
       data: undefined,
     },
   }, {

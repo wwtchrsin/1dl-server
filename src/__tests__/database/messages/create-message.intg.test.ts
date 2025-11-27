@@ -104,10 +104,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.messages.region,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.region",
     }],
   }, {
     tag: 5,
@@ -121,10 +118,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.messages.district,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.district",
     }],
   }, {
     tag: 6,
@@ -138,10 +132,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.messages.room,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.room",
     }],
   }, {
     tag: 7,
@@ -155,10 +146,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.messages.index,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.index",
     }],
   }, {
     tag: 8,
@@ -172,10 +160,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMax + 1),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.messages.text,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.text",
     }],
   }, {
     tag: 9,
@@ -189,10 +174,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMax),
         color: "abcd",
       },
-      expres: {
-        error: wrongValues.messages.color,
-        data: undefined,
-      }
+      expres: "wrongValues.messages.color",
     }],
   }, {
     tag: 10,
@@ -217,10 +199,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: databaseConflicts.messageAlreadyExists,
-        data: undefined,
-      },
+      expres: "databaseConflicts.messageAlreadyExists",
     }],
   }, {
     tag: 11,
@@ -259,10 +238,7 @@ describe("testing database queries...", () => {
         text: "1".repeat(limits.messages.textLenMin),
         color: limits.messages.colors[0],
       },
-      expres: {
-        error: wrongValues.users.userid,
-        data: undefined,
-      }
+      expres: "wrongValues.users.userid",
     }],
   }]
   for ( let testcase of testcases ) {
@@ -288,7 +264,8 @@ describe("testing database queries...", () => {
           msgCount++
           continue
         }
-        expect(result).toStrictEqual(expres)
+        expect(result.data).toBeUndefined()
+        expect(result.error).toBe(expres)
       }
       let result = await pool.query("SELECT * FROM messages")
       expect(result).toBeDefined()

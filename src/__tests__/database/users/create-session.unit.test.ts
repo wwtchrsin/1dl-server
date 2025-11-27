@@ -28,7 +28,7 @@ describe("testing database queries...", () => {
     args: uuid,
     mocks: {
       deleteSession: {
-        error: databaseConflicts.sessionNotFound,
+        error: "databaseConflicts.sessionNotFound",
         data: undefined,
       },
       queryDatabase: {
@@ -48,26 +48,20 @@ describe("testing database queries...", () => {
         rows: [{}]
       },
     },
-    expres: {
-      error: wrongValues.users.userid,
-      data: undefined,
-    },
+    expres: "wrongValues.users.userid",
   }, {
     tag: 4,
     args: uuid,
     mocks: {
       deleteSession: {
-        error: databaseErrors.deleteSession,
+        error: "databaseErrors.deleteSession",
         data: undefined,
       },
       queryDatabase: {
         rows: [{}]
       },
     },
-    expres: {
-      error: databaseErrors.deleteSession,
-      data: undefined,
-    },
+    expres: "databaseErrors.deleteSession",
   }, {
     tag: 5,
     args: uuid,
@@ -78,10 +72,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: undefined,
     },
-    expres: {
-      error: databaseErrors.createSession,
-      data: undefined,
-    },
+    expres: "databaseErrors.createSession",
   }, {
     tag: 6,
     args: uuid,
@@ -94,10 +85,7 @@ describe("testing database queries...", () => {
         rows: []
       },
     },
-    expres: {
-      error: databaseErrors.createSession,
-      data: undefined,
-    },
+    expres: "databaseErrors.createSession",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, mocks, tag } = testcase
@@ -110,7 +98,8 @@ describe("testing database queries...", () => {
         expect(result.data).toMatch(limits.patterns.uuid)
         return
       }
-      expect(result).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
+      expect(result.data).toBeUndefined()
     })
   }
 })

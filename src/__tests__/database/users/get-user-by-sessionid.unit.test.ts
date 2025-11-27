@@ -59,21 +59,21 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: wrongValues.users.sessionid,
+    expres: "wrongValues.users.sessionid",
   }, {
     tag: 4,
     args: sessionids[2],
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: databaseConflicts.userNotFound,
+    expres: "databaseConflicts.userNotFound",
   }, {
     tag: 5,
     args: sessionids[0],
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: databaseErrors.getUserBySessionId,
+    expres: "databaseErrors.getUserBySessionId",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
@@ -92,7 +92,7 @@ describe("testing database queries...", () => {
         expect(result.data.timestamp).toBe(user.timestamp)
         return
       }
-      expect(result.error).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
       expect(result.data).toBeUndefined()
     })
   }

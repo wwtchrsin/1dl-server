@@ -105,7 +105,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnEmptyList,
     },
-    expres: databaseConflicts.messageNotFound,
+    expres: "databaseConflicts.messageNotFound",
   }, {
     tag: 5,
     args: {
@@ -117,7 +117,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnTwoMessages,
     },
-    expres: databaseErrors.getMessage,
+    expres: "databaseErrors.getMessage",
   }, {
     tag: 6,
     args: {
@@ -129,7 +129,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnError,
     },
-    expres: databaseErrors.getMessage,
+    expres: "databaseErrors.getMessage",
   }, {
     tag: 7,
     args: {
@@ -141,7 +141,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.region,
+    expres: "wrongValues.messages.region",
   }, {
     tag: 8,
     args: {
@@ -153,7 +153,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.district,
+    expres: "wrongValues.messages.district",
   }, {
     tag: 9,
     args: {
@@ -165,7 +165,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.room,
+    expres: "wrongValues.messages.room",
   }, {
     tag: 10,
     args: {
@@ -177,7 +177,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: wrongValues.messages.index,
+    expres: "wrongValues.messages.index",
   }]
   afterEach(() => {
     jest.restoreAllMocks()
@@ -191,7 +191,7 @@ describe("testing database queries...", () => {
         expect(result).toStrictEqual(success(args))
         return
       }
-      expect(result.error).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
       expect(result.data).toBeUndefined()
     })
   }

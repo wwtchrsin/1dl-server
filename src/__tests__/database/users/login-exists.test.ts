@@ -21,11 +21,11 @@ describe("testing database queries...", () => {
   test("Function loginExists. Test #3", async () => {
     jest.spyOn(conn, "queryDatabase").mockResolvedValue({ rows: [{ login }, { login }] })
     let result = await users.loginExists(login)
-    expect(result).toStrictEqual({ error: databaseErrors.checkUserExists, data: undefined })
+    expect(result).toStrictEqual({ error: "databaseErrors.checkUserExists", data: undefined })
   })
   test("Function loginExists. Text #4", async () => {
     jest.spyOn(conn, "queryDatabase").mockResolvedValue(undefined)
     let result = await users.loginExists(login)
-    expect(result).toStrictEqual({ error: databaseErrors.checkUserExists, data: undefined })
+    expect(result).toStrictEqual({ error: "databaseErrors.checkUserExists", data: undefined })
   })
 })

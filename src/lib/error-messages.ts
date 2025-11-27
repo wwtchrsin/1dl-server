@@ -173,17 +173,32 @@ export const databaseConflicts: Record<string, TextResource> = {
   },
 }
 
-export const errorsEqual = (errA: TextResource | undefined, errB: TextResource | undefined): boolean => {
-  if ( errA === undefined && errB === undefined ) {
-    return true
+export const getErrorMessage = (error: string | undefined): TextResource | undefined => {
+  if ( error === undefined ) {
+    return undefined
   }
-  if ( errA === undefined || errB === undefined ) {
-    return false
-  }
-  for ( let lang in errA ) {
-    if ( errA[lang] !== errB[lang] ) {
-      return false
+  let err = error.split(".")
+  switch ( err[0] ) {
+    case "wrongValues": {
+      switch ( err[1] ) {
+        case "messages":
+          return wrongValues.messages[err[2]]
+        case "users":
+          return wrongValues.users[err[2]]
+        default:
+          return undefined
+      }
+    }
+    case "databaseErrors": {
+      return databaseErrors[err[1]]
+    }
+    case "databaseConflicts": {
+      return databaseConflicts[err[1]]
+    }
+    default: {
+      return undefined
     }
   }
-  return true
 }
+
+

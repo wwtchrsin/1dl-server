@@ -61,11 +61,11 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: () => "f1278c63-d098-431f-9cf3-2397b1506b79",
-    expres: databaseConflicts.userNotFound,
+    expres: "databaseConflicts.userNotFound",
   }, {
     tag: 4,
     args: () => "abcd",
-    expres: wrongValues.users.sessionid,
+    expres: "wrongValues.users.sessionid",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
@@ -84,7 +84,7 @@ describe("testing database queries...", () => {
         expect(result.data.timestamp).toBe(user.timestamp)
         return
       }
-      expect(result.error).toStrictEqual(expres)
+      expect(result.error).toBe(expres)
       expect(result.data).toBeUndefined()
     })
   }

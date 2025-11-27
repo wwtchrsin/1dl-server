@@ -73,7 +73,7 @@ describe("testing database queries...", () => {
     tag: 3,
     args: () => wrongRequest,
     expres: () => ({
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     }),
   }, {
@@ -83,7 +83,7 @@ describe("testing database queries...", () => {
       password: correctRequests[1].args.password,
     }),
     expres: () => ({
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     }),
   }, {
@@ -93,7 +93,7 @@ describe("testing database queries...", () => {
       password: correctRequests[0].args.password,
     }),
     expres: () => ({
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     }),
   }, {
@@ -103,7 +103,7 @@ describe("testing database queries...", () => {
       password: "abcd",
     }),
     expres: () => ({
-      error: databaseConflicts.userNotFound,
+      error: "databaseConflicts.userNotFound",
       data: undefined,
     }),
   }, {
@@ -112,7 +112,7 @@ describe("testing database queries...", () => {
       password: "abcd",
     }),
     expres: () => ({
-      error: wrongValues.users.credentialsLogin,
+      error: "wrongValues.users.credentialsLogin",
       data: undefined,
     }),
   }, {
@@ -122,7 +122,7 @@ describe("testing database queries...", () => {
       password: "abcd",
     }),
     expres: () => ({
-      error: wrongValues.users.credentialsLogin,
+      error: "wrongValues.users.credentialsLogin",
       data: undefined,
     }),
   }, {
@@ -131,7 +131,7 @@ describe("testing database queries...", () => {
       login: "abcd",
     }),
     expres: () => ({
-      error: wrongValues.users.credentialsPassword,
+      error: "wrongValues.users.credentialsPassword",
       data: undefined,
     }),
   }, {
@@ -141,7 +141,7 @@ describe("testing database queries...", () => {
       password: {},
     }),
     expres: () => ({
-      error: wrongValues.users.credentialsPassword,
+      error: "wrongValues.users.credentialsPassword",
       data: undefined,
     }),
   }]
