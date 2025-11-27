@@ -2,8 +2,6 @@ import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
 import { hashPassword } from "../../../lib/database/miscs"
-import { databaseConflicts, databaseErrors } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let correctPassword = "Aa!11111"
 

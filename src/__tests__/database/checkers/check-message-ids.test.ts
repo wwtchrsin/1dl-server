@@ -1,6 +1,5 @@
 import { checkMessageIds } from "../../../lib/database/checkers"
 import limits from "../../../lib/database/limits"
-import { wrongValues } from "../../../lib/error-messages"
 
 describe("testing query validators...", () => {
   let testcases = [{

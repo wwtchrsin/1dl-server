@@ -1,8 +1,6 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
-import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let sessionids = [
   "53e291f8-522b-43b8-a5f5-84795b887a81",

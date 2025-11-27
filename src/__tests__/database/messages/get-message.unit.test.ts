@@ -1,8 +1,6 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
-import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let text = "abcd efg hijk lmnop"
 let color = limits.messages.colors[0]

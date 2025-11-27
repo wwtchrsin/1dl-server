@@ -5,8 +5,6 @@ import { createMessage } from "../../../lib/database/messages"
 import { createUser } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
-import { databaseErrors, databaseConflicts } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let userid = ""
 let username = "abcd 123"

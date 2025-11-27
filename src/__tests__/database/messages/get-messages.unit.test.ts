@@ -1,8 +1,6 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
-import { databaseErrors } from "../../../lib/error-messages"
-import { wrongValues } from "../../../lib/error-messages"
 
 let text = "1".repeat(limits.messages.textLenMin)
 let timestamp = "123456789"

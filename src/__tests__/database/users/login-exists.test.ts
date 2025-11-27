@@ -1,6 +1,5 @@
 import * as conn from "../../../lib/database/conn"
 import * as users from "../../../lib/database/users"
-import { databaseErrors } from "../../../lib/error-messages"
 
 let login = "12345678"
 
