@@ -4,14 +4,14 @@
   "description": "1dl project server part",
   "main": "index.js",
   "scripts": {
-    "init": "'ts-node' 'src/scripts/init-database.ts'",
-    "test": "jest"
+    "init": "dotenvx run -f .env -- npx 'ts-node' 'src/scripts/init-database.ts'",
+    "test": "dotenvx run -f .env.test -f .env -- npx jest"
   },
   "author": "vladislav chursin",
   "license": "MIT",
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.51.1",
     "cors": "^2.8.5",
-    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "pg": "^8.16.3",
     "pino": "^10.1.0",

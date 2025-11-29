@@ -1,5 +1,3 @@
-import "dotenv/config"
-
 const env = {
   httpPort: Number(process.env.HTTP_PORT ?? "3000"),
   wsPort: Number(process.env.WS_PORT ?? "8080"),
