@@ -37,7 +37,7 @@ describe("testing auxilliary functions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function errorsEqual. Test #${tag}`, () => {
+    test(`Function getErrorMessage. Test #${tag}`, () => {
       let result = getErrorMessage(args)
       expect(result).toStrictEqual(expres)
     })

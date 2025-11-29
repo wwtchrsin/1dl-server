@@ -172,7 +172,7 @@ export const databaseConflicts: Record<string, TextResource> = {
     ru: "Пользователь не найден",
   },
 }
-
+  
 export const getErrorMessage = (error: string | undefined): TextResource | undefined => {
   if ( error === undefined ) {
     return undefined
@@ -199,6 +199,38 @@ export const getErrorMessage = (error: string | undefined): TextResource | undef
       return undefined
     }
   }
+}
+
+export const getStatusCode = (error: string | undefined, successCode: number = 200): number => {
+  if ( error === undefined ) {
+    return successCode
+  }
+  if ( getErrorMessage(error) === undefined ) {
+    return 500
+  }
+  let err = error.split(".")
+  switch ( err[0] ) {
+    case "wrongValues": {
+      return 400
+    }
+    case "databaseErrors": {
+      return 500
+    }
+    case "databaseConflicts": {
+      switch ( err[1] ) {
+        case "messageNotFound":
+        case "sessionNotFound":
+        case "userNotFound": {
+          return 404
+        }
+        case "messageAlreadyExists":
+        case "loginTaken": {
+          return 409
+        }
+      }
+    }
+  }
+  return 500
 }
 
 
