@@ -1,7 +1,7 @@
 process.env.PG_SCHEMA = "createSessionTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { createUser, createSession } from "../../../lib/database/users"
+import { createProfile, createSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
 
@@ -36,7 +36,7 @@ describe("testing database queries...", () => {
   })
   test("Function createSession. Preparing database...", async () => {
     for ( let user of correctData ) {
-      let result = await createUser(user)
+      let result = await createProfile(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.userid).toMatch(limits.patterns.uuid)
@@ -68,14 +68,14 @@ describe("testing database queries...", () => {
       login: wrongData.login,
       password: wrongData.password,
     },
-    expres: "databaseConflicts.userNotFound",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: {
       login: correctData[0].login,
       password: correctData[1].password,
     },
-    expres: "databaseConflicts.userNotFound",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
     args: {

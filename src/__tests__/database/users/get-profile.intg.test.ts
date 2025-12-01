@@ -1,7 +1,7 @@
-process.env.PG_SCHEMA = "getUserBySessionIdTest"
+process.env.PG_SCHEMA = "getProfileTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { getUserBySessionId, createUser, createSession } from "../../../lib/database/users"
+import { getProfile, createProfile, createSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
 
@@ -19,7 +19,7 @@ let sessionids = []
 let users = new Map()
 
 describe("testing database queries...", () => {
-  test("Function getUserBySessionId. Preparing database...", async () => {
+  test("Function getProfile. Preparing database...", async () => {
     let userdata = [{
       login: "1".repeat(limits.users.loginLenMin),
       password: "Aa!11111",
@@ -30,7 +30,7 @@ describe("testing database queries...", () => {
       name: "2".repeat(limits.users.nameLenMin),
     }]
     for ( let user of userdata ) {
-      let result = await createUser(user)
+      let result = await createProfile(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.userid).toMatch(limits.patterns.uuid)
@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: () => "f1278c63-d098-431f-9cf3-2397b1506b79",
-    expres: "databaseConflicts.userNotFound",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: () => "abcd",
@@ -67,9 +67,9 @@ describe("testing database queries...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function getUserBySessionId. Intg Test #${tag}`, async () => {
+    test(`Function getProfile. Intg Test #${tag}`, async () => {
       let sessionid = args()
-      let result = await getUserBySessionId(sessionid)
+      let result = await getProfile(sessionid)
       if ( expres === "success" ) {
         let user = users.get(sessionid)        
         expect(result.error).toBeUndefined()

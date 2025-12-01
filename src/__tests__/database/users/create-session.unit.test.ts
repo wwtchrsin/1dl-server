@@ -105,7 +105,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.userNotFound",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: {

@@ -5,13 +5,13 @@ import { databaseErrors, databaseConflicts } from "../error-messages"
 import { hashPassword, getTimestamp } from "./miscs"
 import logger from "../logger"
 
-export type UserData = {
+export type ProfileData = {
   login: string,
   password: string,
   name: string,
 }
 
-export type User = {
+export type Profile = {
   userid: string,
   login: string,
   name: string,
@@ -42,27 +42,27 @@ export const loginExists = async (login: string):
     }
   }
 
-export const createUser = async(req: any):
-  Promise<{ error: string | undefined, data: User | undefined }> => {
+export const createProfile = async(req: any):
+  Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let errorMessage = checkUserData(req)
     if ( errorMessage !== undefined ) {
-      logger.warn({ req }, "db/users/createUser#ERROR_ARGS_CHECK")
+      logger.warn(req, "db/users/createProfile#ERROR_ARGS_CHECK")
       return {
         error: errorMessage,
         data: undefined,
       }
     }
-    let { login, password, name } = req as UserData
+    let { login, password, name } = req as ProfileData
     let checkResult = await loginExists(login)
     if ( checkResult.error !== undefined ) {
-      logger.error({ req }, "db/users/createUser#ERROR_LOGIN_CHECK")
+      logger.error(req, "db/users/createProfile#ERROR_LOGIN_CHECK")
       return {
         error: checkResult.error,
         data: undefined,
       }
     }
     if ( checkResult.data !== false ) {
-      logger.warn({ req }, "db/users/createUser#ERROR_LOGIN_TAKEN")
+      logger.warn(req, "db/users/createProfile#ERROR_LOGIN_TAKEN")
       return {
         error: "databaseConflicts.loginTaken",
         data: undefined,
@@ -80,15 +80,15 @@ export const createUser = async(req: any):
     let queryParams = [userid, login, passwordHash, name, state, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
-      logger.error({ req }, "db/users/createUser#ERROR_DB_QUERY")
+      logger.error(req, "db/users/createProfile#ERROR_DB_QUERY")
       return {
-        error: "databaseErrors.createUser",
+        error: "databaseErrors.createProfile",
         data: undefined,
       }
     }
     return {
       error: undefined,
-      data: result!.rows![0] as User,
+      data: result!.rows![0] as Profile,
     }
   }
 
@@ -152,7 +152,7 @@ export const createSession = async (req: any):
     if ( checkResult.rows.length === 0 ) {
       logger.warn(req, "db/users/createSession#ERROR_NOT_FOUND")
       return {
-        error: "databaseConflicts.userNotFound",
+        error: "databaseConflicts.profileNotFound",
         data: undefined,
       }
     }
@@ -180,11 +180,11 @@ export const createSession = async (req: any):
     }
   }
 
-export const getUserBySessionId = async (sessionid: string): 
-  Promise<{ error: string | undefined, data: User | undefined }> => {
+export const getProfile = async (sessionid: string): 
+  Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let sessionidCheckError = checkSessionId(sessionid)
     if ( sessionidCheckError !== undefined ) {
-      logger.warn({ sessionid }, "db/users/getUserBySessionId#ERROR_ARGS_CHECK")
+      logger.warn({ sessionid }, "db/users/getProfile#ERROR_ARGS_CHECK")
       return {
         error: sessionidCheckError,
         data: undefined,
@@ -199,22 +199,22 @@ export const getUserBySessionId = async (sessionid: string):
     `
     let result = await queryDatabase(query, [sessionid])
     if ( !result?.rows || result.rows.length > 1 ) {
-      logger.error({ sessionid }, "db/users/getUserBySessionId#ERROR_DB_QUERY")
+      logger.error({ sessionid }, "db/users/getProfile#ERROR_DB_QUERY")
       return {
-        error: "databaseErrors.getUserBySessionId",
+        error: "databaseErrors.getProfile",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
-      logger.warn({ sessionid }, "db/users/getUserBySessionId#ERROR_NOT_FOUND")
+      logger.warn({ sessionid }, "db/users/getProfile#ERROR_NOT_FOUND")
       return {
-        error: "databaseConflicts.userNotFound",
+        error: "databaseConflicts.profileNotFound",
         data: undefined,
       }
     }
     return {
       error: undefined,
-      data: result.rows[0] as User,
+      data: result.rows[0] as Profile,
     }
   }
 

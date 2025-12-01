@@ -148,7 +148,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
     },
-    expres: "databaseErrors.createUser",
+    expres: "databaseErrors.createProfile",
   }, {
     tag: 10,
     args: {
@@ -160,14 +160,14 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
     },
-    expres: "databaseErrors.createUser",
+    expres: "databaseErrors.createProfile",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
-    test(`Function createUser. Unit Test #${tag}`, async () => {
+    test(`Function createProfile. Unit Test #${tag}`, async () => {
       let loginExists = jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
       let queryDatabase = jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await users.createUser(args)
+      let result = await users.createProfile(args)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()

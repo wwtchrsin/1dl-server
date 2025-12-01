@@ -2,7 +2,7 @@ process.env.PG_SCHEMA = "createMessageTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createMessage } from "../../../lib/database/messages"
-import { createUser } from "../../../lib/database/users"
+import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
 
@@ -39,7 +39,7 @@ describe("testing database queries...", () => {
       password: "Aa!11111",
       name: username,
     }
-    let result = await createUser(args)
+    let result = await createProfile(args)
     let table = await pool.query("SELECT userid FROM users")
     expect(result.error).toBeUndefined()
     expect(result.data).toBeDefined()

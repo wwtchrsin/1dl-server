@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "createUserRouteTest"
+process.env.PG_SCHEMA = "createProfileRouteTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -175,10 +175,10 @@ describe("testing routes...", () => {
   }]
   for ( let testcase of testcases ) {
     let { calls, tag } = testcase
-    test(`Request POST /user. Test #${tag}`, async () => {
+    test(`POST /profiles. Test #${tag}`, async () => {
       for ( let call of calls ) {
         let { args, expres } = call
-        let result = await testServer.post("/api/v1/users").send(args)
+        let result = await testServer.post("/api/v1/profiles").send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
         expect(result.body.error).toStrictEqual(expres.error)

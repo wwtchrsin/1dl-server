@@ -128,9 +128,9 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to check the message",
     ru: "Невозможно проверить сообщение",
   },
-  createUser: {
-    en: "Impossible to add the user",
-    ru: "Невозможно добавить пользователя",
+  createProfile: {
+    en: "Impossible to create profile",
+    ru: "Невозможно создать профиль",
   },
   deleteSession: {
     en: "Impossible to delete the session",
@@ -144,13 +144,9 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to check credentials",
     ru: "Невозможно проверить учетные данные пользователя",
   },
-  getUserBySessionId: {
-    en: "Impossible to retrieve user data (using session id)",
-    ru: "Невозможно извлечь данные пользователя (используя id сессии)",
-  },
-  getUserByCredentials: {
-    en: "Impossible to retrieve user data (using credentials)",
-    ru: "Невозможно извлечь данные пользователя (используя учетные данные)",
+  getProfile: {
+    en: "Impossible to retrieve profile data",
+    ru: "Невозможно извлечь данные профиля",
   },
 }
 
@@ -171,9 +167,9 @@ export const databaseConflicts: Record<string, TextResource> = {
     en: "Session not found",
     ru: "Сессия не найдена",
   },
-  userNotFound: {
-    en: "User not found",
-    ru: "Пользователь не найден",
+  profileNotFound: {
+    en: "Profile not found",
+    ru: "Профиль не найден",
   },
 }
   
@@ -224,7 +220,7 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
       switch ( err[1] ) {
         case "messageNotFound":
         case "sessionNotFound":
-        case "userNotFound": {
+        case "profileNotFound": {
           return 404
         }
         case "messageAlreadyExists":

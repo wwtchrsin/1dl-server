@@ -1,7 +1,7 @@
-process.env.PG_SCHEMA = "createUserTest"
+process.env.PG_SCHEMA = "createProfileTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { createUser } from "../../../lib/database/users"
+import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
 
@@ -159,11 +159,11 @@ describe("testing database queries...", () => {
   }]
   for ( let testcase of testcases ) {
     let { calls, tag } = testcase
-    test(`Function createUser. Intg Test #${tag}`, async () => {
+    test(`Function createProfile. Intg Test #${tag}`, async () => {
       let msgCount = 0
       for ( let call of calls ) {
         let { args, expres } = call
-        let result = await createUser(args)
+        let result = await createProfile(args)
         if ( expres === "success" ) {
           let checks = resultChecks(args)
           expect(result.error).toBeUndefined()

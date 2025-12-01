@@ -1,7 +1,7 @@
 process.env.PG_SCHEMA = "deleteSessionTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { deleteSession, createSession, createUser } from "../../../lib/database/users"
+import { deleteSession, createSession, createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import limits from "../../../lib/database/limits"
 
@@ -33,7 +33,7 @@ describe("testing database queries...", () => {
     await pool.query("DELETE FROM sessions")
   })
   test("Function deleteSession. Preparing database...", async () => {
-    let result = await createUser(correctData)
+    let result = await createProfile(correctData)
     expect(result.error).toBeUndefined()
     expect(result.data).toBeDefined()
     expect(result.data.userid).toMatch(limits.patterns.uuid)

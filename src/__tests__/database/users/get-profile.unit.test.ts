@@ -64,20 +64,20 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "databaseConflicts.userNotFound",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
     args: sessionids[0],
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: "databaseErrors.getUserBySessionId",
+    expres: "databaseErrors.getProfile",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
-    test(`Function getUserBySessionId. Unit Test #${tag}`, async () => {
+    test(`Function getProfile. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await users.getUserBySessionId(args)
+      let result = await users.getProfile(args)
       if ( expres === "success" ) {
         let user = userlist.get(args)
         expect(result.error).toBeUndefined()
