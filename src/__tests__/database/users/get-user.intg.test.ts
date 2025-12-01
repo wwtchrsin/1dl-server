@@ -40,7 +40,7 @@ describe("testing database queries...", () => {
       expect(result.data.state).toBeDefined()
       expect(result.data.puid).toMatch(limits.patterns.uuid)
       expect(result.data.timestamp).toMatch(limits.patterns.timestamp)
-      let session = await createSession(result.data.userid)
+      let session = await createSession({ login: user.login, password: user.password })
       expect(session.error).toBeUndefined()
       expect(session.data).toBeDefined()
       expect(session.data).toMatch(limits.patterns.uuid)

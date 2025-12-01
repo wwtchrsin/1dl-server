@@ -1,32 +1,27 @@
 import { Router } from "express"
-import { createUser, createSession } from "../lib/database/users"
+import { createSession, deleteSession } from "../lib/database/users"
 import { getStatusCode, getErrorMessage } from "../lib/error-messages"
 import type { Request, Response } from "express"
-import type { UserData } from "../lib/database/users"
+import type { Credentials } from "../lib/database/users"
 
-const createUserAction = async (req: Request<UserData>, res: Response) => {
-  let result = await createUser(req.body)
+const createSessionAction = async (req: Request<Credentials>, res: Response) => {
+  let result = await createSession(req.body)
   if ( result.error !== undefined ) {
     let status = getStatusCode(result.error)    
     res.status(status).json({ 
       error: getErrorMessage(result.error),
       session: undefined,
-      user: undefined,
     })
     return
   }
-  let { login, password } = req.body as UserData
-  let session = await createSession({ login, password })
   res.status(201).json({
     error: undefined,
-    session: session.data,
-    user: result.data,
+    session: result.data,
   })
 }
 
 const router = new Router()
 
-router.post("/", createUserAction)
+router.post("/", createSessionAction)
 
 export default router
-

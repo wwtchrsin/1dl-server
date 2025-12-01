@@ -92,27 +92,27 @@ export const createUser = async(req: any):
     }
   }
 
-export const deleteSession = async (userid: string): 
+export const deleteSession = async (sessionid: string): 
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let useridCheckError = checkUserId(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/users/deleteSession#ERROR_ARGS_CHECK")
+    let sessionidCheckError = checkSessionId(sessionid)
+    if ( sessionidCheckError !== undefined ) {
+      logger.warn({ sessionid }, "db/users/deleteSession#ERROR_ARGS_CHECK")
       return {
-        error: useridCheckError,
+        error: sessionidCheckError,
         data: undefined,
       }
     }
-    let query = "DELETE FROM sessions WHERE userid = $1 RETURNING sessionid"
-    let result = await queryDatabase(query, [userid])
+    let query = "DELETE FROM sessions WHERE sessionid = $1 RETURNING userid"
+    let result = await queryDatabase(query, [sessionid])
     if ( !result?.rows || result.rows.length > 1 ) {
-      logger.error({ userid }, "db/users/deleteSession#ERROR_DB_QUERY")
+      logger.error({ sessionid }, "db/users/deleteSession#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.deleteSession",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
-      logger.warn({ userid }, "db/users/deleteSession#ERROR_NOT_FOUND")
+      logger.warn({ sessionid }, "db/users/deleteSession#ERROR_NOT_FOUND")
       return {
         error: "databaseConflicts.sessionNotFound",
         data: undefined,
@@ -120,34 +120,55 @@ export const deleteSession = async (userid: string):
     }
     return {
       error: undefined,
-      data: result.rows[0].sessionid,
+      data: result.rows[0].userid,
     }
   }
 
-export const createSession = async (userid: string): 
+export const createSession = async (req: any):
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let useridCheckError = checkUserId(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/users/createSession#ERROR_ARGS_CHECK")
+    let credentialsError = checkUserCredentials(req)
+    if ( credentialsError !== undefined ) {
+      logger.warn(req, "db/users/createSession#ERROR_ARGS_CHECK")
       return {
-        error: useridCheckError,
+        error: credentialsError,
         data: undefined,
       }
     }
-    let delres = await deleteSession(userid)
-    if ( delres.error !== undefined && delres.error !== "databaseConflicts.sessionNotFound" ) {
-        logger.error({ userid }, "db/users/createSession#ERROR_DEL_SESSION")
-        return {
-          error: delres.error,
-          data: undefined,
-        }
+    let { login, password } = req as Credentials
+    let passwordHash = hashPassword(login, password)
+    let checkQuery = `
+      SELECT users.userid as userid, sessions.sessionid as sessionid
+        FROM users LEFT JOIN sessions ON users.userid = sessions.userid
+        WHERE users.login = $1 AND users.password = $2
+    `
+    let checkResult = await queryDatabase(checkQuery, [login, passwordHash])
+    if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
+      logger.error(req, "db/users/createSession#ERROR_CREDENTIALS_CHECK")
+      return {
+        error: "databaseErrors.checkCredentials",
+        data: undefined,
       }
+    }
+    if ( checkResult.rows.length === 0 ) {
+      logger.warn(req, "db/users/createSession#ERROR_NOT_FOUND")
+      return {
+        error: "databaseConflicts.userNotFound",
+        data: undefined,
+      }
+    }
+    if ( typeof checkResult.rows[0].sessionid === "string" ) {
+      return {
+        error: undefined,
+        data: checkResult.rows[0].sessionid,
+      }
+    }
+    let { userid } = checkResult.rows[0]
     let sessionid = randomUUID()
     let query = "INSERT INTO sessions VALUES($1, $2, $3) RETURNING *"
     let queryParams = [userid, sessionid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
-      logger.error({ userid }, "db/users/createSession#ERROR_DB_QUERY")
+      logger.error(req, "db/users/createSession#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.createSession",
         data: undefined,
@@ -197,42 +218,6 @@ export const getUserBySessionId = async (sessionid: string):
     }
   }
 
-export const getUserByCredentials = async (req: any):
-  Promise<{ error: string | undefined, data: User | undefined }> => {
-    let credentialsError = checkUserCredentials(req)
-    if ( credentialsError !== undefined ) {
-      logger.warn(req, "db/users/getUserByCredentials#ERROR_ARGS_CHECK")
-      return {
-        error: credentialsError,
-        data: undefined,
-      }
-    }
-    let { login, password } = req as Credentials
-    let passwordHash = hashPassword(login, password)
-    let query = `
-      SELECT userid, login, name, state, puid, timestamp 
-        FROM users WHERE login = $1 AND password = $2
-    `
-    let result = await queryDatabase(query, [login, passwordHash])
-    if ( !result?.rows || result.rows.length > 1 ) {
-      logger.error(req, "db/users/getUserByCredentials#ERROR_DB_QUERY")
-      return {
-        error: "databaseErrors.getUserByCredentials",
-        data: undefined,
-      }
-    }
-    if ( result.rows.length === 0 ) {
-      logger.warn(req, "db/users/getUserByCredentials#ERROR_NOT_FOUND")
-      return {
-        error: "databaseConflicts.userNotFound",
-        data: undefined,
-      }
-    }
-    return {
-      error: undefined,
-      data: result.rows[0] as User,
-    }
-  }
   
     
   

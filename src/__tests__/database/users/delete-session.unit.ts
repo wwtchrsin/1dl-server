@@ -2,37 +2,37 @@ import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
 
-let uuid = "53e291f8-522b-43b8-a5f5-84795b887a81"
+let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
 let sessionid = "c656b2b6-5008-46d6-b407-92a050476048"
 
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
-    args: uuid,
+    args: sessionid,
     mocks: {
       queryDatabase: {
-        rows: [{ sessionid }]
+        rows: [{ userid }]
       },
     },
     expres: {
       error: undefined,
-      data: sessionid
+      data: userid,
     },
   }, {
     tag: 2,
     args: "abcd",
     mocks: {
       queryDatabase: {
-        rows: [{ sessionid }]
+        rows: [{ userid }]
       },
     },
     expres: {
-      error: "wrongValues.users.userid",
+      error: "wrongValues.users.sessionid",
       data: undefined,
     },
   }, {
     tag: 3,
-    args: uuid,
+    args: sessionid,
     mocks: {
       queryDatabase: {
         rows: []
@@ -44,10 +44,10 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 4,
-    args: uuid,
+    args: sessionid,
     mocks: {
       queryDatabase: {
-        rows: [{ sessionid }, { sessionid }]
+        rows: [{ userid }, { userid }]
       },
     },
     expres: {
@@ -56,7 +56,7 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 5,
-    args: uuid,
+    args: sessionid,
     mocks: {
       queryDatabase: undefined,
     },
@@ -67,7 +67,7 @@ describe("testing database queries...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
-    test(`Function createSession. Unit Test #${tag}`, async () => {
+    test(`Function deleteSession. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
       let result = await users.deleteSession(args)
       expect(result).toStrictEqual(expres)

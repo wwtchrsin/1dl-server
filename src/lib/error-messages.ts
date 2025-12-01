@@ -140,6 +140,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to create a session",
     ru: "Невозможно создать сессию",
   },
+  checkCredentials: {
+    en: "Impossible to check credentials",
+    ru: "Невозможно проверить учетные данные пользователя",
+  },
   getUserBySessionId: {
     en: "Impossible to retrieve user data (using session id)",
     ru: "Невозможно извлечь данные пользователя (используя id сессии)",
