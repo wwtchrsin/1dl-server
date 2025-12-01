@@ -95,13 +95,18 @@ describe("testing database queries...", () => {
     let { args, expres, tag } = testcase
     test(`Function createSession. Intg Test #${tag}`, async () => {
       let result = await createSession(args)
+      let rowCount = 0      
       if ( expres === "success" ) {     
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(limits.patterns.uuid)
+        expect(result.data).toMatch(limits.patterns.sessionid)
+        rowCount++
       } else {
         expect(result.error).toBe(expres)
         expect(result.data).toBeUndefined()
       }
+      let table = await queryDatabase("SELECT * FROM sessions")
+      expect(table).toBeDefined()
+      expect(table.rows).toHaveLength(rowCount)
     })
   }
   test("Function createSession. Intg Test #7", async () => {
@@ -117,12 +122,12 @@ describe("testing database queries...", () => {
     let resultB = await createSession(args1)
     let resultC = await createSession(args2)
     expect(resultA.error).toBeUndefined()
-    expect(resultA.data).toMatch(limits.patterns.uuid)
+    expect(resultA.data).toMatch(limits.patterns.sessionid)
     expect(resultB.error).toBeUndefined()
-    expect(resultB.data).toMatch(limits.patterns.uuid)
+    expect(resultB.data).toMatch(limits.patterns.sessionid)
     expect(resultC.error).toBeUndefined()
-    expect(resultC.data).toMatch(limits.patterns.uuid)
-    expect(resultA.data).toBe(resultB.data)
+    expect(resultC.data).toMatch(limits.patterns.sessionid)
+    expect(resultA.data).not.toBe(resultB.data)
     expect(resultA.data).not.toBe(resultC.data)
   })
 })

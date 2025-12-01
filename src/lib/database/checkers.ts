@@ -98,7 +98,7 @@ export const checkUserId = (userid: string): string | undefined => {
 }
 
 export const checkSessionId = (sessionid: string): string | undefined => {
-  if ( !limits.patterns.uuid.test(sessionid) ) {
+  if ( !limits.patterns.sessionid.test(sessionid) ) {
     return "wrongValues.users.sessionid"
   }
   return undefined

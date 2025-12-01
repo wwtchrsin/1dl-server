@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto"
 import { checkUserData, checkUserId, checkSessionId, checkUserCredentials } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
-import { hashPassword, getTimestamp } from "./miscs"
+import { hashPassword, hashSession, generateToken, getTimestamp } from "./miscs"
 import logger from "../logger"
 
 export type ProfileData = {
@@ -102,8 +102,9 @@ export const deleteSession = async (sessionid: string):
         data: undefined,
       }
     }
+    let sessionHash = hashSession(sessionid)
     let query = "DELETE FROM sessions WHERE sessionid = $1 RETURNING userid"
-    let result = await queryDatabase(query, [sessionid])
+    let result = await queryDatabase(query, [sessionHash])
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ sessionid }, "db/users/deleteSession#ERROR_DB_QUERY")
       return {
@@ -136,11 +137,7 @@ export const createSession = async (req: any):
     }
     let { login, password } = req as Credentials
     let passwordHash = hashPassword(login, password)
-    let checkQuery = `
-      SELECT users.userid as userid, sessions.sessionid as sessionid
-        FROM users LEFT JOIN sessions ON users.userid = sessions.userid
-        WHERE users.login = $1 AND users.password = $2
-    `
+    let checkQuery = "SELECT userid FROM users WHERE login = $1 AND password = $2"
     let checkResult = await queryDatabase(checkQuery, [login, passwordHash])
     if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
       logger.error(req, "db/users/createSession#ERROR_CREDENTIALS_CHECK")
@@ -156,18 +153,22 @@ export const createSession = async (req: any):
         data: undefined,
       }
     }
-    if ( typeof checkResult.rows[0].sessionid === "string" ) {
+    let { userid } = checkResult.rows[0]
+    let deleteQuery = "DELETE FROM sessions WHERE userid = $1"
+    let deleteResult = await queryDatabase(deleteQuery, [userid])
+    if ( deleteResult === undefined ) {
+      logger.error(req, "db/users/createSession#ERROR_SESSION_REMOVE")
       return {
-        error: undefined,
-        data: checkResult.rows[0].sessionid,
+        error: "databaseErrors.deleteSession",
+        data: undefined,
       }
     }
-    let { userid } = checkResult.rows[0]
-    let sessionid = randomUUID()
-    let query = "INSERT INTO sessions VALUES($1, $2, $3) RETURNING *"
-    let queryParams = [userid, sessionid, getTimestamp()]
+    let sessionid = await generateToken()
+    let sessionHash = hashSession(sessionid)
+    let query = "INSERT INTO sessions VALUES($1, $2, $3)"
+    let queryParams = [userid, sessionHash, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
-    if ( result?.rows?.length !== 1 ) {
+    if ( result === undefined || result.rowCount !== 1 ) {
       logger.error(req, "db/users/createSession#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.createSession",
@@ -190,6 +191,7 @@ export const getProfile = async (sessionid: string):
         data: undefined,
       }
     }
+    let sessionHash = hashSession(sessionid)
     let query = `
       SELECT users.userid as userid, login, name, 
         state, puid, users.timestamp as timestamp
@@ -197,7 +199,7 @@ export const getProfile = async (sessionid: string):
           sessions.userid = users.userid AND
           sessions.sessionid = $1
     `
-    let result = await queryDatabase(query, [sessionid])
+    let result = await queryDatabase(query, [sessionHash])
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ sessionid }, "db/users/getProfile#ERROR_DB_QUERY")
       return {

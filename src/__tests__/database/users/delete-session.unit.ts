@@ -3,7 +3,8 @@ import * as conn from "../../../lib/database/conn"
 import limits from "../../../lib/database/limits"
 
 let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
-let sessionid = "c656b2b6-5008-46d6-b407-92a050476048"
+let sessionid = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
+  "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
 
 describe("testing database queries...", () => {
   let testcases = [{

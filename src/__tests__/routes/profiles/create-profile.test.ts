@@ -183,7 +183,7 @@ describe("testing routes...", () => {
         expect(result.body).toBeDefined()
         expect(result.body.error).toStrictEqual(expres.error)
         if ( expres.error === undefined ) {
-          expect(result.body.session).toMatch(limits.patterns.uuid)
+          expect(result.body.session).toMatch(limits.patterns.sessionid)
           expect(result.body.user).toBeDefined()
           expect(result.body.user.userid).toMatch(limits.patterns.uuid)
           expect(result.body.user.login).toBe(args.login)

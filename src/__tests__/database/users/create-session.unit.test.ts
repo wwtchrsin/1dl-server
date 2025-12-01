@@ -7,18 +7,11 @@ let correctData = {
   userid: "53e291f8-522b-43b8-a5f5-84795b887a81",
   login: "1".repeat(limits.users.loginLenMin),
   password: "Aa!11111",
-  sessionid: "95d99ed3-a0a4-4751-847b-5f622b65fc1f",
-}
-
-let correctDataSessionUdf = {
-  userid: "3e7e2b22-c7da-49a1-804f-61542c227d73",
-  login: "2".repeat(limits.users.loginLenMin),
-  password: "Bb@22222",
 }
 
 let wrongData = {
-  login: "3".repeat(limits.users.loginLenMin),
-  password: "Cc#33333",
+  login: "2".repeat(limits.users.loginLenMin),
+  password: "Bb@22222",
 }
 
 let checkRequestSucceeds = (query: string, queryParams: string[]) => {
@@ -26,21 +19,7 @@ let checkRequestSucceeds = (query: string, queryParams: string[]) => {
   let correctPassword = hashPassword(correctData.login, correctData.password)
   if ( login === correctData.login && passwordHash === correctPassword ) {
     return Promise.resolve({ 
-      rows: [{ 
-        userid: correctData.userid,
-        sessionid: correctData.sessionid,
-      }]
-    })
-  }
-  correctPassword = hashPassword(
-    correctDataSessionUdf.login,
-    correctDataSessionUdf.password)
-  if ( login === correctDataSessionUdf.login && passwordHash === correctPassword ) {
-    return Promise.resolve({
-      rows: [{
-        userid: correctData.userid,
-        sessionid: null,
-      }]
+      rows: [{ userid: correctData.userid }]
     })
   }
   return Promise.resolve({ rows: [] })
@@ -48,14 +27,22 @@ let checkRequestSucceeds = (query: string, queryParams: string[]) => {
 
 let checkRequestFails = () => Promise.resolve(undefined)
 
-let mainRequestSucceeds = () => Promise.resolve({ rows: [{}] })
+let deleteRequestSucceeds = () => Promise.resolve({ rowCount: 1 })
+
+let deleteRequestFails = () => Promise.resolve(undefined)
+
+let mainRequestSucceeds = () => Promise.resolve({ rowCount: 1 })
 
 let mainRequestFails = () => Promise.resolve(undefined)
 
-let mockDatabaseQuery = ({ checkRequest, mainRequest }: { checkRequest: Function, mainRequest: Function }) => 
+let mockDatabaseQuery = ({ checkRequest, deleteRequest, mainRequest }: 
+  { checkRequest: Function, deleteRequest: Function, mainRequest: Function }) => 
   ((query: string, queryParams: string[]) => {
     if ( query.trim().indexOf("SELECT") === 0 ) {
       return checkRequest(query, queryParams)
+    }
+    if ( query.trim().indexOf("DELETE") === 0 ) {
+      return deleteRequest(query, queryParams)
     }
     if ( query.trim().indexOf("INSERT") === 0 ) {
       return mainRequest(query, queryParams)
@@ -76,19 +63,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: mockDatabaseQuery({
         checkRequest: checkRequestSucceeds,
-        mainRequest: mainRequestSucceeds,
-      })
-    },
-    expres: "success",
-  }, {
-    tag: 2,
-    args: {
-      login: correctDataSessionUdf.login,
-      password: correctDataSessionUdf.password,
-    },
-    mocks: {
-      queryDatabase: mockDatabaseQuery({
-        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
         mainRequest: mainRequestSucceeds,
       })
     },
@@ -102,6 +77,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: mockDatabaseQuery({
         checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
         mainRequest: mainRequestSucceeds,
       })
     },
@@ -115,6 +91,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: mockDatabaseQuery({
         checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
         mainRequest: mainRequestSucceeds,
       })
     },
@@ -128,6 +105,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: mockDatabaseQuery({
         checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
         mainRequest: mainRequestSucceeds,
       })
     },
@@ -140,24 +118,12 @@ describe("testing database queries...", () => {
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
-        checkRequest: checkRequestSucceeds,
-        mainRequest: mainRequestFails,
+        checkRequest: checkRequestFails,
+        deleteRequest: deleteRequestSucceeds,
+        mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "success",
-  }, {
-    tag: 7,
-    args: {
-      login: correctDataSessionUdf.login,
-      password: correctDataSessionUdf.password,
-    },
-    mocks: {
-      queryDatabase: mockDatabaseQuery({
-        checkRequest: checkRequestSucceeds,
-        mainRequest: mainRequestFails,
-      })
-    },
-    expres: "databaseErrors.createSession",
+    expres: "databaseErrors.checkCredentials",
   }, {
     tag: 8,
     args: {
@@ -166,11 +132,26 @@ describe("testing database queries...", () => {
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
-        checkRequest: checkRequestFails,
+        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestFails,
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseErrors.checkCredentials",
+    expres: "databaseErrors.deleteSession",
+  }, {
+    tag: 9,
+    args: {
+      login: correctData.login,
+      password: correctData.password,
+    },
+    mocks: {
+      queryDatabase: mockDatabaseQuery({
+        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
+        mainRequest: mainRequestFails,
+      })
+    },
+    expres: "databaseErrors.createSession",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
@@ -179,7 +160,7 @@ describe("testing database queries...", () => {
       let result = await users.createSession(args)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(limits.patterns.uuid)
+        expect(result.data).toMatch(limits.patterns.sessionid)
       } else {
         expect(result.error).toBe(expres)
         expect(result.data).toBeUndefined()

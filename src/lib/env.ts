@@ -4,7 +4,7 @@ const env = {
   pg: {
     user: process.env.PG_USER ?? "admin",
     password: process.env.PG_PASSWORD,
-    host: process.env.PG_HOST ?? "http://127.0.0.1",
+    host: process.env.PG_HOST ?? "localhost",
     port: Number(process.env.PG_PORT ?? "5432"),
     database: process.env.PG_DBNAME,
     schema: process.env.PG_SCHEMA ?? "public",
@@ -12,11 +12,11 @@ const env = {
   redis: {
     user: process.env.REDIS_USER ?? "default",
     password: process.env.REDIS_PASSWORD,
-    host: process.env.REDIS_HOST ?? "http://127.0.0.1",
+    host: process.env.REDIS_HOST ?? "localhost",
     port: Number(process.env.REDIS_PORT ?? "6379"),
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
   },
-  passwordSalt: process.env.PASSWORD_SALT ?? "",
+  hashSalt: process.env.HASH_SALT ?? "",
   pinoLogLevel: process.env.PINO_LOGLEVEL ?? "error",
 }
 

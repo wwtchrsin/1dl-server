@@ -15,6 +15,9 @@ afterAll(async () => {
   await pool.end()
 })
 
+let wrongSessionId = "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
+  "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+
 let sessionids = []
 let users = new Map()
 
@@ -43,7 +46,7 @@ describe("testing database queries...", () => {
       let session = await createSession({ login: user.login, password: user.password })
       expect(session.error).toBeUndefined()
       expect(session.data).toBeDefined()
-      expect(session.data).toMatch(limits.patterns.uuid)
+      expect(session.data).toMatch(limits.patterns.sessionid)
       sessionids.push(session.data)
       users.set(session.data, result.data)  
     }
@@ -58,7 +61,7 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 3,
-    args: () => "f1278c63-d098-431f-9cf3-2397b1506b79",
+    args: () => wrongSessionId,
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,

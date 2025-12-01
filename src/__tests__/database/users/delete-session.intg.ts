@@ -25,7 +25,8 @@ let wrongData = {
   login: "2".repeat(limits.users.loginLenMin),
   password: "Bb@22222",
   name: "2".repeat(limits.users.nameLenMin),
-  sessionid: "53e291f8-522b-43b8-a5f5-84795b887a81",
+  sessionid: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
+    "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
 }
 
 describe("testing database queries...", () => {
@@ -67,10 +68,9 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { init, args, expres, tag } = testcase
     test(`Function deleteSession. Intg Test #${tag}`, async () => {
-      let sessionids = new Map<string, string>() 
       let initResult = await createSession(init)
       expect(initResult.error).toBeUndefined()
-      expect(initResult.data).toMatch(limits.patterns.uuid)
+      expect(initResult.data).toMatch(limits.patterns.sessionid)
       correctData.sessionid = initResult.data
       let result = await deleteSession(args())
       let rowCount = 1
