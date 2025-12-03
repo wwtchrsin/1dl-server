@@ -1,12 +1,12 @@
 import { checkUserCredentials } from "../../../lib/database/checkers"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
+      login: examples.login.regLen,
+      password: examples.password.regLen,
     },
     expres: undefined,
   }, {
@@ -19,26 +19,26 @@ describe("testing query validators...", () => {
   }, {
     tag: 3,
     args: {
-      password: "Aa!11111",
+      password: examples.password.regLen,
     },
     expres: "wrongValues.users.credentialsLogin",
   }, {
     tag: 4,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
+      login: examples.login.regLen,
     },
     expres: "wrongValues.users.credentialsPassword",
   }, {
     tag: 5,
     args: {
       login: {},
-      password: "Aa!11111",
+      password: examples.password.regLen,
     },
     expres: "wrongValues.users.credentialsLogin",
   }, {
     tag: 6,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
+      login: examples.login.regLen,
       password: {},
     },
     expres: "wrongValues.users.credentialsPassword",

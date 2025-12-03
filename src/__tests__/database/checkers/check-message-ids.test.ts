@@ -1,5 +1,5 @@
 import { checkMessageIds } from "../../../lib/database/checkers"
-import limits from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
   let testcases = [{
@@ -14,7 +14,7 @@ describe("testing query validators...", () => {
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[0],
+      region: limits.messages.regions[limits.messages.regions.length - 1],
       district: `${limits.messages.districtMax}`,
       room: `${limits.messages.roomMax}`,
       index: `${limits.messages.indexMax}`,
@@ -23,10 +23,10 @@ describe("testing query validators...", () => {
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[limits.messages.regions.length - 1],
-      district: `${limits.messages.districtMax}`,
-      room: `${limits.messages.roomMax}`,
-      index: `${limits.messages.indexMax}`,
+      region: limits.messages.regions[1],
+      district: `${limits.messages.districtMin + 1}`,
+      room: `${limits.messages.roomMin + 1}`,
+      index: `${limits.messages.indexMin + 1}`,
     },
     expres: undefined
   }, {

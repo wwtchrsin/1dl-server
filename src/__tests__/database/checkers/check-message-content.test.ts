@@ -1,5 +1,5 @@
 import { checkMessageContent } from "../../../lib/database/checkers"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
   let testcases = [{
@@ -9,7 +9,7 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
+      text: examples.text.minLen,
       color: limits.messages.colors[0],
     },
     expres: undefined,
@@ -20,65 +20,65 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMax}`,
       room: `${limits.messages.roomMax}`,
       index: `${limits.messages.indexMax}`,
-      text: "1".repeat(limits.messages.textLenMax),
+      text: examples.text.maxLen,
       color: limits.messages.colors[limits.messages.colors.length - 1],
     },
     expres: undefined,
   }, {
     tag: 3,
     args: {
+      region: limits.messages.regions[1],
+      district: `${limits.messages.districtMin + 1}`,
+      room: `${limits.messages.roomMin + 1}`,
+      index: `${limits.messages.indexMin + 1}`,
+      text: examples.text.regLen,
+      color: limits.messages.colors[1],
+    },
+    expres: undefined,
+  }, {
+    tag: 4,
+    args: {
       region: "12345678",
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
+      text: examples.text.minLen,
       color: limits.messages.colors[0],
     },
     expres: "wrongValues.messages.region",
   }, {
-    tag: 4,
+    tag: 5,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin - 1}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
+      text: examples.text.minLen,
       color: limits.messages.colors[0],
     },
     expres: "wrongValues.messages.district",
-  }, {
-    tag: 5,
-    args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMax + 1}`,
-      index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[0],
-    },
-    expres: "wrongValues.messages.room",
   }, {
     tag: 6,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin - 1}`,
-      text: "1".repeat(limits.messages.textLenMin),
+      room: `${limits.messages.roomMax + 1}`,
+      index: `${limits.messages.indexMin}`,
+      text: examples.text.minLen,
       color: limits.messages.colors[0],
     },
-    expres: "wrongValues.messages.index",
+    expres: "wrongValues.messages.room",
   }, {
     tag: 7,
     args: {
       region: limits.messages.regions[0],
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin - 1),
+      index: `${limits.messages.indexMin - 1}`,
+      text: examples.text.minLen,
       color: limits.messages.colors[0],
     },
-    expres: "wrongValues.messages.text",
+    expres: "wrongValues.messages.index",
   }, {
     tag: 8,
     args: {
@@ -86,7 +86,7 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMax + 1),
+      text: examples.text.tooShort,
       color: limits.messages.colors[0],
     },
     expres: "wrongValues.messages.text",
@@ -97,10 +97,10 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin + 1),
+      text: examples.text.tooLong,
       color: limits.messages.colors[0],
     },
-    expres: undefined,
+    expres: "wrongValues.messages.text",
   }, {
     tag: 10,
     args: {
@@ -108,10 +108,10 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
-      color: "12345678",
+      text: examples.text.minLen,
+      color: limits.messages.colors[0],
     },
-    expres: "wrongValues.messages.color",
+    expres: undefined,
   }, {
     tag: 11,
     args: {
@@ -119,7 +119,18 @@ describe("testing query validators...", () => {
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
-      text: "1".repeat(limits.messages.textLenMin),
+      text: examples.text.minLen,
+      color: "12345678",
+    },
+    expres: "wrongValues.messages.color",
+  }, {
+    tag: 12,
+    args: {
+      region: limits.messages.regions[0],
+      district: `${limits.messages.districtMin}`,
+      room: `${limits.messages.roomMin}`,
+      index: `${limits.messages.indexMin}`,
+      text: examples.text.minLen,
       color: limits.messages.colors[1],
     },
     expres: undefined,

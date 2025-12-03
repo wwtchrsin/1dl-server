@@ -1,17 +1,17 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 import { hashPassword } from "../../../lib/database/miscs"
 
 let correctData = {
-  userid: "53e291f8-522b-43b8-a5f5-84795b887a81",
-  login: "1".repeat(limits.users.loginLenMin),
-  password: "Aa!11111",
+  userid: examples.uuid[2],
+  login: examples.login.correct[2],
+  password: examples.password.correct[2],
 }
 
 let wrongData = {
-  login: "2".repeat(limits.users.loginLenMin),
-  password: "Bb@22222",
+  login: examples.login.correct[3],
+  password: examples.password.correct[3],
 }
 
 let checkRequestSucceeds = (query: string, queryParams: string[]) => {
@@ -160,7 +160,7 @@ describe("testing database queries...", () => {
       let result = await users.createSession(args)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(limits.patterns.sessionid)
+        expect(result.data).toMatch(patterns.sessionid)
       } else {
         expect(result.error).toBe(expres)
         expect(result.data).toBeUndefined()

@@ -4,7 +4,7 @@ import { pool, queryDatabase } from "../../../lib/database/conn"
 import { getMessages, createMessage } from "../../../lib/database/messages"
 import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -21,91 +21,91 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
     },
     init: [[0, {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
       text: "1".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[0],
+      color: examples.color.first,
     }], [1, {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 1,
       text: "2".repeat(limits.messages.textLenMax),
-      color: limits.messages.colors[1],
+      color: examples.color.some,
     }], [0, {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 2,
       text: "A".repeat(limits.messages.textLenMin + 1),
-      color: limits.messages.colors[1],
+      color: examples.color.some,
     }]],
     expres: [],
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
     },
     init: [[1, {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
       text: "#".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[limits.messages.colors.length - 1],
+      color: examples.color.last,
     }], [1, {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax - 1,
       text: "1".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[limits.messages.colors.length - 2],
+      color: examples.color.last,
     }]],
     expres: [],
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
     },
     init: [[0, {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
       text: "&".repeat(limits.messages.textLenMax),
-      color: limits.messages.colors[1],
+      color: examples.color.some,
     }], [0, {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 1,
       text: "@".repeat(limits.messages.textLenMax),
-      color: limits.messages.colors[1],
+      color: examples.color.some,
     }], [1, {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax - 2,
       text: "$".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[0],
+      color: examples.color.first,
     }], [0, {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax,
       text: "%".repeat(limits.messages.textLenMin),
-      color: limits.messages.colors[0],
+      color: examples.color.first,
     }]],
     expres: [],
   }]
@@ -125,8 +125,8 @@ describe("testing database queries...", () => {
       let result = await createProfile(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(limits.patterns.uuid)
-      expect(result.data.puid).toMatch(limits.patterns.uuid)
+      expect(result.data.userid).toMatch(patterns.uuid)
+      expect(result.data.puid).toMatch(patterns.uuid)
       userids.push(result.data.userid)
       puids.push(result.data.puid)
       usernames.push(user.name)
@@ -195,7 +195,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin - 1,
       room: limits.messages.roomMin,
     },
@@ -206,7 +206,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMin,
       room: limits.messages.roomMax + 1,
     },
@@ -217,7 +217,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 7,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: limits.messages.districtMax - 2,
       room: limits.messages.roomMax - 2,
     },

@@ -1,18 +1,15 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
-import limits from "../../../lib/database/limits"
-
-let text = "1".repeat(limits.messages.textLenMin)
-let timestamp = "123456789"
+import { limits, examples } from "../../../lib/database/limits"
 
 let getMessage = (args: any) => ({
   region: args.region,
   district: Number(args.district),
   room: Number(args.room),
   index: 0,
-  text: "1".repeat(limits.messages.textLenMin),
-  color: limits.messages.colors[0],
-  timestamp: timestamp,
+  text: examples.text.correct[0],
+  color: examples.color.first,
+  timestamp: "123456789",
 })
 
 let returnMessage = (queryString: string, queryParams: string[]) => {
@@ -34,7 +31,7 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
     },
@@ -45,7 +42,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[limits.messages.regions.length - 1],
+      region: examples.region.last,
       district: `${limits.messages.districtMax}`,
       room: `${limits.messages.roomMax}`,
     },
@@ -56,7 +53,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin + 1}`,
       room: `${limits.messages.roomMin + 1}`,
     },
@@ -67,7 +64,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
     },
@@ -81,7 +78,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
     },
@@ -109,7 +106,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin - 1}`,
       room: `${limits.messages.roomMin}`,
     },
@@ -123,7 +120,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 7,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMax + 1}`,
     },

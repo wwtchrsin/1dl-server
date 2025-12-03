@@ -1,101 +1,101 @@
 import { checkUserData } from "../../../lib/database/checkers"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     expres: undefined,
   }, {
     tag: 2,
     args: {
-      login: "1".repeat(limits.users.loginLenMax),
-      password: "aA!12345".repeat(3),
-      name: "1".repeat(limits.users.nameLenMax),
+      login: examples.login.maxLen,
+      password: examples.password.maxLen,
+      name: examples.name.maxLen,
     },
     expres: undefined,
   }, {
     tag: 3,
     args: {
-      login: "1".repeat(limits.users.loginLenMin + 1),
-      password: "aA!123456",
-      name: "1".repeat(limits.users.nameLenMin + 1),
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
     },
     expres: undefined,
   }, {
     tag: 4,
     args: {
-      login: "-_AaBbYyZz0189",
-      password: "bB@#$%^&*_-+=5",
-      name: "Abc 0189-=<{[\\~",
+      login: examples.login.correct[0],
+      password: examples.password.correct[0],
+      name: examples.name.correct[0],
     },
     expres: undefined,
   }, {
     tag: 5,
     args: {
-      login: "1".repeat(limits.users.loginLenMin - 1),
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.tooShort,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.login",
   }, {
     tag: 6,
     args: {
-      login: "1".repeat(limits.users.loginLenMax + 1),
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.tooLong,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.login",
   }, {
     tag: 7,
     args: {
-      login: "1".repeat(limits.users.loginLenMin) + "%",
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.wrongSymbols,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.login",
   }, {
     tag: 8,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!1234",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.regLen,
+      password: examples.password.tooShort,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
     tag: 9,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!12345".repeat(3) + "1",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.regLen,
+      password: examples.password.tooLong,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
     tag: 10,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!<2345",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.regLen,
+      password: examples.password.wrongSymbols,
+      name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
     tag: 11,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMin - 1),
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+      name: examples.name.tooShort,
     },
     expres: "wrongValues.users.name",
   }, {
     tag: 12,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "aA!12345",
-      name: "1".repeat(limits.users.nameLenMax + 1),
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+      name: examples.name.tooLong,
     },
     expres: "wrongValues.users.name",
   }]

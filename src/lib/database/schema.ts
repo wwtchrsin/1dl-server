@@ -1,4 +1,4 @@
-import limits from "./limits"
+import { limits } from "./limits"
 
 const regions = limits.messages.regions.map(r => `'${r}'`).join(", ")
 const colors = limits.messages.colors.map(r => `'${r}'`).join(", ")

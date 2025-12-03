@@ -1,4 +1,4 @@
-import limits from "./database/limits"
+import { limits } from "./database/limits"
 import type { TextResource } from "./langs"
 
 const passwordSymbols = limits.users.passwordSymbols.map(r => `"${r}"`).join(", ")

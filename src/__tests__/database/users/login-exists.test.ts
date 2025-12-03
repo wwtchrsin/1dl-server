@@ -1,8 +1,8 @@
 import * as conn from "../../../lib/database/conn"
 import * as users from "../../../lib/database/users"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 
-let login = "1".repeat(limits.users.loginLenMin)
+let login = examples.login.correct[0]
 
 describe("testing database queries...", () => {
   afterEach(() => {

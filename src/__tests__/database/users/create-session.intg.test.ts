@@ -3,7 +3,7 @@ process.env.PG_SCHEMA = "createSessionTest"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createProfile, createSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -16,18 +16,18 @@ afterAll(async () => {
 })
 
 let correctData = [{
-  login: "1".repeat(limits.users.loginLenMin),
-  password: "Aa!11111",
-  name: "1".repeat(limits.users.nameLenMin),
+  login: examples.login.correct[0],
+  password: examples.password.correct[0],
+  name: examples.name.correct[0],
 }, {
-  login: "2".repeat(limits.users.loginLenMin),
-  password: "Bb@22222",
-  name: "2".repeat(limits.users.nameLenMin),
+  login: examples.login.correct[2],
+  password: examples.password.correct[2],
+  name: examples.name.correct[2],
 }]
 
 let wrongData = {
-  login: "3".repeat(limits.users.loginLenMin),
-  password: "Cc#33333",
+  login: examples.login.correct[1],
+  password: examples.password.correct[1],
 }
 
 describe("testing database queries...", () => {
@@ -39,13 +39,13 @@ describe("testing database queries...", () => {
       let result = await createProfile(user)
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(limits.patterns.uuid)
+      expect(result.data.userid).toMatch(patterns.uuid)
       expect(result.data.login).toBe(user.login)
       expect(result.data.password).toBeUndefined() 
       expect(result.data.name).toBe(user.name)
       expect(result.data.state).toBeDefined()
-      expect(result.data.puid).toMatch(limits.patterns.uuid)
-      expect(result.data.timestamp).toMatch(limits.patterns.timestamp) 
+      expect(result.data.puid).toMatch(patterns.uuid)
+      expect(result.data.timestamp).toMatch(patterns.timestamp) 
     }
   })
   let testcases = [{
@@ -98,7 +98,7 @@ describe("testing database queries...", () => {
       let rowCount = 0      
       if ( expres === "success" ) {     
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(limits.patterns.sessionid)
+        expect(result.data).toMatch(patterns.sessionid)
         rowCount++
       } else {
         expect(result.error).toBe(expres)
@@ -122,11 +122,11 @@ describe("testing database queries...", () => {
     let resultB = await createSession(args1)
     let resultC = await createSession(args2)
     expect(resultA.error).toBeUndefined()
-    expect(resultA.data).toMatch(limits.patterns.sessionid)
+    expect(resultA.data).toMatch(patterns.sessionid)
     expect(resultB.error).toBeUndefined()
-    expect(resultB.data).toMatch(limits.patterns.sessionid)
+    expect(resultB.data).toMatch(patterns.sessionid)
     expect(resultC.error).toBeUndefined()
-    expect(resultC.data).toMatch(limits.patterns.sessionid)
+    expect(resultC.data).toMatch(patterns.sessionid)
     expect(resultA.data).not.toBe(resultB.data)
     expect(resultA.data).not.toBe(resultC.data)
   })

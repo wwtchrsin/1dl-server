@@ -1,6 +1,6 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 let loginDoesntExist = () => {
   return Promise.resolve({ error: undefined, data: false })
@@ -29,12 +29,12 @@ let requestReturnsError = () => {
 }
 
 let resultChecks = (args: any) => ({
-  userid: limits.patterns.uuid,
+  userid: patterns.uuid,
   login: new RegExp(`^${args.login}$`),
   name: new RegExp(`^${args.name}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: limits.patterns.uuid,
-  timestamp: limits.patterns.timestamp,
+  puid: patterns.uuid,
+  timestamp: patterns.timestamp,
 })
 
 describe("testing database queries...", () => {
@@ -44,9 +44,9 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -56,9 +56,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      login: "1".repeat(limits.users.loginLenMax),
-      password: "Aa!11111".repeat(3),
-      name: "1".repeat(limits.users.nameLenMax),
+      login: examples.login.maxLen,
+      password: examples.password.maxLen,
+      name: examples.name.maxLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -68,9 +68,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      login: "1".repeat(limits.users.loginLenMin + 1),
-      password: "Aa!111111",
-      name: "1".repeat(limits.users.nameLenMin + 1),
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -80,9 +80,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      login: "1".repeat(limits.users.loginLenMin - 1),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.tooShort,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -92,9 +92,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!1111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.tooShort,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -104,9 +104,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMax + 1),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.tooLong,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -116,9 +116,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 7,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginExists,
@@ -128,9 +128,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 8,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginCheckError,
@@ -140,9 +140,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 9,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginDoesntExist,
@@ -152,9 +152,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 10,
     args: {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: "1".repeat(limits.users.nameLenMin),
+      login: examples.login.minLen,
+      password: examples.password.minLen,
+      name: examples.name.minLen,
     },
     mocks: {
       loginExists: loginDoesntExist,

@@ -1,12 +1,14 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 
-let text = "abcd efg hijk lmnop"
-let color = limits.messages.colors[0]
-let puid = "53e291f8-522b-43b8-a5f5-84795b887a81"
-let username = "12345678"
-let timestamp = 123456789
+let msgData = {
+  text: examples.text.correct[0],
+  color: examples.color.some,
+  puid: examples.uuid[0],
+  username: examples.name.correct[0],
+  timestamp: 123456789,
+}
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
   let [region, district, room, index] = queryParams
@@ -15,11 +17,11 @@ let returnOneMessage = (queryString: string, queryParams: string[]) => {
     district: Number(district),
     room: Number(room),
     index: Number(index),
-    text: text,
-    color: color,
-    puid: puid,
-    username: username,
-    timestamp: timestamp,
+    text: msgData.text,
+    color: msgData.color,
+    puid: msgData.puid,
+    username: msgData.username,
+    timestamp: msgData.timestamp,
   }
   return Promise.resolve({ rows: [message] })
 }
@@ -31,11 +33,11 @@ let returnTwoMessages = (queryString: string, queryParams: string[]) => {
     district: Number(district),
     room: Number(room),
     index: Number(index),
-    text: text,
-    color: color,
-    puid: puid,
-    username: username,
-    timestamp: timestamp,
+    text: msgData.text,
+    color: msgData.color,
+    puid: msgData.puid,
+    username: msgData.username,
+    timestamp: msgData.timestamp,
   }
   return Promise.resolve({ rows: [message, message] })
 }
@@ -51,7 +53,11 @@ let success = (args: any) => ({
     district: Number(args.district),
     room: Number(args.room),
     index: Number(args.index),
-    text, color, puid, username, timestamp,
+    text: msgData.text, 
+    color: msgData.color,
+    puid: msgData.puid,
+    username: msgData.username,
+    timestamp: msgData.timestamp,
   }
 })
 
@@ -59,7 +65,7 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
@@ -71,7 +77,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[limits.messages.regions.length - 1],
+      region: examples.region.last,
       district: `${limits.messages.districtMax}`,
       room: `${limits.messages.roomMax}`,
       index: `${limits.messages.indexMax}`,
@@ -83,7 +89,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[1],
+      region: examples.region.some,
       district: `${limits.messages.districtMin + 1}`,
       room: `${limits.messages.roomMin + 1}`,
       index: `${limits.messages.indexMin + 1}`,
@@ -95,7 +101,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
@@ -107,7 +113,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
@@ -119,7 +125,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
@@ -143,7 +149,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 8,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin - 1}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin}`,
@@ -155,7 +161,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 9,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMax + 1}`,
       index: `${limits.messages.indexMin}`,
@@ -167,7 +173,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 10,
     args: {
-      region: limits.messages.regions[0],
+      region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
       index: `${limits.messages.indexMin - 1}`,
@@ -182,7 +188,7 @@ describe("testing database queries...", () => {
   })
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
-    test(`Function getMessages. Test #${tag}`, async () => {
+    test(`Function getMessages. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await messages.getMessage(args)
       if ( expres === "success" ) {

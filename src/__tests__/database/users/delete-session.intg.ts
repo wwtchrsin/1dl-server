@@ -3,7 +3,7 @@ process.env.PG_SCHEMA = "deleteSessionTest"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { deleteSession, createSession, createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -16,17 +16,16 @@ afterAll(async () => {
 })
 
 let correctData = {
-  login: "1".repeat(limits.users.loginLenMin),
-  password: "Aa!11111",
-  name: "1".repeat(limits.users.nameLenMin),
+  login: examples.login.correct[0],
+  password: examples.password.correct[0],
+  name: examples.name.correct[0],
 }
 
 let wrongData = {
-  login: "2".repeat(limits.users.loginLenMin),
-  password: "Bb@22222",
-  name: "2".repeat(limits.users.nameLenMin),
-  sessionid: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
-    "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+  login: examples.login.correct[1],
+  password: examples.password.correct[1],
+  name: examples.name.correct[1],
+  sessionid: examples.sessionid[1],
 }
 
 describe("testing database queries...", () => {
@@ -37,7 +36,7 @@ describe("testing database queries...", () => {
     let result = await createProfile(correctData)
     expect(result.error).toBeUndefined()
     expect(result.data).toBeDefined()
-    expect(result.data.userid).toMatch(limits.patterns.uuid)
+    expect(result.data.userid).toMatch(patterns.uuid)
     correctData.userid = result.data.userid
   })
   let testcases = [{
@@ -70,13 +69,13 @@ describe("testing database queries...", () => {
     test(`Function deleteSession. Intg Test #${tag}`, async () => {
       let initResult = await createSession(init)
       expect(initResult.error).toBeUndefined()
-      expect(initResult.data).toMatch(limits.patterns.sessionid)
+      expect(initResult.data).toMatch(patterns.sessionid)
       correctData.sessionid = initResult.data
       let result = await deleteSession(args())
       let rowCount = 1
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(limits.patterns.uuid)
+        expect(result.data).toMatch(patterns.uuid)
         expect(result.data).toBe(correctData.userid)
         rowCount--
       } else {

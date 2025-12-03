@@ -4,7 +4,7 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 import { wrongValues, databaseErrors, databaseConflicts } 
   from "../../../lib/error-messages"
 
@@ -29,9 +29,9 @@ describe("testing routes...", () => {
     tag: 1,
     calls: [{   
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: {
         error: undefined,
@@ -42,9 +42,9 @@ describe("testing routes...", () => {
     tag: 2,
     calls: [{    
       args: {
-        login: "1".repeat(limits.users.loginLenMax),
-        password: "Aa!11111".repeat(3),
-        name: "1".repeat(limits.users.nameLenMax),
+        login: examples.login.maxLen,
+        password: examples.password.maxLen,
+        name: examples.name.maxLen,
       },
       expres: {
         error: undefined,
@@ -55,9 +55,9 @@ describe("testing routes...", () => {
     tag: 3,
     calls: [{    
       args: {
-        login: "1".repeat(limits.users.loginLenMin + 1),
-        password: "Aa!111111",
-        name: "1".repeat(limits.users.nameLenMin + 1),
+        login: examples.login.regLen,
+        password: examples.password.regLen,
+        name: examples.name.regLen,
       },
       expres: {
         error: undefined,
@@ -68,9 +68,9 @@ describe("testing routes...", () => {
     tag: 4,
     calls: [{    
       args: {
-        login: "1".repeat(limits.users.loginLenMin - 1),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.tooShort,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: {
         error: wrongValues.users.login,
@@ -81,9 +81,9 @@ describe("testing routes...", () => {
     tag: 5,
     calls: [{    
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!1111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.minLen,
+        password: examples.password.tooLong,
+        name: examples.name.minLen,
       },
       expres: {
         error: wrongValues.users.password,
@@ -94,9 +94,9 @@ describe("testing routes...", () => {
     tag: 6,
     calls: [{    
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin - 1),
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.tooShort,
       },
       expres: {
         error: wrongValues.users.name,
@@ -107,9 +107,9 @@ describe("testing routes...", () => {
     tag: 7,
     calls: [{   
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.correct[0],
+        name: examples.name.correct[0],
       },
       expres: {
         error: undefined,
@@ -117,9 +117,9 @@ describe("testing routes...", () => {
       },
     }, {   
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Bb@22222",
-        name: "2".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.correct[1],
+        name: examples.name.correct[1],
       },
       expres: {
         error: databaseConflicts.loginTaken,
@@ -130,9 +130,9 @@ describe("testing routes...", () => {
     tag: 8,
     calls: [{   
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.correct[0],
+        name: examples.name.correct[0],
       },
       expres: {
         error: undefined,
@@ -140,9 +140,9 @@ describe("testing routes...", () => {
       },
     }, {   
       args: {
-        login: "2".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[1],
+        password: examples.password.correct[1],
+        name: examples.name.correct[1],
       },
       expres: {
         error: undefined,
@@ -153,9 +153,9 @@ describe("testing routes...", () => {
     tag: 9,
     calls: [{   
       args: {
-        login: "1".repeat(limits.users.loginLenMin - 1),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.tooShort,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: {
         error: wrongValues.users.login,
@@ -163,9 +163,9 @@ describe("testing routes...", () => {
       },
     }, {   
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: {
         error: undefined,
@@ -183,15 +183,15 @@ describe("testing routes...", () => {
         expect(result.body).toBeDefined()
         expect(result.body.error).toStrictEqual(expres.error)
         if ( expres.error === undefined ) {
-          expect(result.body.session).toMatch(limits.patterns.sessionid)
+          expect(result.body.session).toMatch(patterns.sessionid)
           expect(result.body.user).toBeDefined()
-          expect(result.body.user.userid).toMatch(limits.patterns.uuid)
+          expect(result.body.user.userid).toMatch(patterns.uuid)
           expect(result.body.user.login).toBe(args.login)
           expect(result.body.user.password).toBeUndefined()
           expect(result.body.user.name).toBe(args.name)
           expect(result.body.user.state).toBeDefined()
-          expect(result.body.user.puid).toMatch(limits.patterns.uuid)
-          expect(result.body.user.timestamp).toMatch(limits.patterns.timestamp)
+          expect(result.body.user.puid).toMatch(patterns.uuid)
+          expect(result.body.user.timestamp).toMatch(patterns.timestamp)
         } else {
           expect(result.body.session).toBeUndefined()
           expect(result.body.user).toBeUndefined()

@@ -1,8 +1,5 @@
-import limits from "./limits"
+import { limits, patterns } from "./limits"
 import { wrongValues } from "../error-messages"
-
-const loginPattern = new RegExp(limits.users.loginPattern)
-const passwordPattern = new RegExp(limits.users.passwordPattern)
 
 export const checkRoomIds = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
@@ -60,14 +57,14 @@ export const checkUserData = (req: any): string | undefined => {
   if ( isNaN(loginLen) || loginLen < limits.users.loginLenMin ||
     loginLen > limits.users.loginLenMax ||
     typeof req?.login !== "string" ||
-    !loginPattern.test(req?.login) ) {
+    !patterns.login.test(req?.login) ) {
       return "wrongValues.users.login"
     }
   let passwordLen = Number(req?.password?.length)
   if ( isNaN(passwordLen) || passwordLen < limits.users.passwordLenMin ||
     passwordLen > limits.users.passwordLenMax ||
     typeof req?.password !== "string" ||
-    !passwordPattern.test(req?.password) ) {
+    !patterns.password.test(req?.password) ) {
       return "wrongValues.users.password"
     }
   let nameLen = Number(req?.name?.length)
@@ -91,14 +88,14 @@ export const checkUserCredentials = (req: any): string | undefined => {
 }
 
 export const checkUserId = (userid: string): string | undefined => {
-  if ( !limits.patterns.uuid.test(userid) ) {
+  if ( !patterns.uuid.test(userid) ) {
     return "wrongValues.users.userid"
   }
   return undefined
 }
 
 export const checkSessionId = (sessionid: string): string | undefined => {
-  if ( !limits.patterns.sessionid.test(sessionid) ) {
+  if ( !patterns.sessionid.test(sessionid) ) {
     return "wrongValues.users.sessionid"
   }
   return undefined

@@ -1,30 +1,28 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import limits from "../../../lib/database/limits"
+import { limits, examples } from "../../../lib/database/limits"
 import { hashSession } from "../../../lib/database/miscs"
 
-let sessionids = [
-  "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
-    "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
-  "df83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
-    "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
-  "ef83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85" +
-    "f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+let correctSessionids = [
+  examples.sessionid[0],
+  examples.sessionid[1],
 ]
 
-let userlist = new Map([[hashSession(sessionids[0]), {
-  userid: "b23a03a5-9f91-4422-a012-4b7d6183a83f",
-  login: "1".repeat(limits.users.loginLenMin),
-  name: "1".repeat(limits.users.nameLenMin),
+let wrongSessionid = examples.sessionid[2]
+
+let userlist = new Map([[hashSession(correctSessionids[0]), {
+  userid: examples.uuid[0],
+  login: examples.login.correct[0],
+  name: examples.name.correct[0],
   state: "inactive",
-  puid: "46aa627b-9647-4b05-8084-90a658405fe4",
+  puid: examples.uuid[1],
   timestamp: "123456789",
-}], [hashSession(sessionids[1]), {
-  userid: "91cfb27d-f9cf-441e-82e2-f645d2566b4e",
-  login: "2".repeat(limits.users.loginLenMin),
-  name: "2".repeat(limits.users.nameLenMin),
+}], [hashSession(correctSessionids[1]), {
+  userid: examples.uuid[2],
+  login: examples.login.correct[1],
+  name: examples.name.correct[1],
   state: "inactive",
-  puid: "38945a9a-bdab-443b-9751-3419dbc72e6b",
+  puid: examples.uuid[3],
   timestamp: "123456789",
 }]])
 
@@ -43,14 +41,14 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: sessionids[0],
+    args: correctSessionids[0],
     mocks: {
       queryDatabase: requestSucceeds,
     },
     expres: "success",
   }, {
     tag: 2,
-    args: sessionids[1],
+    args: correctSessionids[1],
     mocks: {
       queryDatabase: requestSucceeds,
     },
@@ -64,14 +62,14 @@ describe("testing database queries...", () => {
     expres: "wrongValues.users.sessionid",
   }, {
     tag: 4,
-    args: sessionids[2],
+    args: wrongSessionid,
     mocks: {
       queryDatabase: requestSucceeds,
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
-    args: sessionids[0],
+    args: correctSessionids[0],
     mocks: {
       queryDatabase: requestFails,
     },

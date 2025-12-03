@@ -3,7 +3,7 @@ process.env.PG_SCHEMA = "createProfileTest"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -16,22 +16,22 @@ afterAll(async () => {
 })
 
 let databaseChecks = {
-  userid: limits.patterns.uuid,
+  userid: patterns.uuid,
   login: new RegExp(limits.users.loginPattern),
-  password: limits.patterns.passwordHash,
+  password: patterns.passwordHash,
   name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: limits.patterns.uuid,
-  timestamp: limits.patterns.timestamp,
+  puid: patterns.uuid,
+  timestamp: patterns.timestamp,
 }
 
 let resultChecks = (args: any) => ({
-  userid: limits.patterns.uuid,
+  userid: patterns.uuid,
   login: new RegExp(`^${args.login}$`),
   name: new RegExp(`^${args.name}$`),
   state: new RegExp(`^[a-z]+$`),
-  puid: limits.patterns.uuid,
-  timestamp: limits.patterns.timestamp,
+  puid: patterns.uuid,
+  timestamp: patterns.timestamp,
 })
 
 describe("testing database queries...", () => {
@@ -42,9 +42,9 @@ describe("testing database queries...", () => {
     tag: 1,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }],
@@ -52,9 +52,9 @@ describe("testing database queries...", () => {
     tag: 2,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMax),
-        password: "Aa!11111".repeat(3),
-        name: "1".repeat(limits.users.nameLenMax),
+        login: examples.login.maxLen,
+        password: examples.password.maxLen,
+        name: examples.name.maxLen,
       },
       expres: "success",
     }],
@@ -62,9 +62,9 @@ describe("testing database queries...", () => {
     tag: 3,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin + 1),
-        password: "Aa!111111",
-        name: "1".repeat(limits.users.nameLenMin + 1),
+        login: examples.login.regLen,
+        password: examples.password.regLen,
+        name: examples.name.regLen,
       },
       expres: "success",
     }],
@@ -72,9 +72,9 @@ describe("testing database queries...", () => {
     tag: 4,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin - 1),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.tooShort,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "wrongValues.users.login",
     }],
@@ -82,9 +82,9 @@ describe("testing database queries...", () => {
     tag: 5,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!1111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.minLen,
+        password: examples.password.tooShort,
+        name: examples.name.minLen,
       },
       expres: "wrongValues.users.password",
     }],
@@ -92,9 +92,9 @@ describe("testing database queries...", () => {
     tag: 6,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin - 1),
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.tooShort,
       },
       expres: "wrongValues.users.name",
     }],
@@ -102,16 +102,16 @@ describe("testing database queries...", () => {
     tag: 7,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }, {
       args: {
-        login: "2".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[1],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }],
@@ -119,16 +119,16 @@ describe("testing database queries...", () => {
     tag: 8,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }, {
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[0],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "databaseConflicts.loginTaken",
     }],
@@ -136,23 +136,23 @@ describe("testing database queries...", () => {
     tag: 9,
     calls: [{
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[2],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }, {
       args: {
-        login: "1".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[2],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "databaseConflicts.loginTaken",
     }, {
       args: {
-        login: "2".repeat(limits.users.loginLenMin),
-        password: "Aa!11111",
-        name: "1".repeat(limits.users.nameLenMin),
+        login: examples.login.correct[3],
+        password: examples.password.minLen,
+        name: examples.name.minLen,
       },
       expres: "success",
     }],

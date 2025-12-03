@@ -4,9 +4,10 @@ import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createMessage } from "../../../lib/database/messages"
 import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
-let userid = ""
+let correctData = {}
+
 let username = "abcd 123"
 
 beforeAll(async () => {
@@ -19,25 +20,15 @@ afterAll(async () => {
   await pool.end()
 })
 
-let resultChecks = (args: any) => ({
-  region: new RegExp(`^${args.region}$`),
-  district: new RegExp(`^${args.district}$`),
-  room: new RegExp(`^${args.room}$`),
-  index: new RegExp(`^${args.index}$`),
-  text: new RegExp(`^${args.text}$`),
-  color: new RegExp(`^${args.color}$`),
-  timestamp: limits.patterns.timestamp,
-})
-
 describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
   test("Function createMessage. Preparing database...", async () => {
     let args = {
-      login: "1".repeat(limits.users.loginLenMin),
-      password: "Aa!11111",
-      name: username,
+      login: examples.login.correct[1],
+      password: examples.password.correct[1],
+      name: examples.name.correct[1],
     }
     let result = await createProfile(args)
     let table = await pool.query("SELECT userid FROM users")
@@ -45,20 +36,20 @@ describe("testing database queries...", () => {
     expect(result.data).toBeDefined()
     expect(table).toBeDefined()
     expect(table.rows).toHaveLength(1)
-    expect(table.rows[0].userid).toMatch(limits.patterns.uuid)
-    userid = table.rows[0].userid
+    expect(table.rows[0].userid).toMatch(patterns.uuid)
+    correctData.userid = table.rows[0].userid
   })
   let testcases = [{
     tag: 1,
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "success",
     }],
@@ -67,12 +58,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: examples.region.last,
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
-        text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
+        text: examples.text.maxLen,
+        color: examples.color.last,
       },
       expres: "success",
     }],
@@ -81,12 +72,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.some,
         district: `${limits.messages.districtMin + 1}`,
         room: `${limits.messages.roomMin + 1}`,
         index: `${limits.messages.indexMin + 1}`,
-        text: "1".repeat(limits.messages.textLenMin + 1),
-        color: limits.messages.colors[1],
+        text: examples.text.regLen,
+        color: examples.color.some,
       },
       expres: "success",
     }],
@@ -99,8 +90,8 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "wrongValues.messages.region",
     }],
@@ -109,12 +100,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin - 1}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "wrongValues.messages.district",
     }],
@@ -123,12 +114,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin - 1}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "wrongValues.messages.room",
     }],
@@ -137,12 +128,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax + 1}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "wrongValues.messages.index",
     }],
@@ -151,12 +142,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax}`,
-        text: "1".repeat(limits.messages.textLenMax + 1),
-        color: limits.messages.colors[0],
+        text: examples.text.tooShort,
+        color: examples.color.first,
       },
       expres: "wrongValues.messages.text",
     }],
@@ -165,11 +156,11 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax}`,
-        text: "1".repeat(limits.messages.textLenMax),
+        text: examples.text.minLen,
         color: "abcd",
       },
       expres: "wrongValues.messages.color",
@@ -179,23 +170,23 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "2".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[1],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "success",
     }, {
       wrongid: false,
       args: {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "databaseConflicts.messageAlreadyExists",
     }],
@@ -204,23 +195,23 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: false,
       args: {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "success",
     }, {
       wrongid: false,
       args: {
-        region: limits.messages.regions[1],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,
-        text: "2".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[1],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "success",
     }],
@@ -229,12 +220,12 @@ describe("testing database queries...", () => {
     calls: [{
       wrongid: true,
       args: {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
       expres: "wrongValues.users.userid",
     }],
@@ -246,18 +237,17 @@ describe("testing database queries...", () => {
       let table = []
       for ( let call of calls ) {
         let { args, wrongid, expres } = call
-        let id = !wrongid ? userid : "abcd"
+        let id = !wrongid ? correctData.userid : "abcd"
         let result = await createMessage(id, args)
         if ( expres === "success" ) {
-          let checks = resultChecks(args)
           expect(result.data).toBeDefined()
-          expect(result.data.region).toMatch(checks.region)
-          expect(`${result.data.district}`).toMatch(checks.district)
-          expect(`${result.data.room}`).toMatch(checks.room) 
-          expect(`${result.data.index}`).toMatch(checks.index)
-          expect(result.data.text).toMatch(checks.text)
-          expect(result.data.color).toMatch(checks.color)
-          expect(result.data.timestamp).toMatch(checks.timestamp)
+          expect(result.data.region).toBe(args.region)
+          expect(`${result.data.district}`).toBe(args.district)
+          expect(`${result.data.room}`).toBe(args.room) 
+          expect(`${result.data.index}`).toBe(args.index)
+          expect(result.data.text).toBe(args.text)
+          expect(result.data.color).toBe(args.color)
+          expect(result.data.timestamp).toMatch(patterns.timestamp)
           expect(result.error).toBeUndefined()
           msgCount++
           continue
@@ -278,8 +268,8 @@ describe("testing database queries...", () => {
         expect(result.rows[i].index).toBeLessThanOrEqual(limits.messages.indexMax)
         expect(result.rows[i].text).toBeDefined()
         expect(limits.messages.colors).toContain(result.rows[i].color)
-        expect(result.rows[i].userid).toMatch(limits.patterns.uuid)
-        expect(result.rows[i].timestamp).toMatch(limits.patterns.timestamp)
+        expect(result.rows[i].userid).toMatch(patterns.uuid)
+        expect(result.rows[i].timestamp).toMatch(patterns.timestamp)
       }
     })
   }

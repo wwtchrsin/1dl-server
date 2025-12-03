@@ -1,9 +1,9 @@
 import * as conn from "../../../lib/database/conn"
 import * as messages from "../../../lib/database/messages"
-import limits from "../../../lib/database/limits"
+import { limits, patterns, examples } from "../../../lib/database/limits"
 
 let timestamp = 123456789
-let userid = "53e291f8-522b-43b8-a5f5-84795b887a81"
+let userid = examples.uuid[0]
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
   let [region, district, room, index, text, color, userid] = queryParams
@@ -42,12 +42,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -63,12 +63,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: examples.region.last,
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
         text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
+        color: examples.color.last,
       },
     ],
     mocks: {
@@ -84,12 +84,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: examples.region.last,
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
         text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
+        color: examples.color.last,
       },
     ],
     mocks: {
@@ -110,7 +110,7 @@ describe("testing database queries...", () => {
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
         text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
+        color: examples.color.last,
       },
     ],
     mocks: {
@@ -126,12 +126,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[limits.messages.regions.length - 1],
+        region: examples.region.last,
         district: `${limits.messages.districtMax + 1}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
         text: "1".repeat(limits.messages.textLenMax),
-        color: limits.messages.colors[limits.messages.colors.length - 1],
+        color: examples.color.last,
       },
     ],
     mocks: {
@@ -147,12 +147,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin - 1}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -168,12 +168,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin - 1}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -189,12 +189,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin - 1),
-        color: limits.messages.colors[0],
+        text: examples.text.tooShort,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -210,12 +210,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMax + 1),
-        color: limits.messages.colors[0],
+        text: examples.text.tooLong,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -231,11 +231,11 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
+        text: examples.text.minLen,
         color: "12345678",
       },
     ],
@@ -252,12 +252,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -265,12 +265,12 @@ describe("testing database queries...", () => {
         error: undefined,
         data: {
           rows: [{
-            region: limits.messages.regions[0],
+            region: examples.region.first,
             district: limits.messages.districtMin,
             room: limits.messages.roomMin,
             index: limits.messages.indexMin,
-            text: "1".repeat(limits.messages.textLenMin),
-            color: limits.messages.colors[0],
+            text: examples.text.minLen,
+            color: examples.color.first,
             timestamp: 0,
           }]
         }
@@ -283,12 +283,12 @@ describe("testing database queries...", () => {
     args: [
       "abcdefg",
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -304,12 +304,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
@@ -325,12 +325,12 @@ describe("testing database queries...", () => {
     args: [
       userid,
       {
-        region: limits.messages.regions[0],
+        region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-        text: "1".repeat(limits.messages.textLenMin),
-        color: limits.messages.colors[0],
+        text: examples.text.minLen,
+        color: examples.color.first,
       },
     ],
     mocks: {
