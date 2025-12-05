@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "wrongValues.users.sessionid",
+    expres: "authErrors.sessionid",
   }, {
     tag: 4,
     args: wrongSessionid,

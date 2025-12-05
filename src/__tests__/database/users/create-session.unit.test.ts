@@ -95,7 +95,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "wrongValues.users.credentialsLogin",
+    expres: "wrongValues.auth.login",
   }, {
     tag: 5,
     args: {
@@ -109,7 +109,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "wrongValues.users.credentialsPassword",
+    expres: "wrongValues.auth.password",
   }, {
     tag: 6,
     args: {

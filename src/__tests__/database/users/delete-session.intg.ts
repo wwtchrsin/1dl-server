@@ -62,7 +62,7 @@ describe("testing database queries...", () => {
       password: correctData.password,
     },
     args: () => "abcd", 
-    expres: "wrongValues.users.sessionid",
+    expres: "authErrors.sessionid",
   }]
   for ( let testcase of testcases ) {
     let { init, args, expres, tag } = testcase

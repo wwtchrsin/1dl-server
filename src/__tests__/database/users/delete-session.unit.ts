@@ -29,7 +29,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "wrongValues.users.sessionid",
+      error: "authErrors.sessionid",
       data: undefined,
     },
   }, {

@@ -65,7 +65,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: () => "abcd",
-    expres: "wrongValues.users.sessionid",
+    expres: "authErrors.sessionid",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

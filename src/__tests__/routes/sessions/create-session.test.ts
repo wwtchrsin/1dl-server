@@ -124,7 +124,7 @@ describe("testing routes...", () => {
         password: correctData[0].password,
       },
       expres: {
-        error: wrongValues.users.credentialsLogin,
+        error: wrongValues.auth.login,
         status: 400,
       },
     }],
@@ -137,7 +137,7 @@ describe("testing routes...", () => {
         password: correctData[0].password,
       },
       expres: {
-        error: wrongValues.users.credentialsLogin,
+        error: wrongValues.auth.login,
         status: 400,
       },
     }],
@@ -149,7 +149,7 @@ describe("testing routes...", () => {
         login: correctData[0].login,
       },
       expres: {
-        error: wrongValues.users.credentialsPassword,
+        error: wrongValues.auth.password,
         status: 400,
       },
     }],
@@ -162,7 +162,7 @@ describe("testing routes...", () => {
         password: {},
       },
       expres: {
-        error: wrongValues.users.credentialsPassword,
+        error: wrongValues.auth.password,
         status: 400,
       },
     }],

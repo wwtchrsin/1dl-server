@@ -92,18 +92,27 @@ export const wrongValues: WrongValues = {
       en: "Wrong user identifier",
       ru: "Недопустимый идентификатор пользователя",
     },
-    sessionid: {
-      en: "Wrong session identifier",
-      ru: "Недопустимый идентификатор сессии",
-    },
-    credentialsLogin: {
+  },
+  auth: {
+    login: {
       en: "Login is not set or incorrect",
-      ru: "Логин не задан или имеет некорректное значение",
+      ru: "Логин не задан или имеет недопустимое значение",
     },
-    credentialsPassword: {
+    password: {
       en: "Password is not set or incorrect",
-      ru: "Пароль не задан или имеет некорректное значение",
+      ru: "Пароль не задан или имеет недопустимое значение",
     },
+  }
+}
+
+export const authErrors: Record<string, TextResource> = {
+  header: {
+    en: "Authorization header is not set or incorrect",
+    ru: "Заголовок 'Authorization' не задан или имеет недопустимое значение",
+  },
+  sessionid: {
+    en: "Wrong session identifier",
+    ru: "Недопустимый идентификатор сессии",
   },
 }
 
@@ -185,9 +194,14 @@ export const getErrorMessage = (error: string | undefined): TextResource | undef
           return wrongValues.messages[err[2]]
         case "users":
           return wrongValues.users[err[2]]
+        case "auth":
+          return wrongValues.auth[err[2]]
         default:
           return undefined
       }
+    }
+    case "authErrors": {
+      return authErrors[err[1]]
     }
     case "databaseErrors": {
       return databaseErrors[err[1]]
@@ -212,6 +226,9 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
   switch ( err[0] ) {
     case "wrongValues": {
       return 400
+    }
+    case "authErrors": {
+      return 401
     }
     case "databaseErrors": {
       return 500

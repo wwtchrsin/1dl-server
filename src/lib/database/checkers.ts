@@ -1,5 +1,4 @@
 import { limits, patterns } from "./limits"
-import { wrongValues } from "../error-messages"
 
 export const checkRoomIds = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
@@ -79,10 +78,10 @@ export const checkUserData = (req: any): string | undefined => {
 export const checkUserCredentials = (req: any): string | undefined => {
   let { login, password } = req
   if ( typeof login !== "string" ) {
-    return "wrongValues.users.credentialsLogin"
+    return "wrongValues.auth.login"
   }
   if ( typeof password !== "string" ) {
-    return "wrongValues.users.credentialsPassword"
+    return "wrongValues.auth.password"
   }
   return undefined
 }
@@ -96,7 +95,7 @@ export const checkUserId = (userid: string): string | undefined => {
 
 export const checkSessionId = (sessionid: string): string | undefined => {
   if ( !patterns.sessionid.test(sessionid) ) {
-    return "wrongValues.users.sessionid"
+    return "authErrors.sessionid"
   }
   return undefined
 }
