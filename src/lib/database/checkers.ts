@@ -86,16 +86,16 @@ export const checkUserCredentials = (req: any): string | undefined => {
   return undefined
 }
 
-export const checkUserId = (userid: string): string | undefined => {
+export const checkUserid = (userid: string): string | undefined => {
   if ( !patterns.uuid.test(userid) ) {
     return "wrongValues.users.userid"
   }
   return undefined
 }
 
-export const checkSessionId = (sessionid: string): string | undefined => {
+export const checkSessionid = (sessionid: string): string | undefined => {
   if ( !patterns.sessionid.test(sessionid) ) {
-    return "authErrors.sessionid"
+    return "wrongValues.auth.sessionid"
   }
   return undefined
 }

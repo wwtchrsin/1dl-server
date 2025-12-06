@@ -102,18 +102,15 @@ export const wrongValues: WrongValues = {
       en: "Password is not set or incorrect",
       ru: "Пароль не задан или имеет недопустимое значение",
     },
+    header: {
+      en: "Authorization header is not set or incorrect",
+      ru: "Заголовок 'Authorization' не задан или имеет недопустимое значение",
+    },
+    sessionid: {
+      en: "Wrong session identifier",
+      ru: "Недопустимый идентификатор сессии",
+    },
   }
-}
-
-export const authErrors: Record<string, TextResource> = {
-  header: {
-    en: "Authorization header is not set or incorrect",
-    ru: "Заголовок 'Authorization' не задан или имеет недопустимое значение",
-  },
-  sessionid: {
-    en: "Wrong session identifier",
-    ru: "Недопустимый идентификатор сессии",
-  },
 }
 
 export const databaseErrors: Record<string, TextResource> = {
@@ -156,6 +153,10 @@ export const databaseErrors: Record<string, TextResource> = {
   getProfile: {
     en: "Impossible to retrieve profile data",
     ru: "Невозможно извлечь данные профиля",
+  },
+  getUserid: {
+    en: "Impossible to retrieve user identifier",
+    ru: "Невозможно извлечь идентификатор пользователя",
   },
 }
 
@@ -200,9 +201,6 @@ export const getErrorMessage = (error: string | undefined): TextResource | undef
           return undefined
       }
     }
-    case "authErrors": {
-      return authErrors[err[1]]
-    }
     case "databaseErrors": {
       return databaseErrors[err[1]]
     }
@@ -225,10 +223,15 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
   let err = error.split(".")
   switch ( err[0] ) {
     case "wrongValues": {
-      return 400
-    }
-    case "authErrors": {
-      return 401
+      switch ( error ) {
+        case "wrongValues.auth.header":
+        case "wrongValues.auth.sessionid": {
+          return 401
+        }
+        default: {
+          return 400
+        }
+      }
     }
     case "databaseErrors": {
       return 500

@@ -5,8 +5,7 @@ import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns, examples } from "../../../lib/database/limits"
-import { wrongValues, databaseErrors, databaseConflicts } 
-  from "../../../lib/error-messages"
+import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -73,7 +72,7 @@ describe("testing routes...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: wrongValues.users.login,
+        error: "wrongValues.users.login",
         status: 400,
       },
     }],
@@ -86,7 +85,7 @@ describe("testing routes...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: wrongValues.users.password,
+        error: "wrongValues.users.password",
         status: 400,
       },
     }],
@@ -99,7 +98,7 @@ describe("testing routes...", () => {
         name: examples.name.tooShort,
       },
       expres: {
-        error: wrongValues.users.name,
+        error: "wrongValues.users.name",
         status: 400,
       },
     }],
@@ -122,7 +121,7 @@ describe("testing routes...", () => {
         name: examples.name.correct[1],
       },
       expres: {
-        error: databaseConflicts.loginTaken,
+        error: "databaseConflicts.loginTaken",
         status: 409,
       },
     }],
@@ -158,7 +157,7 @@ describe("testing routes...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: wrongValues.users.login,
+        error: "wrongValues.users.login",
         status: 400,
       },
     }, {   
@@ -178,10 +177,11 @@ describe("testing routes...", () => {
     test(`POST /profiles. Test #${tag}`, async () => {
       for ( let call of calls ) {
         let { args, expres } = call
+        let errorMessage = getErrorMessage(expres.error)
         let result = await testServer.post("/api/v1/profiles").send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
-        expect(result.body.error).toStrictEqual(expres.error)
+        expect(result.body.error).toStrictEqual(errorMessage)
         if ( expres.error === undefined ) {
           expect(result.body.session).toMatch(patterns.sessionid)
           expect(result.body.user).toBeDefined()

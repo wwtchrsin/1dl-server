@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { createSession, deleteSession, getProfile } from "../lib/database/users"
 import { getStatusCode, getErrorMessage } from "../lib/error-messages"
-import { getAuthToken } from "./miscs"
+import { getPrivateUserid } from "./miscs"
 import type { Request, Response } from "express"
 import type { Credentials } from "../lib/database/users"
 
@@ -22,20 +22,19 @@ const createSessionAction = async (req: Request<Credentials>, res: Response) => 
 }
 
 const deleteSessionAction = async (req: Request, res: Response) => {
-  let token = getAuthToken(req.header("Authorization"))
-  if ( token.error !== undefined ) {
-    let status = getStatusCode(token.error)
+  let authResult = await getPrivateUserid(req.header("Authorization"))
+  if ( authResult.error !== undefined ) {
+    let status = getStatusCode(authResult.error)
     res.status(status).json({
-      error: getErrorMessage(token.error)
+      error: getErrorMessage(authResult.error)
     })
     return
   }
-  let session = token.data
-  let result = await deleteSession(session)
-  if ( result.error !== undefined ) {
-    let status = getStatusCode(result.error)
+  let error = await deleteSession(authResult.data)
+  if ( error !== undefined ) {
+    let status = getStatusCode(error)
     res.status(status).json({
-      error: getErrorMessage(result.error)
+      error: getErrorMessage(error)
     })
     return
   }

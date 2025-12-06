@@ -1,21 +1,20 @@
+import { getUserid } from "../lib/database/users"
 
-export const getAuthToken = (auth: string | undefined): 
+export const getPrivateUserid = async (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
-    if ( typeof auth !== "string" ) {
+    if ( typeof header !== "string" ) {
       return {
-        error: "authErrors.header",
+        error: "wrongValues.auth.header",
         data: undefined,
       }
     }
-    let token = auth.split(" ")[1]
-    if ( !token ) {
+    let session = header.split(" ")[1]
+    if ( !session ) {
       return {
-        error: "authErrors.header",
+        error: "wrongValues.auth.header",
         data: undefined,
       }
     }
-    return {
-      error: undefined,
-      data: token,
-    }
+    let result = await getUserid(session)
+    return result
   }

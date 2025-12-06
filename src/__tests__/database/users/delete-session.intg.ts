@@ -25,7 +25,7 @@ let wrongData = {
   login: examples.login.correct[1],
   password: examples.password.correct[1],
   name: examples.name.correct[1],
-  sessionid: examples.sessionid[1],
+  userid: examples.uuid[1],
 }
 
 describe("testing database queries...", () => {
@@ -45,15 +45,15 @@ describe("testing database queries...", () => {
       login: correctData.login,
       password: correctData.password,
     },
-    args: () => correctData.sessionid,
-    expres: "success",
+    args: () => correctData.userid,
+    expres: undefined,
   }, {
     tag: 2,
     init: {
       login: correctData.login,
       password: correctData.password,
     },
-    args: () => wrongData.sessionid,
+    args: () => wrongData.userid,
     expres: "databaseConflicts.sessionNotFound",
   }, {
     tag: 3,
@@ -62,7 +62,7 @@ describe("testing database queries...", () => {
       password: correctData.password,
     },
     args: () => "abcd", 
-    expres: "authErrors.sessionid",
+    expres: "wrongValues.users.userid",
   }]
   for ( let testcase of testcases ) {
     let { init, args, expres, tag } = testcase
@@ -70,18 +70,10 @@ describe("testing database queries...", () => {
       let initResult = await createSession(init)
       expect(initResult.error).toBeUndefined()
       expect(initResult.data).toMatch(patterns.sessionid)
-      correctData.sessionid = initResult.data
+      let sessionid = initResult.data
       let result = await deleteSession(args())
-      let rowCount = 1
-      if ( expres === "success" ) {
-        expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(patterns.uuid)
-        expect(result.data).toBe(correctData.userid)
-        rowCount--
-      } else {
-        expect(result.error).toBe(expres)
-        expect(result.data).toBeUndefined()
-      }
+      expect(result).toBe(expres)
+      let rowCount = (expres === undefined) ? 0 : 1
       let table = await queryDatabase("SELECT * FROM sessions")
       expect(table).toBeDefined()
       expect(table.rows).toHaveLength(rowCount)

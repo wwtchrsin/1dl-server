@@ -1,7 +1,7 @@
 process.env.PG_SCHEMA = "getProfileTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { getProfile, createProfile, createSession } from "../../../lib/database/users"
+import { getProfile, createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns, examples } from "../../../lib/database/limits"
 
@@ -15,9 +15,9 @@ afterAll(async () => {
   await pool.end()
 })
 
-let wrongSessionId = examples.sessionid[0]
+let wrongUserid = examples.uuid[0]
 
-let sessionids = []
+let userids = []
 let users = new Map()
 
 describe("testing database queries...", () => {
@@ -42,41 +42,37 @@ describe("testing database queries...", () => {
       expect(result.data.state).toBeDefined()
       expect(result.data.puid).toMatch(patterns.uuid)
       expect(result.data.timestamp).toMatch(patterns.timestamp)
-      let session = await createSession({ login: user.login, password: user.password })
-      expect(session.error).toBeUndefined()
-      expect(session.data).toBeDefined()
-      expect(session.data).toMatch(patterns.sessionid)
-      sessionids.push(session.data)
-      users.set(session.data, result.data)  
+      userids.push(result.data.userid)
+      users.set(result.data.userid, result.data)  
     }
   })
   let testcases = [{
     tag: 1,
-    args: () => sessionids[0],
+    args: () => userids[0],
     expres: "success",
   }, {
     tag: 2,
-    args: () => sessionids[1],
+    args: () => userids[1],
     expres: "success",
   }, {
     tag: 3,
-    args: () => wrongSessionId,
+    args: () => wrongUserid,
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: () => "abcd",
-    expres: "authErrors.sessionid",
+    expres: "wrongValues.users.userid",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`Function getProfile. Intg Test #${tag}`, async () => {
-      let sessionid = args()
-      let result = await getProfile(sessionid)
+      let userid = args()
+      let result = await getProfile(userid)
       if ( expres === "success" ) {
-        let user = users.get(sessionid)        
+        let user = users.get(userid)        
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        expect(result.data.userid).toBe(user.userid)
+        expect(result.data.userid).toBe(userid)
         expect(result.data.login).toBe(user.login)
         expect(result.data.password).toBeUndefined()
         expect(result.data.name).toBe(user.name)

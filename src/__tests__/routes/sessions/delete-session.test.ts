@@ -91,7 +91,7 @@ describe("testing routes...", () => {
     actions: [{
       args: () => "Bearer abcd",
       expres: {
-        error: "authErrors.sessionid",
+        error: "wrongValues.auth.sessionid",
         status: 401,
       },
     }],
@@ -102,7 +102,7 @@ describe("testing routes...", () => {
     actions: [{
       args: () => "",
       expres: {
-        error: "authErrors.header",
+        error: "wrongValues.auth.header",
         status: 401,
       },
     }],

@@ -1,4 +1,4 @@
-import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserId } from "./checkers"
+import { checkRoomIds, checkMessageIds, checkMessageContent, checkUserid } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
 import { getTimestamp } from "./miscs"
@@ -115,7 +115,7 @@ export const getMessage = async (req: any):
 
 export const createMessage = async (userid: string, req: any): 
   Promise<{ error: string | undefined, data: CreatedMessage | undefined }> => {
-    let useridCheckError = checkUserId(userid)
+    let useridCheckError = checkUserid(userid)
     if ( useridCheckError !== undefined ) {
       logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_ID_CHECK")
       return {

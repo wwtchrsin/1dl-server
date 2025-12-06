@@ -4,79 +4,59 @@ import { limits, examples } from "../../../lib/database/limits"
 
 let correctData = {
   userid: examples.uuid[3],
-  sessionid: examples.sessionid[3],
 }
 
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
-    args: correctData.sessionid,
+    args: correctData.userid,
     mocks: {
       queryDatabase: {
-        rows: [{ userid: correctData.userid }]
+        rowCount: 1,
       },
     },
-    expres: {
-      error: undefined,
-      data: correctData.userid,
-    },
+    expres: undefined,
   }, {
     tag: 2,
     args: "abcd",
     mocks: {
       queryDatabase: {
-        rows: [{ userid: correctData.userid }]
+        rowCount: 1,
       },
     },
-    expres: {
-      error: "authErrors.sessionid",
-      data: undefined,
-    },
+    expres: "wrongValues.users.userid",
   }, {
     tag: 3,
-    args: correctData.sessionid,
+    args: correctData.userid,
     mocks: {
       queryDatabase: {
-        rows: []
+        rowCount: 0,
       },
     },
-    expres: {
-      error: "databaseConflicts.sessionNotFound",
-      data: undefined,
-    },
+    expres: "databaseConflicts.sessionNotFound",
   }, {
     tag: 4,
-    args: correctData.sessionid,
+    args: correctData.userid,
     mocks: {
       queryDatabase: {
-        rows: [{ 
-          userid: correctData.userid
-        }, {
-          userid: correctData.userid
-        }]
+        rowCount: 2,
       },
     },
-    expres: {
-      error: "databaseErrors.deleteSession",
-      data: undefined,
-    },
+    expres: "databaseErrors.deleteSession",
   }, {
     tag: 5,
-    args: correctData.sessionid,
+    args: correctData.userid,
     mocks: {
       queryDatabase: undefined,
     },
-    expres: {
-      error: "databaseErrors.deleteSession",
-      data: undefined,
-    },
+    expres: "databaseErrors.deleteSession",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
     test(`Function deleteSession. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockResolvedValue(mocks.queryDatabase)
       let result = await users.deleteSession(args)
-      expect(result).toStrictEqual(expres)
+      expect(result).toBe(expres)
     })
   }
 })

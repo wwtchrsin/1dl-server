@@ -1,24 +1,23 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
 import { limits, examples } from "../../../lib/database/limits"
-import { hashSession } from "../../../lib/database/miscs"
 
-let correctSessionids = [
-  examples.sessionid[0],
-  examples.sessionid[1],
+let correctUserids = [
+  examples.uuid[0],
+  examples.uuid[1],
 ]
 
-let wrongSessionid = examples.sessionid[2]
+let wrongUserid = examples.uuid[2]
 
-let userlist = new Map([[hashSession(correctSessionids[0]), {
-  userid: examples.uuid[0],
+let userlist = new Map([[correctUserids[0], {
+  userid: correctUserids[0],
   login: examples.login.correct[0],
   name: examples.name.correct[0],
   state: "inactive",
   puid: examples.uuid[1],
   timestamp: "123456789",
-}], [hashSession(correctSessionids[1]), {
-  userid: examples.uuid[2],
+}], [correctUserids[1], {
+  userid: correctUserids[1],
   login: examples.login.correct[1],
   name: examples.name.correct[1],
   state: "inactive",
@@ -27,8 +26,8 @@ let userlist = new Map([[hashSession(correctSessionids[0]), {
 }]])
 
 let requestSucceeds = (query: string, queryParams: string[]) => {
-  let [sessionHash] = queryParams
-  let user = userlist.get(sessionHash)
+  let [userid] = queryParams
+  let user = userlist.get(userid)
   let rows = user !== undefined ? [user] : []
   return Promise.resolve({ rows })
 }
@@ -41,14 +40,14 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: correctSessionids[0],
+    args: correctUserids[0],
     mocks: {
       queryDatabase: requestSucceeds,
     },
     expres: "success",
   }, {
     tag: 2,
-    args: correctSessionids[1],
+    args: correctUserids[1],
     mocks: {
       queryDatabase: requestSucceeds,
     },
@@ -59,17 +58,17 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "authErrors.sessionid",
+    expres: "wrongValues.users.userid",
   }, {
     tag: 4,
-    args: wrongSessionid,
+    args: wrongUserid,
     mocks: {
       queryDatabase: requestSucceeds,
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
-    args: correctSessionids[0],
+    args: correctUserids[0],
     mocks: {
       queryDatabase: requestFails,
     },
@@ -81,10 +80,10 @@ describe("testing database queries...", () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await users.getProfile(args)
       if ( expres === "success" ) {
-        let user = userlist.get(hashSession(args))
+        let user = userlist.get(args)
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        expect(result.data.userid).toBe(user.userid)
+        expect(result.data.userid).toBe(args)
         expect(result.data.login).toBe(user.login)
         expect(result.data.name).toBe(user.name)
         expect(result.data.state).toBe(user.state)

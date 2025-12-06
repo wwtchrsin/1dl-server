@@ -23,7 +23,7 @@ describe("testing auxilliary functions...", () => {
     expres: 400,
   }, {
     tag: 6,
-    args: ["authErrors.header"],
+    args: ["wrongValues.auth.header"],
     expres: 401,
   }, {
     tag: 7,

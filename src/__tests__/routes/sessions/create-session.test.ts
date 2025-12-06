@@ -5,8 +5,7 @@ import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns, examples } from "../../../lib/database/limits"
-import { wrongValues, databaseErrors, databaseConflicts } 
-  from "../../../lib/error-messages"
+import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -86,7 +85,7 @@ describe("testing routes...", () => {
         password: correctData[1].password,
       },
       expres: {
-        error: databaseConflicts.profileNotFound,
+        error: "databaseConflicts.profileNotFound",
         status: 404,
       },
     }],
@@ -99,7 +98,7 @@ describe("testing routes...", () => {
         password: correctData[0].password,
       },
       expres: {
-        error: databaseConflicts.profileNotFound,
+        error: "databaseConflicts.profileNotFound",
         status: 404,
       },
     }],
@@ -112,7 +111,7 @@ describe("testing routes...", () => {
         password: wrongData.password,
       },
       expres: {
-        error: databaseConflicts.profileNotFound,
+        error: "databaseConflicts.profileNotFound",
         status: 404,
       },
     }],
@@ -124,7 +123,7 @@ describe("testing routes...", () => {
         password: correctData[0].password,
       },
       expres: {
-        error: wrongValues.auth.login,
+        error: "wrongValues.auth.login",
         status: 400,
       },
     }],
@@ -137,7 +136,7 @@ describe("testing routes...", () => {
         password: correctData[0].password,
       },
       expres: {
-        error: wrongValues.auth.login,
+        error: "wrongValues.auth.login",
         status: 400,
       },
     }],
@@ -149,7 +148,7 @@ describe("testing routes...", () => {
         login: correctData[0].login,
       },
       expres: {
-        error: wrongValues.auth.password,
+        error: "wrongValues.auth.password",
         status: 400,
       },
     }],
@@ -162,7 +161,7 @@ describe("testing routes...", () => {
         password: {},
       },
       expres: {
-        error: wrongValues.auth.password,
+        error: "wrongValues.auth.password",
         status: 400,
       },
     }],
@@ -217,10 +216,11 @@ describe("testing routes...", () => {
     test(`POST /sessions. Test #${tag}`, async () => {
       for ( let call of calls ) {
         let { args, expres } = call
+        let errorMessage = getErrorMessage(expres.error)
         let result = await testServer.post("/api/v1/sessions").send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
-        expect(result.body.error).toStrictEqual(expres.error)
+        expect(result.body.error).toStrictEqual(errorMessage)
         if ( expres.error === undefined ) {
           expect(result.body.session).toMatch(patterns.sessionid)
         }
