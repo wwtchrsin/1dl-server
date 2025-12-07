@@ -27,7 +27,7 @@ export type MessageContent = {
   color: string,
 }
 
-export type CreatedMessage = {
+export type UserMessage = {
   region: string,
   district: number,
   room: number,
@@ -37,7 +37,7 @@ export type CreatedMessage = {
   timestamp: string
 }
 
-export type Message = CreatedMessage & {
+export type Message = UserMessage & {
   puid: string,
   username: string,
 }
@@ -113,8 +113,36 @@ export const getMessage = async (req: any):
     }
   }
 
+export const getUserMessages = async (userid: string): 
+  Promise<{ error: string | undefined, data: UserMessage[] }> => {
+    let useridCheckError = checkUserid(userid)
+    if ( useridCheckError !== undefined ) {
+      logger.warn({ userid }, "db/messages/getUserMessages#ERROR_ID_CHECK")
+      return {
+        error: useridCheckError,
+        data: undefined,
+      }
+    }
+    let query = `
+      SELECT region, district, room, index, text, color, timestamp
+        FROM messages WHERE userid = $1
+    `
+    let result = await queryDatabase(query, [userid])
+    if ( result === undefined ) {
+      logger.error({ userid }, "db/messages/getUserMessages#ERROR_DB_QUERY")
+      return {
+        error: "databaseErrors.getUserMessages",
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows as UserMessage[],
+    }
+  }
+
 export const createMessage = async (userid: string, req: any): 
-  Promise<{ error: string | undefined, data: CreatedMessage | undefined }> => {
+  Promise<{ error: string | undefined, data: UserMessage | undefined }> => {
     let useridCheckError = checkUserid(userid)
     if ( useridCheckError !== undefined ) {
       logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_ID_CHECK")
@@ -163,7 +191,7 @@ export const createMessage = async (userid: string, req: any):
     }
     return {
       error: undefined,
-      data: result.rows[0] as CreatedMessage,
+      data: result.rows[0] as UserMessage,
     }
   }
 

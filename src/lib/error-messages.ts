@@ -158,6 +158,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to retrieve user identifier",
     ru: "Невозможно извлечь идентификатор пользователя",
   },
+  getUserMessages: {
+    en: "Impossible to retrieve user messages",
+    ru: "Невозможно извлечь сообщения пользователя",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {

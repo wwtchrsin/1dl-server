@@ -25,10 +25,10 @@ export const getClient = async () => {
   })
 }
 
-export const queryDatabase = async (queryString: string, queryParams: string[] | undefined):
+export const queryDatabase = async (queryString: string, queryParams: string[] = []):
   Promise<Result | undefined> => {
     try {
-      let result = await pool.query(queryString, queryParams ?? [])
+      let result = await pool.query(queryString, queryParams)
       return result
     } catch (err) {
       let errmsg = {
@@ -40,3 +40,27 @@ export const queryDatabase = async (queryString: string, queryParams: string[] |
       return undefined
     }
   }
+
+export const executeTransaction = async (queryString: string): Promise<boolean> => {
+  let client: Client | undefined
+  try {
+    client = await pool.connect()
+    await client!.query("BEGIN")
+    await client!.query(queryString)
+    await client!.query("COMMIT")
+    return true
+  } catch (err) {
+    if ( client !== undefined ) {
+      try { 
+        await client.query("ROLLBACK") 
+      } catch (err) {
+        logger.error({ stack: err.stack }, "db/conn/executeTransaction#CatchBlockError")
+      }
+    }
+    logger.error({ stack: err.stack }, "db/conn/executeTransaction#Error")
+    return false
+  } finally {
+    client?.release()
+  }
+}
+
