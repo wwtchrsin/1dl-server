@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "getMessagesTest"
+process.env.PG_SCHEMA = "getUserMessagesTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { getUserMessages, createMessage } from "../../../lib/database/messages"
