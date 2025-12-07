@@ -1,8 +1,10 @@
 import { randomUUID } from "node:crypto"
 import { checkUserData, checkUserid, checkSessionid, checkUserCredentials } from "./checkers"
-import { queryDatabase } from "./conn"
+import { queryDatabase, executeTransaction } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
+import { getUserMessages } from "./messages"
 import { hashPassword, hashSession, generateToken, getTimestamp } from "./miscs"
+import type { UserMessage } from "../messages"
 import logger from "../logger"
 
 export type ProfileData = {
@@ -166,7 +168,7 @@ export const createSession = async (req: any):
       data: sessionid,
     }
   }
-
+     
 export const getProfile = async (userid: string): 
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let useridCheckError = checkUserid(userid)
@@ -199,6 +201,56 @@ export const getProfile = async (userid: string):
     return {
       error: undefined,
       data: result.rows[0] as Profile,
+    }
+  }
+
+export const deleteProfile = async (userid: string):
+  Promise<{ error: string | undefined, messages: UserMessage[] | undefined, profile: Profile | undefined }> => {
+    let useridCheckError = checkUserid(userid)
+    if ( useridCheckError !== undefined ) {
+      logger.warn({ userid }, "db/users/deleteProfile#ERROR_ARGS_CHECK")
+      return {
+        error: useridCheckError,
+        messages: undefined,
+        profile: undefined,
+      }
+    }
+    let profile = await getProfile(userid)
+    if ( profile.error !== undefined ) {
+      logger.error({ userid }, "db/users/deleteProfile#ERROR_GETTING_PROFILE")
+      return {
+        error: profile.error,
+        messages: undefined,
+        profile: undefined,
+      }
+    }
+    let messages = await getUserMessages(userid)
+    if ( messages.error !== undefined ) {
+      logger.error({ userid }, "db/users/deleteProfile#ERROR_GETTING_MESSAGES")
+      return {
+        error: messages.error,
+        messages: undefined,
+        profile: undefined,
+      }
+    }
+    let query = `
+      DELETE FROM messages WHERE userid = '${userid}';
+      DELETE FROM sessions WHERE userid = '${userid}';
+      DELETE FROM users WHERE userid = '${userid}';
+    `
+    let result = await executeTransaction(query)
+    if ( !result ) {
+      logger.error({ userid }, "db/users/deleteProfile#ERROR_DB_QUERY")
+      return {
+        error: "databaseErrors.deleteProfile",
+        messages: undefined,
+        profile: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      messages: messages.data,
+      profile: profile.data,
     }
   }
 

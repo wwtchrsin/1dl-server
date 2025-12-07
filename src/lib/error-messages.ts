@@ -162,6 +162,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to retrieve user messages",
     ru: "Невозможно извлечь сообщения пользователя",
   },
+  deleteProfile: {
+    en: "Impossible to delete profile",
+    ru: "Невозможно удалить профиль",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {
