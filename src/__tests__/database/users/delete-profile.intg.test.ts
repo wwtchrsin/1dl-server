@@ -116,7 +116,7 @@ describe("testing database queries...", () => {
     let { args, expres, exprows, tag } = testcase
     test(`Function deleteProfile. Intg Test #${tag}`, async () => {
       for ( let i=0; i < profiles.length; i++ ) {
-        let result = await createProfile(profiles[i])
+        let result = await createProfile(profiles[i], "active")
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.userid).toMatch(patterns.uuid)

@@ -30,7 +30,7 @@ describe("testing database queries...", () => {
       password: examples.password.correct[1],
       name: examples.name.correct[1],
     }
-    let result = await createProfile(args)
+    let result = await createProfile(args, "active")
     let table = await pool.query("SELECT userid FROM users")
     expect(result.error).toBeUndefined()
     expect(result.data).toBeDefined()

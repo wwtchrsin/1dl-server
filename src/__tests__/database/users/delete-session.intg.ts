@@ -33,7 +33,7 @@ describe("testing database queries...", () => {
     await pool.query("DELETE FROM sessions")
   })
   test("Function deleteSession. Preparing database...", async () => {
-    let result = await createProfile(correctData)
+    let result = await createProfile(correctData, "active")
     expect(result.error).toBeUndefined()
     expect(result.data).toBeDefined()
     expect(result.data.userid).toMatch(patterns.uuid)

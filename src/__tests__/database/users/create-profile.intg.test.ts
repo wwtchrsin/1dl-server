@@ -41,119 +41,119 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }],
   }, {
     tag: 2,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.maxLen,
         password: examples.password.maxLen,
         name: examples.name.maxLen,
-      },
+      }, "active"],
       expres: "success",
     }],
   }, {
     tag: 3,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.regLen,
         password: examples.password.regLen,
         name: examples.name.regLen,
-      },
+      }, "active"],
       expres: "success",
     }],
   }, {
     tag: 4,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "wrongValues.users.login",
     }],
   }, {
     tag: 5,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.minLen,
         password: examples.password.tooShort,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "wrongValues.users.password",
     }],
   }, {
     tag: 6,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.tooShort,
-      },
+      }, "active"],
       expres: "wrongValues.users.name",
     }],
   }, {
     tag: 7,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.correct[0],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }, {
-      args: {
+      args: [{
         login: examples.login.correct[1],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }],
   }, {
     tag: 8,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.correct[0],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }, {
-      args: {
+      args: [{
         login: examples.login.correct[0],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "databaseConflicts.loginTaken",
     }],
   }, {
     tag: 9,
     calls: [{
-      args: {
+      args: [{
         login: examples.login.correct[2],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }, {
-      args: {
+      args: [{
         login: examples.login.correct[2],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "databaseConflicts.loginTaken",
     }, {
-      args: {
+      args: [{
         login: examples.login.correct[3],
         password: examples.password.minLen,
         name: examples.name.minLen,
-      },
+      }, "active"],
       expres: "success",
     }],
   }]
@@ -163,9 +163,9 @@ describe("testing database queries...", () => {
       let msgCount = 0
       for ( let call of calls ) {
         let { args, expres } = call
-        let result = await createProfile(args)
+        let result = await createProfile(...args)
         if ( expres === "success" ) {
-          let checks = resultChecks(args)
+          let checks = resultChecks(args[0])
           expect(result.error).toBeUndefined()
           expect(result.data).toBeDefined()
           expect(result.data.userid).toMatch(checks.userid)

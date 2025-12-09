@@ -56,7 +56,7 @@ let messages = [[{
 describe("testing database queries...", () => {
   test("Function createMessage. Preparing database...", async () => {
     for ( let userData of users ) {
-      let result = await createProfile(userData)
+      let result = await createProfile(userData, "active")
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.userid).toMatch(patterns.uuid)

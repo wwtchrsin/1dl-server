@@ -20,6 +20,7 @@ const getCorrectRange = (lang: string, min: number, max: number) => {
 type WrongValues = {
   messages: Record<string, TextResource>,
   users: Record<string, TextResource>,
+  auth: Record<string, TextResource>,
 }
 
 export const wrongValues: WrongValues = {
@@ -111,6 +112,13 @@ export const wrongValues: WrongValues = {
       ru: "Недопустимый идентификатор сессии",
     },
   }
+}
+
+export const appErrors: Record<string, TextResource> = {
+  actionNotAllowed: {
+    en: "Action not allowed",
+    ru: "Действие запрещено",
+  },
 }
 
 export const databaseErrors: Record<string, TextResource> = {
@@ -209,6 +217,9 @@ export const getErrorMessage = (error: string | undefined): TextResource | undef
           return undefined
       }
     }
+    case "appErrors": {
+       return appErrors[err[1]]
+    }
     case "databaseErrors": {
       return databaseErrors[err[1]]
     }
@@ -238,6 +249,13 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
         }
         default: {
           return 400
+        }
+      }
+    }
+    case "appErrors": {
+      switch ( err[1] ) {
+        case "actionNotAllowed": {
+          return 403
         }
       }
     }

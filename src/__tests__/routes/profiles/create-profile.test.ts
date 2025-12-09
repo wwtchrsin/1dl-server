@@ -184,17 +184,17 @@ describe("testing routes...", () => {
         expect(result.body.error).toStrictEqual(errorMessage)
         if ( expres.error === undefined ) {
           expect(result.body.session).toMatch(patterns.sessionid)
-          expect(result.body.user).toBeDefined()
-          expect(result.body.user.userid).toMatch(patterns.uuid)
-          expect(result.body.user.login).toBe(args.login)
-          expect(result.body.user.password).toBeUndefined()
-          expect(result.body.user.name).toBe(args.name)
-          expect(result.body.user.state).toBeDefined()
-          expect(result.body.user.puid).toMatch(patterns.uuid)
-          expect(result.body.user.timestamp).toMatch(patterns.timestamp)
+          expect(result.body.profile).toBeDefined()
+          expect(result.body.profile.userid).toBeUndefined()
+          expect(result.body.profile.login).toBe(args.login)
+          expect(result.body.profile.password).toBeUndefined()
+          expect(result.body.profile.name).toBe(args.name)
+          expect(result.body.profile.state).toBeDefined()
+          expect(result.body.profile.puid).toMatch(patterns.uuid)
+          expect(result.body.profile.timestamp).toMatch(patterns.timestamp)
         } else {
           expect(result.body.session).toBeUndefined()
-          expect(result.body.user).toBeUndefined()
+          expect(result.body.profile).toBeUndefined()
         }
       }
     })

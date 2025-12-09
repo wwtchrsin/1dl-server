@@ -43,11 +43,11 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -55,11 +55,11 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 2,
-    args: {
+    args: [{
       login: examples.login.maxLen,
       password: examples.password.maxLen,
       name: examples.name.maxLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser
@@ -67,11 +67,11 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 3,
-    args: {
+    args: [{
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.regLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -79,11 +79,11 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 4,
-    args: {
+    args: [{
       login: examples.login.tooShort,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -91,11 +91,11 @@ describe("testing database queries...", () => {
     expres: "wrongValues.users.login",
   }, {
     tag: 5,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.tooShort,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -103,11 +103,11 @@ describe("testing database queries...", () => {
     expres: "wrongValues.users.password",
   }, {
     tag: 6,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.tooLong,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -115,11 +115,11 @@ describe("testing database queries...", () => {
     expres: "wrongValues.users.name",
   }, {
     tag: 7,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginExists,
       queryDatabase: requestReturnsUser,
@@ -127,11 +127,11 @@ describe("testing database queries...", () => {
     expres: "databaseConflicts.loginTaken",
   }, {
     tag: 8,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginCheckError,
       queryDatabase: requestReturnsUser,
@@ -139,11 +139,11 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.checkUserExists",
   }, {
     tag: 9,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
@@ -151,11 +151,11 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.createProfile",
   }, {
     tag: 10,
-    args: {
+    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-    },
+    }, "active"],
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
@@ -167,11 +167,11 @@ describe("testing database queries...", () => {
     test(`Function createProfile. Unit Test #${tag}`, async () => {
       let loginExists = jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
       let queryDatabase = jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await users.createProfile(args)
+      let result = await users.createProfile(...args)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        let checks = resultChecks(args)
+        let checks = resultChecks(args[0])
         expect(result.data.userid).toMatch(checks.userid)
         expect(result.data.login).toMatch(checks.login)
         expect(result.data.name).toMatch(checks.name)

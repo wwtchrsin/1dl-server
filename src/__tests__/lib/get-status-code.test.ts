@@ -27,54 +27,62 @@ describe("testing auxilliary functions...", () => {
     expres: 401,
   }, {
     tag: 7,
+    args: ["appErrors.actionNotAllowed"],
+    expres: 403,
+  }, {
+    tag: 8,
     args: ["databaseErrors.getMessages"],
     expres: 500,
   }, {
-    tag: 8,
+    tag: 9,
     args: ["databaseErrors.deleteSession", 200],
     expres: 500,
   }, {
-    tag: 9,
+    tag: 10,
     args: ["databaseConflicts.messageNotFound", 200],
     expres: 404,
   }, {
-    tag: 10,
+    tag: 11,
     args: ["databaseConflicts.messageAlreadyExists", 200],
     expres: 409,
   }, {
-    tag: 11,
+    tag: 12,
     args: ["wrongValues.messages.regionabcd"],
     expres: 500,
   }, {
-    tag: 12,
+    tag: 13,
     args: ["wrongValues.abcd"],
     expres: 500,
   }, {
-    tag: 13,
-    args: ["databaseErrors.abcd"],
-    expres: 500,
-  }, {
     tag: 14,
-    args: ["databaseConflicts.abcd", 200],
+    args: ["appErrors.abcd"],
     expres: 500,
   }, {
     tag: 15,
-    args: ["databaseConflicts.abcd"],
+    args: ["databaseErrors.abcd"],
     expres: 500,
   }, {
     tag: 16,
-    args: ["abcd"],
+    args: ["databaseConflicts.abcd", 200],
     expres: 500,
   }, {
     tag: 17,
-    args: ["abcd", 200],
+    args: ["databaseConflicts.abcd"],
     expres: 500,
   }, {
     tag: 18,
+    args: ["abcd"],
+    expres: 500,
+  }, {
+    tag: 19,
+    args: ["abcd", 200],
+    expres: 500,
+  }, {
+    tag: 20,
     args: [undefined],
     expres: 200,
   }, {
-    tag: 19,
+    tag: 21,
     args: [undefined, 201],
     expres: 201,
   }]

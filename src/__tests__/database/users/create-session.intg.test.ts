@@ -36,7 +36,7 @@ describe("testing database queries...", () => {
   })
   test("Function createSession. Preparing database...", async () => {
     for ( let user of correctData ) {
-      let result = await createProfile(user)
+      let result = await createProfile(user, "active")
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.userid).toMatch(patterns.uuid)

@@ -1,4 +1,4 @@
-import { getErrorMessage, wrongValues, databaseErrors, databaseConflicts } 
+import { getErrorMessage, wrongValues, appErrors, databaseErrors, databaseConflicts } 
   from "../../lib/error-messages"
 
 describe("testing auxilliary functions...", () => {
@@ -24,22 +24,26 @@ describe("testing auxilliary functions...", () => {
     expres: wrongValues.auth.sessionid,
   }, {
     tag: 6,
+    args: "appErrors.actionNotAllowed",
+    expres: appErrors.actionNotAllowed,
+  }, {
+    tag: 7,
     args: "databaseErrors.checkUserExists",
     expres: databaseErrors.checkUserExists,
   }, {
-    tag: 7,
+    tag: 8,
     args: "databaseConflicts.messageAlreadyExists",
     expres: databaseConflicts.messageAlreadyExists,
   }, {
-    tag: 8,
+    tag: 9,
     args: "wrongValues.messages.abcd",
     expres: undefined,
   }, {
-    tag: 9,
+    tag: 10,
     args: "wrongValues.abcd",
     expres: undefined,
   }, {
-    tag: 10,
+    tag: 11,
     args: "abcd",
     expres: undefined,
   }]

@@ -38,7 +38,7 @@ export const limits = {
       "inactive",
       "active",
       "suspended",
-    ]
+    ],
   },
 }
 

@@ -44,7 +44,7 @@ export const loginExists = async (login: string):
     }
   }
 
-export const createProfile = async(req: any):
+export const createProfile = async(req: any, defaultState: string):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let errorMessage = checkUserData(req)
     if ( errorMessage !== undefined ) {
@@ -70,7 +70,6 @@ export const createProfile = async(req: any):
         data: undefined,
       }
     }
-    let state = "inactive"
     let userid = randomUUID()
     let puid = randomUUID()
     let passwordHash = hashPassword(login, password)
@@ -79,7 +78,7 @@ export const createProfile = async(req: any):
         ($1, $2, $3, $4, $5, $6, $7)
         RETURNING userid, login, name, state, puid, timestamp
     `
-    let queryParams = [userid, login, passwordHash, name, state, puid, getTimestamp()]
+    let queryParams = [userid, login, passwordHash, name, defaultState, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       logger.error(req, "db/users/createProfile#ERROR_DB_QUERY")

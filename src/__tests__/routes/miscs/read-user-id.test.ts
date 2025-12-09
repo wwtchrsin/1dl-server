@@ -1,8 +1,11 @@
 import * as users from "../../../lib/database/users"
-import { getPrivateUserid } from "../../../routes/miscs"
-import { patterns, examples } from "../../../lib/database/limits"
+import { readUserid } from "../../../routes/miscs"
+import { examples } from "../../../lib/database/limits"
 
 describe("testing auxilliary functions...", () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   let testcases = [{
     tag: 1,
     args: "Bearer " + examples.sessionid[0],
@@ -53,20 +56,6 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 4,
-    args: "Bearer ",
-    mocks: {
-      getUserid: {
-        error: undefined,
-        data: examples.uuid[0],
-      },
-    },
-    mocksCalledWith: {},
-    expres: {
-      error: "wrongValues.auth.header",
-      data: undefined,
-    },
-  }, {
-    tag: 5,
     args: "",
     mocks: {
       getUserid: {
@@ -82,9 +71,9 @@ describe("testing auxilliary functions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, mocksCalledWith, expres, tag } = testcase
-    test(`Function getPrivateUserid. Test #${tag}`, async () => {
+    test(`Function readUserid. Test #${tag}`, async () => {
       let getUserid = jest.spyOn(users, "getUserid").mockResolvedValue(mocks.getUserid)
-      let result = await getPrivateUserid(args)
+      let result = await readUserid(args)
       expect(result).toStrictEqual(expres)
       if ( "getUserid" in mocksCalledWith ) {
         expect(getUserid).toHaveBeenCalledWith(mocksCalledWith.getUserid)

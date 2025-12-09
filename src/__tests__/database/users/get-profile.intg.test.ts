@@ -32,14 +32,14 @@ describe("testing database queries...", () => {
       name: examples.name.correct[1],
     }]
     for ( let user of userdata ) {
-      let result = await createProfile(user)
+      let result = await createProfile(user, "active")
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.userid).toMatch(patterns.uuid)
       expect(result.data.login).toBe(user.login)
       expect(result.data.password).toBeUndefined() 
       expect(result.data.name).toBe(user.name)
-      expect(result.data.state).toBeDefined()
+      expect(result.data.state).toBe("active")
       expect(result.data.puid).toMatch(patterns.uuid)
       expect(result.data.timestamp).toMatch(patterns.timestamp)
       userids.push(result.data.userid)

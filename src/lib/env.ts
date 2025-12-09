@@ -18,6 +18,9 @@ const env = {
   },
   hashSalt: process.env.HASH_SALT ?? "",
   pinoLogLevel: process.env.PINO_LOGLEVEL ?? "error",
+  users: {
+    defaultState: process.env.USER_DEFAULT_STATE ?? "active",
+  }
 }
 
 if ( isNaN(env.httpPort) || isNaN(env.wsPort) || isNaN(env.pg.port) ||

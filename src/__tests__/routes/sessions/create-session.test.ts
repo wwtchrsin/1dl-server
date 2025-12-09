@@ -44,7 +44,7 @@ describe("testing routes...", () => {
       expect(result.statusCode).toBe(201)
       expect(result.body).toBeDefined()
       expect(result.body.error).toBeUndefined()
-      expect(result.body.user).toBeDefined()
+      expect(result.body.profile).toBeDefined()
       expect(result.body.session).toBeDefined()
     }
     let result = await queryDatabase("SELECT * FROM users")
