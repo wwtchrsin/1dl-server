@@ -151,11 +151,11 @@ export const createMessage = async (userid: string, req: any):
         data: undefined,
       }
     }
-    let errorMessage = checkMessageContent(req)
-    if ( errorMessage !== undefined ) {
+    let contentCheckError = checkMessageContent(req)
+    if ( contentCheckError !== undefined ) {
       logger.warn({ userid, ...req }, "db/messages/createMessage#ERROR_DATA_CHECK")
       return {
-        error: errorMessage,
+        error: contentCheckError,
         data: undefined,
       }
     }
@@ -195,6 +195,54 @@ export const createMessage = async (userid: string, req: any):
     }
   }
 
+export const deleteMessage = async (userid: string, req: any):
+  Promise<{ error: TextResource | undefined, data: UserMessage | undefined }> => {
+    let useridCheckError = checkUserid(userid)
+    if ( useridCheckError !== undefined ) {
+      logger.warn({ userid, ...req }, "db/messages/deleteMessage#ERROR_USER_ID")
+      return {
+        error: useridCheckError,
+        data: undefined,
+      }
+    }
+    let messageidCheckError = checkMessageIds(req)
+    if ( messageidCheckError !== undefined ) {
+      logger.warn(req, "db/messages/deleteMessage#ERROR_MESSAGE_ID")
+      return {
+        error: messageidCheckError,
+        data: undefined,
+      }
+    }
+    let { region, district, room, index } = req as MessageIds
+    let query = `
+      DELETE FROM messages 
+        WHERE userid = $1 AND region = $2 AND district = $3 AND 
+          room = $4 AND index = $5
+        RETURNIN region, district, room, index, text, color, timestamp
+    `
+    let queryParams = [userid, region, district, room, index]
+    let result = await queryDatabase(query, queryParams)
+    if ( !result?.rows || result.rows.length > 1 ) {
+      logger.error({ userid, ...req }, "db/messages/deleteMessage#ERROR_DB_QUERY")
+      return {
+        error: "databaseErrors.deleteMessage",
+        data: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      logger.warn({ userid, ...req }, "db/messages/deleteMessage#ERROR_NOT_FOUND")
+      return {
+        error: "databaseConflicts.messageNotFound",
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0] as UserMessage,
+    }
+  }
+    
+    
 
     
   

@@ -30,7 +30,6 @@ export const checkMessageIds = (req: any): string | undefined => {
     Math.round(index) !== index ) {
       return "wrongValues.messages.index"
     }
-
   return undefined
 }
 

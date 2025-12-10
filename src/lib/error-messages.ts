@@ -174,6 +174,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to delete profile",
     ru: "Невозможно удалить профиль",
   },
+  deleteMessage: {
+    en: "Impossible to delete message",
+    ru: "Невозможно удалить сообщение",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {
