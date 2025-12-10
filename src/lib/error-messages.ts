@@ -279,4 +279,17 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
   return 500
 }
 
+export const getAuthStatus = (status: number): number => {
+  switch ( status ) {
+    case 400:
+    case 404:
+    case 409: {
+      return 401
+    }
+    default: {
+      return status
+    }
+  }
+}
+
 

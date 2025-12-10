@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "deleteSessionRouteTest"
+process.env.PG_SCHEMA = "deleteSessionEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -36,7 +36,7 @@ let correctSessions = [
 
 let wrongSession = examples.sessionid[2]
 
-describe("testing routes...", () => {
+describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
     await pool.query("DELETE FROM sessions")
@@ -81,7 +81,7 @@ describe("testing routes...", () => {
       args: () => "Bearer " + wrongSession,
       expres: {
         error: "databaseConflicts.sessionNotFound",
-        status: 404,
+        status: 401,
       },
     }],
     exprows: 2,
@@ -137,7 +137,7 @@ describe("testing routes...", () => {
       args: () => "Bearer " + wrongSession,
       expres: {
         error: "databaseConflicts.sessionNotFound",
-        status: 404,
+        status: 401,
       },
     }, {
       args: () => "Bearer " + correctSessions[1],

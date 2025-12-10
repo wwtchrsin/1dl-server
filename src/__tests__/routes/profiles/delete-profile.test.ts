@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "deleteProfileRouteTest"
+process.env.PG_SCHEMA = "deleteProfileEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -49,7 +49,7 @@ let messages = [[{
   color: examples.color.first,
 }], []]
 
-describe("testing routes...", () => {
+describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
     await pool.query("DELETE FROM sessions")
@@ -87,7 +87,7 @@ describe("testing routes...", () => {
     tag: 3,
     args: () => "Bearer " + unknownSessionid,
     expres: {
-      status: 404,
+      status: 401,
       error: "databaseConflicts.sessionNotFound",
       profile: undefined,
       messages: undefined,

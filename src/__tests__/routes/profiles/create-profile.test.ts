@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "createProfileRouteTest"
+process.env.PG_SCHEMA = "createProfileEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -19,7 +19,7 @@ afterAll(async () => {
 
 const testServer = supertest(httpServer)
 
-describe("testing routes...", () => {
+describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
     await pool.query("DELETE FROM sessions")

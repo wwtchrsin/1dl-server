@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { createSession, deleteSession, getProfile } from "../lib/database/users"
-import { getStatusCode, getErrorMessage } from "../lib/error-messages"
+import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readUserid } from "./miscs"
 import type { Request, Response } from "express"
 import type { Credentials } from "../lib/database/users"
@@ -24,7 +24,7 @@ const createSessionAction = async (req: Request<Credentials>, res: Response) => 
 const deleteSessionAction = async (req: Request, res: Response) => {
   let userid = await readUserid(req.header("Authorization"))
   if ( userid.error !== undefined ) {
-    let status = getStatusCode(userid.error)
+    let status = getAuthStatus(getStatusCode(userid.error))
     res.status(status).json({
       error: getErrorMessage(userid.error)
     })

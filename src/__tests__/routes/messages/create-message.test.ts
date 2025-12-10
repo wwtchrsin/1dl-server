@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "createMessageRouteTest"
+process.env.PG_SCHEMA = "createMessageEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -26,7 +26,7 @@ let sessions = {
   "unknown": examples.sessionid[0],
 }
 
-describe("testing routes...", () => {
+describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
@@ -128,7 +128,7 @@ describe("testing routes...", () => {
       },
       expres: {
         error: "databaseConflicts.sessionNotFound",
-        status: 404,
+        status: 401,
       },
     }],
     exprows: 0,

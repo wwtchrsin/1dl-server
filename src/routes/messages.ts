@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { createMessage } from "../lib/database/messages"
-import { getStatusCode, getErrorMessage } from "../lib/error-messages"
+import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile } from "./miscs"
 import type { Request, Response } from "express"
 import type { MessageContent } from "../lib/database/messages"
@@ -8,7 +8,7 @@ import type { MessageContent } from "../lib/database/messages"
 const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
   let profile = await readProfile(req.header("Authorization"))
   if ( profile.error !== undefined ) {
-    let status = getStatusCode(profile.error)
+    let status = getAuthStatus(getStatusCode(profile.error))
     res.status(status).json({
       error: getErrorMessage(profile.error),
       message: undefined,

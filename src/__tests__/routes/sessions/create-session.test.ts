@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "createSessionRouteTest"
+process.env.PG_SCHEMA = "createSessionEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -34,7 +34,7 @@ let wrongData = {
   password: examples.password.correct[2],
 }
 
-describe("testing routes...", () => {
+describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM sessions")
   })
