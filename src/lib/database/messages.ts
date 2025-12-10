@@ -218,7 +218,7 @@ export const deleteMessage = async (userid: string, req: any):
       DELETE FROM messages 
         WHERE userid = $1 AND region = $2 AND district = $3 AND 
           room = $4 AND index = $5
-        RETURNIN region, district, room, index, text, color, timestamp
+        RETURNING region, district, room, index, text, color, timestamp
     `
     let queryParams = [userid, region, district, room, index]
     let result = await queryDatabase(query, queryParams)
