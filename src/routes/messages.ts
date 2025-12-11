@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { createMessage } from "../lib/database/messages"
+import { createMessage, deleteMessage } from "../lib/database/messages"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
-import { readProfile } from "./miscs"
+import { readProfile, readUserid } from "./miscs"
 import type { Request, Response } from "express"
-import type { MessageContent } from "../lib/database/messages"
+import type { MessageContent, MessageIds } from "../lib/database/messages"
 
 const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
   let profile = await readProfile(req.header("Authorization"))
@@ -33,13 +33,39 @@ const createMessageAction = async (req: Request<MessageContent>, res: Response) 
   }
   res.status(201).json({
     error: undefined,
-    message: message.data
+    message: message.data,
+  })
+}
+
+const deleteMessageAction = async (req: Request<MessageIds>, res: Response) => {
+  let userid = await readUserid(req.header("Authorization"))
+  if ( userid.error !== undefined ) {
+    let status = getAuthStatus(getStatusCode(userid.error))
+    res.status(status).json({
+      error: getErrorMessage(userid.error),
+      message: undefined,
+    })
+    return
+  }
+  let message = await deleteMessage(userid.data, req.body)
+  if ( message.error !== undefined ) {
+    let status = getStatusCode(message.error)
+    res.status(status).json({
+      error: getErrorMessage(message.error),
+      message: undefined,
+    })
+    return
+  }
+  res.status(200).json({
+    error: undefined,
+    message: message.data,
   })
 }
 
 const router = new Router()
 
 router.post("/", createMessageAction)
+router.delete("/", deleteMessageAction)
 
 export default router
 
