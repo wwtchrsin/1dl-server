@@ -33,21 +33,23 @@ let knownSessionids = []
 
 let unknownSessionid = examples.sessionid[0]
 
-let messages = [[{
+let messages = [[[{
   region: examples.region.first,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin,
+}, {
   text: examples.text.correct[0],
   color: examples.color.first,
-}, {
+}], [{
   region: examples.region.first,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin + 1,
+}, {
   text: examples.text.correct[1],
   color: examples.color.first,
-}], []]
+}]], []]
 
 describe("testing endpoints...", () => {
   beforeEach(async () => {
@@ -141,9 +143,11 @@ describe("testing endpoints...", () => {
       }
       for ( let i=0; i < messages.length; i++ ) {
         for ( let j=0; j < messages[i].length; j++ ) {
-          let result = await testServer.post("/api/v1/messages")
+          let [ msgid, content ] = messages[i][j]
+          let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.room}/${msgid.index}`
+          let result = await testServer.post(url)
             .set("Authorization", "Bearer " + knownSessionids[i])
-            .send(messages[i][j])
+            .send(content)
           expect(result.statusCode).toBe(201)
           expect(result.body).toBeDefined()
           expect(result.body.error).toBeUndefined()

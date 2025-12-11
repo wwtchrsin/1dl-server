@@ -1,4 +1,4 @@
-import { checkRoomIds } from "../../../lib/database/checkers"
+import { checkRoomid } from "../../../lib/database/checkers"
 import { limits } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
@@ -77,8 +77,8 @@ describe("testing query validators...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function checkRoomIds. Test #${tag}`, () => {
-      let result = checkRoomIds(args)
+    test(`Function checkRoomid. Test #${tag}`, () => {
+      let result = checkRoomid(args)
       expect(result).toEqual(expres)
     })
   }

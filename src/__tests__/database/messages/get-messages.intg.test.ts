@@ -30,6 +30,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
+    }, {
       text: examples.text.correct[0],
       color: examples.color.first,
     }], [1, {
@@ -37,6 +38,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 1,
+    }, {
       text: examples.text.correct[1],
       color: examples.color.some,
     }], [0, {
@@ -44,6 +46,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 2,
+    }, {
       text: examples.text.correct[2],
       color: examples.color.some,
     }]],
@@ -60,6 +63,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
+    }, {
       text: examples.text.minLen,
       color: examples.color.last,
     }], [1, {
@@ -67,6 +71,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax - 1,
+    }, {
       text: examples.text.maxLen,
       color: examples.color.last,
     }]],
@@ -83,6 +88,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
+    }, {
       text: examples.text.regLen,
       color: examples.color.some,
     }], [0, {
@@ -90,6 +96,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin + 1,
+    }, {
       text: examples.text.correct[3],
       color: examples.color.some,
     }], [1, {
@@ -97,6 +104,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax - 2,
+    }, {
       text: examples.text.correct[2],
       color: examples.color.first,
     }], [0, {
@@ -104,12 +112,13 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMax,
+    }, {
       text: examples.text.correct[1],
       color: examples.color.first,
     }]],
     expres: [],
   }]
-  test("Function createMessage. Preparing database...", async () => {
+  test("Function getMessages. Preparing database...", async () => {
     let users = [{
       login: examples.login.correct[0],
       password: examples.password.correct[0],
@@ -136,23 +145,23 @@ describe("testing database queries...", () => {
     for ( let testcase of testcases ) {
       let { init, expres } = testcase 
       for ( let data of init ) {
-        let result = await createMessage(userids[data[0]], data[1])
+        let result = await createMessage(userids[data[0]], data[1], data[2])
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.region).toBe(data[1].region)
         expect(result.data.district).toBe(data[1].district)
         expect(result.data.room).toBe(data[1].room)
         expect(result.data.index).toBe(data[1].index)
-        expect(result.data.text).toBe(data[1].text)
-        expect(result.data.color).toBe(data[1].color)
+        expect(result.data.text).toBe(data[2].text)
+        expect(result.data.color).toBe(data[2].color)
         expect(result.data.timestamp).toBeDefined()
         expres.push({
           region: data[1].region,
           district: data[1].district,
           room: data[1].room,
           index: data[1].index,
-          text: data[1].text,
-          color: data[1].color,
+          text: data[2].text,
+          color: data[2].color,
           puid: puids[data[0]],
           username: usernames[data[0]],
           timestamp: result.data.timestamp,

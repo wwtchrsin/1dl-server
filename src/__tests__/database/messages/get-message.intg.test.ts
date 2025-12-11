@@ -31,6 +31,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin,
       room: limits.messages.roomMin,
       index: limits.messages.indexMin,
+    }, {
       text: examples.text.minLen,
       color: examples.color.first,
     }],
@@ -48,6 +49,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMax,
       room: limits.messages.roomMax,
       index: limits.messages.indexMax,
+    }, {
       text: examples.text.maxLen,
       color: examples.color.last,
     }],
@@ -65,6 +67,7 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMin + 1,
       room: limits.messages.roomMin + 1,
       index: limits.messages.indexMin + 1,
+    }, {
       text: examples.text.regLen,
       color: examples.color.some,
     }],
@@ -95,23 +98,23 @@ describe("testing database queries...", () => {
     let msgCount = 0
     for ( let testcase of testcases ) {
       let { init, expres } = testcase
-      let result = await createMessage(userids[init[0]], init[1])
+      let result = await createMessage(userids[init[0]], init[1], init[2])
       expect(result.error).toBeUndefined()
       expect(result.data).toBeDefined()
       expect(result.data.region).toBe(init[1].region)
       expect(result.data.district).toBe(init[1].district)
       expect(result.data.room).toBe(init[1].room)
       expect(result.data.index).toBe(init[1].index)
-      expect(result.data.text).toBe(init[1].text)
-      expect(result.data.color).toBe(init[1].color)
+      expect(result.data.text).toBe(init[2].text)
+      expect(result.data.color).toBe(init[2].color)
       expect(result.data.timestamp).toBeDefined()
       expres.push({
         region: init[1].region,
         district: init[1].district,
         room: init[1].room,
         index: init[1].index,
-        text: init[1].text,
-        color: init[1].color,
+        text: init[2].text,
+        color: init[2].color,
         puid: puids[init[0]],
         username: usernames[init[0]],
         timestamp: result.data.timestamp,

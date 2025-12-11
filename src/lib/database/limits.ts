@@ -44,7 +44,7 @@ export const limits = {
 
 export const patterns = {
   uuid: /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/,
-  timestamp: /^[1-9][0-9]{9,10}$/,
+  timestamp: /^[1-9][0-9]{8,10}$/,
   passwordHash: /^[0-9A-Fa-f]{128}$/,
   sessionid: /^[0-9A-Fa-f]{128}$/,
   login: new RegExp(limits.users.loginPattern),

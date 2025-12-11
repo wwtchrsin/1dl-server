@@ -49,6 +49,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -70,6 +71,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
@@ -91,6 +93,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
@@ -112,6 +115,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
@@ -133,6 +137,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMax + 1}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
@@ -154,6 +159,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin - 1}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -175,6 +181,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin - 1}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -196,6 +203,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.tooShort,
         color: examples.color.first,
       },
@@ -217,6 +225,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.tooLong,
         color: examples.color.first,
       },
@@ -238,6 +247,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: "12345678",
       },
@@ -259,6 +269,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -290,6 +301,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -311,6 +323,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -332,6 +345,7 @@ describe("testing database queries...", () => {
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
       },
@@ -350,9 +364,17 @@ describe("testing database queries...", () => {
     test(`Function createMessage. Unit Test #${tag}`, async () => {
       jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await messages.createMessage(args[0], args[1])
+      let result = await messages.createMessage(...args)
       if ( expres === "success" ) {
-        expect(result).toStrictEqual(success(args[1]))
+        expect(result.error).toBeUndefined()
+        expect(result.data).toBeDefined()
+        expect(result.data.region).toBe(args[1].region)
+        expect(`${result.data.district}`).toBe(args[1].district)
+        expect(`${result.data.room}`).toBe(args[1].room)
+        expect(`${result.data.index}`).toBe(args[1].index)
+        expect(result.data.text).toBe(args[2].text)
+        expect(result.data.color).toBe(args[2].color)
+        expect(`${result.data.timestamp}`).toMatch(patterns.timestamp)
         return
       }
       expect(result.error).toBe(expres)

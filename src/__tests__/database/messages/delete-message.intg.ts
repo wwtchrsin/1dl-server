@@ -20,28 +20,31 @@ let knownUserids = []
 
 let unknownUserid = examples.uuid[0]
 
-let messages = [{
+let messages = [[{
   region: examples.region.first,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin,
+}, {
   text: examples.text.correct[0],
   color: examples.color.first,
-}, {
+}], [{
   region: examples.region.first,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin + 1,
+}, {
   text: examples.text.correct[1],
   color: examples.color.first,
-}, {
+}], [{
   region: examples.region.last,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin,
+}, {
   text: examples.text.correct[2],
   color: examples.color.last,
-}]
+}]]
 
 let unknownMessageid = {
   region: examples.region.first,
@@ -56,13 +59,6 @@ let wrongRegionMessageid = {
   room: limits.messages.roomMin,
   index: limits.messages.indexMin,
 }
-
-let getMessageid = (message: any) => ({
-  region: message.region,
-  district: message.district,
-  room: message.room,
-  index: message.index,
-})
 
 describe("testing database queries...", () => {
   beforeEach(async () => {
@@ -89,52 +85,52 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [knownUserids[0], getMessageid(messages[0])],
+      args: () => [knownUserids[0], messages[0][0]],
       expres: "success",
     }],
   }, {
     tag: 2,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [knownUserids[1], getMessageid(messages[2])],
+      args: () => [knownUserids[1], messages[2][0]],
       expres: "success",
     }],
   }, {
     tag: 3,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
     ],
     actions: [{
-      args: () => [knownUserids[1], getMessageid(messages[2])],
+      args: () => [knownUserids[1], messages[2][0]],
       expres: "databaseConflicts.messageNotFound",
     }],
   }, {
     tag: 4,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [unknownUserid, getMessageid(messages[0])],
+      args: () => [unknownUserid, messages[0][0]],
       expres: "databaseConflicts.messageNotFound",
     }],
   }, {
     tag: 5,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
       args: () => [knownUserids[0], unknownMessageid],
@@ -143,20 +139,20 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => ["abcd", getMessageid(messages[0])],
+      args: () => ["abcd", messages[0][0]],
       expres: "wrongValues.users.userid",
     }],
   }, {
     tag: 7,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
       args: () => [knownUserids[0], wrongRegionMessageid],
@@ -165,49 +161,49 @@ describe("testing database queries...", () => {
   }, {
     tag: 8,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [knownUserids[0], getMessageid(messages[0])],
+      args: () => [knownUserids[0], messages[0][0]],
       expres: "success",
     }, {
-      args: () => [knownUserids[1], getMessageid(messages[2])],
+      args: () => [knownUserids[1], messages[2][0]],
       expres: "success",
     }],
   }, {
     tag: 9,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [knownUserids[1], getMessageid(messages[0])],
+      args: () => [knownUserids[1], messages[0][0]],
       expres: "databaseConflicts.messageNotFound",
     }, {
-      args: () => [knownUserids[0], getMessageid(messages[2])],
+      args: () => [knownUserids[0], messages[2][0]],
       expres: "databaseConflicts.messageNotFound",
     }, {
-      args: () => [knownUserids[0], getMessageid(messages[1])],
+      args: () => [knownUserids[0], messages[1][0]],
       expres: "success",
     }],
   }, {
     tag: 10,
     init: [
-      () => [knownUserids[0], messages[0]],
-      () => [knownUserids[0], messages[1]],
-      () => [knownUserids[1], messages[2]],
+      () => [knownUserids[0], messages[0][0], messages[0][1]],
+      () => [knownUserids[0], messages[1][0], messages[1][1]],
+      () => [knownUserids[1], messages[2][0], messages[2][1]],
     ],
     actions: [{
-      args: () => [knownUserids[0], getMessageid(messages[0])],
+      args: () => [knownUserids[0], messages[0][0]],
       expres: "success",
     }, {
-      args: () => [knownUserids[0], getMessageid(messages[1])],
+      args: () => [knownUserids[0], messages[1][0]],
       expres: "success",
     }, {
-      args: () => [knownUserids[1], getMessageid(messages[2])],
+      args: () => [knownUserids[1], messages[2][0]],
       expres: "success",
     }],
   }]
@@ -215,8 +211,8 @@ describe("testing database queries...", () => {
     let { init, actions, tag } = testcase
     test(`Function deleteMessage. Intg Test #${tag}`, async () => {
       for ( let args of init ) {
-        let [ userid, messageid ] = args()
-        let result = await createMessage(userid, messageid)
+        let [ userid, messageid, content ] = args()
+        let result = await createMessage(userid, messageid, content)
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.region).toBe(messageid.region)

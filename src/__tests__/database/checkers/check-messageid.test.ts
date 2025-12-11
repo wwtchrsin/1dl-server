@@ -1,4 +1,4 @@
-import { checkMessageIds } from "../../../lib/database/checkers"
+import { checkMessageid } from "../../../lib/database/checkers"
 import { limits } from "../../../lib/database/limits"
 
 describe("testing query validators...", () => {
@@ -95,8 +95,8 @@ describe("testing query validators...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function checkMessageIds. Test #${tag}`, () => {
-      let result = checkMessageIds(args)
+    test(`Function checkMessageid. Test #${tag}`, () => {
+      let result = checkMessageid(args)
       expect(result).toEqual(expres)
     })
   }

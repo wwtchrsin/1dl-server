@@ -64,14 +64,15 @@ describe("testing endpoints...", () => {
     tag: 1,
     actions: [{
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
@@ -82,14 +83,15 @@ describe("testing endpoints...", () => {
     tag: 2,
     actions: [{
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: "abcd",
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "wrongValues.messages.region",
         status: 400,
@@ -100,14 +102,15 @@ describe("testing endpoints...", () => {
     tag: 3,
     actions: [{
       auth: () => "Bearer " + sessions.inactive,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "appErrors.actionNotAllowed",
         status: 403,
@@ -118,14 +121,15 @@ describe("testing endpoints...", () => {
     tag: 4,
     actions: [{
       auth: () => "Bearer " + sessions.unknown,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "databaseConflicts.sessionNotFound",
         status: 401,
@@ -136,14 +140,15 @@ describe("testing endpoints...", () => {
     tag: 5,
     actions: [{
       auth: () => "abcd",
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "wrongValues.auth.header",
         status: 401,
@@ -154,28 +159,30 @@ describe("testing endpoints...", () => {
     tag: 6,
     actions: [{
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
       },
     }, {
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
@@ -186,28 +193,30 @@ describe("testing endpoints...", () => {
     tag: 7,
     actions: [{
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
       },
     }, {
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "databaseConflicts.messageAlreadyExists",
         status: 409,
@@ -218,42 +227,45 @@ describe("testing endpoints...", () => {
     tag: 8,
     actions: [{
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
       },
     }, {
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: "databaseConflicts.messageAlreadyExists",
         status: 409,
       },
     }, {
       auth: () => "Bearer " + sessions.active,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: {
         error: undefined,
         status: 201,
@@ -266,19 +278,21 @@ describe("testing endpoints...", () => {
     test(`POST /messages. Test #${tag}`, async () => {
       for ( let action of actions ) {
         let { auth, args, expres } = action
-        let result = await testServer.post("/api/v1/messages")
-          .set("Authorization", auth()).send(args)
+        let [ msgid, content ] = args
+        let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.room}/${msgid.index}`
+        let result = await testServer.post(url)
+          .set("Authorization", auth()).send(content)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
         if ( expres.error === undefined ) {
           expect(result.body.error).toBeUndefined()
           expect(result.body.message).toBeDefined()
-          expect(result.body.message.region).toBe(args.region)
-          expect(`${result.body.message.district}`).toBe(args.district)
-          expect(`${result.body.message.room}`).toBe(args.room)
-          expect(`${result.body.message.index}`).toBe(args.index)
-          expect(result.body.message.text).toBe(args.text)
-          expect(result.body.message.color).toBe(args.color)
+          expect(result.body.message.region).toBe(msgid.region)
+          expect(`${result.body.message.district}`).toBe(msgid.district)
+          expect(`${result.body.message.room}`).toBe(msgid.room)
+          expect(`${result.body.message.index}`).toBe(msgid.index)
+          expect(result.body.message.text).toBe(content.text)
+          expect(result.body.message.color).toBe(content.color)
           expect(result.body.message.timestamp).toMatch(patterns.timestamp)
         } else {
           let errorMessage = getErrorMessage(expres.error)

@@ -1,6 +1,6 @@
 import { limits, patterns } from "./limits"
 
-export const checkRoomIds = (req: any): string | undefined => {
+export const checkRoomid = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
     return "wrongValues.messages.region"
   }
@@ -19,8 +19,8 @@ export const checkRoomIds = (req: any): string | undefined => {
   return undefined
 }
 
-export const checkMessageIds = (req: any): string | undefined => {
-  let errorMessage = checkRoomIds(req)
+export const checkMessageid = (req: any): string | undefined => {
+  let errorMessage = checkRoomid(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
   }
@@ -34,10 +34,6 @@ export const checkMessageIds = (req: any): string | undefined => {
 }
 
 export const checkMessageContent = (req: any): string | undefined => {
-  let errorMessage = checkMessageIds(req)
-  if ( errorMessage !== undefined ) {
-    return errorMessage
-  }
   let textLen = Number(req?.text?.length)
   if ( isNaN(textLen) || textLen < limits.messages.textLenMin ||
     textLen > limits.messages.textLenMax ||

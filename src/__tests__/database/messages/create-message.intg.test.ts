@@ -43,190 +43,204 @@ describe("testing database queries...", () => {
     tag: 1,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "success",
     }],
   }, {
     tag: 2,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.last,
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: examples.text.maxLen,
         color: examples.color.last,
-      },
+      }],
       expres: "success",
     }],
   }, {
     tag: 3,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.some,
         district: `${limits.messages.districtMin + 1}`,
         room: `${limits.messages.roomMin + 1}`,
         index: `${limits.messages.indexMin + 1}`,
+      }, {
         text: examples.text.regLen,
         color: examples.color.some,
-      },
+      }],
       expres: "success",
     }],
   }, {
     tag: 4,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: "abcd",
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.messages.region",
     }],
   }, {
     tag: 5,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin - 1}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.messages.district",
     }],
   }, {
     tag: 6,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin - 1}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.messages.room",
     }],
   }, {
     tag: 7,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax + 1}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.messages.index",
     }],
   }, {
     tag: 8,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: examples.text.tooShort,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.messages.text",
     }],
   }, {
     tag: 9,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax}`,
+      }, {
         text: examples.text.minLen,
         color: "abcd",
-      },
+      }],
       expres: "wrongValues.messages.color",
     }],
   }, {
     tag: 10,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "success",
     }, {
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "databaseConflicts.messageAlreadyExists",
     }],
   }, {
     tag: 11,
     calls: [{
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "success",
     }, {
       wrongid: false,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "success",
     }],
   }, {
     tag: 12,
     calls: [{
       wrongid: true,
-      args: {
+      args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
+      }, {
         text: examples.text.minLen,
         color: examples.color.first,
-      },
+      }],
       expres: "wrongValues.users.userid",
     }],
   }]
@@ -238,15 +252,15 @@ describe("testing database queries...", () => {
       for ( let call of calls ) {
         let { args, wrongid, expres } = call
         let id = !wrongid ? correctData.userid : "abcd"
-        let result = await createMessage(id, args)
+        let result = await createMessage(id, args[0], args[1])
         if ( expres === "success" ) {
           expect(result.data).toBeDefined()
-          expect(result.data.region).toBe(args.region)
-          expect(`${result.data.district}`).toBe(args.district)
-          expect(`${result.data.room}`).toBe(args.room) 
-          expect(`${result.data.index}`).toBe(args.index)
-          expect(result.data.text).toBe(args.text)
-          expect(result.data.color).toBe(args.color)
+          expect(result.data.region).toBe(args[0].region)
+          expect(`${result.data.district}`).toBe(args[0].district)
+          expect(`${result.data.room}`).toBe(args[0].room) 
+          expect(`${result.data.index}`).toBe(args[0].index)
+          expect(result.data.text).toBe(args[1].text)
+          expect(result.data.color).toBe(args[1].color)
           expect(result.data.timestamp).toMatch(patterns.timestamp)
           expect(result.error).toBeUndefined()
           msgCount++
