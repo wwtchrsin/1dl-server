@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createMessage, deleteMessage } from "../lib/database/messages"
+import { createMessage, deleteMessage, getMessage } from "../lib/database/messages"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
 import type { Request, Response } from "express"
@@ -37,6 +37,22 @@ const createMessageAction = async (req: Request<MessageContent>, res: Response) 
   })
 }
 
+const getMessageAction = async (req: Request, res: Response) => {
+  let message = await getMessage(req.params)
+  if ( message.error !== undefined ) {
+    let status = getStatusCode(message.error)
+    res.status(status).json({
+      error: getErrorMessage(message.error),
+      message: undefined,
+    })
+    return
+  }
+  res.status(200).json({
+    error: undefined,
+    message: message.data,
+  })
+}
+
 const deleteMessageAction = async (req: Request, res: Response) => {
   let userid = await readUserid(req.header("Authorization"))
   if ( userid.error !== undefined ) {
@@ -65,6 +81,7 @@ const deleteMessageAction = async (req: Request, res: Response) => {
 const router = new Router()
 
 router.post("/:region/:district/:room/:index", createMessageAction)
+router.get("/:region/:district/:room/:index", getMessageAction)
 router.delete("/:region/:district/:room/:index", deleteMessageAction)
 
 export default router

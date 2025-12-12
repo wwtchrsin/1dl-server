@@ -30,7 +30,7 @@ describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
-  test("POST /messages. Preparing database...", async () => {
+  test("POST /messages/r/d/room/index. Preparing database...", async () => {
     let users = [{
       login: examples.login.correct[2],
       password: examples.password.correct[2],
@@ -275,7 +275,7 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { actions, exprows, tag } = testcase
-    test(`POST /messages. Test #${tag}`, async () => {
+    test(`POST /messages/r/d/room/index. Test #${tag}`, async () => {
       for ( let action of actions ) {
         let { auth, args, expres } = action
         let [ msgid, content ] = args

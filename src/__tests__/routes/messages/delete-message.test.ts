@@ -1,4 +1,4 @@
-process.env.PG_SCHEMA = "createMessageEndpointTest"
+process.env.PG_SCHEMA = "deleteMessageEndpointTest"
 
 import supertest from "supertest"
 import httpServer from "../../../http-server"
@@ -61,7 +61,7 @@ describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
-  test("POST /messages. Preparing database...", async () => {
+  test("DELETE /messages/r/d/room/index. Preparing database...", async () => {
     let users = [{
       login: examples.login.correct[0],
       password: examples.password.correct[0],
@@ -254,7 +254,7 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { init, actions, tag } = testcase
-    test(`DELETE /messages. Test #${tag}`, async () => {
+    test(`DELETE /messages/r/d/room/index. Test #${tag}`, async () => {
       for ( let args of init ) {
         let [ header, msgid, content ] = args()
         let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.room}/${msgid.index}`
