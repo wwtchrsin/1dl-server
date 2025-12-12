@@ -1,9 +1,9 @@
 import { Router } from "express"
-import { createMessage, deleteMessage, getMessage } from "../lib/database/messages"
+import { createMessage, deleteMessage, getMessage, getMessages } from "../lib/database/messages"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
 import type { Request, Response } from "express"
-import type { MessageContent, Messageid } from "../lib/database/messages"
+import type { MessageContent, Messageid, Roomid } from "../lib/database/messages"
 
 const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
   let profile = await readProfile(req.header("Authorization"))
@@ -53,6 +53,22 @@ const getMessageAction = async (req: Request, res: Response) => {
   })
 }
 
+const getMessagesAction = async (req: Request, res: Response) => {
+  let messages = await getMessages(req.params)
+  if ( messages.error !== undefined ) {
+    let status = getStatusCode(messages.error)
+    res.status(status).json({
+      error: getErrorMessage(messages.error),
+      message: undefined,
+    })
+    return
+  }
+  res.status(200).json({
+    error: undefined,
+    messages: messages.data,
+  })
+}
+
 const deleteMessageAction = async (req: Request, res: Response) => {
   let userid = await readUserid(req.header("Authorization"))
   if ( userid.error !== undefined ) {
@@ -80,6 +96,7 @@ const deleteMessageAction = async (req: Request, res: Response) => {
 
 const router = new Router()
 
+router.get("/:region/:district/:room", getMessagesAction)
 router.post("/:region/:district/:room/:index", createMessageAction)
 router.get("/:region/:district/:room/:index", getMessageAction)
 router.delete("/:region/:district/:room/:index", deleteMessageAction)
