@@ -178,6 +178,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to delete message",
     ru: "Невозможно удалить сообщение",
   },
+  getDistrictStats: {
+    en: "Impossible to get district stats",
+    ru: "Невозможно получить данные района",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {

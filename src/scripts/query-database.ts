@@ -24,9 +24,14 @@ let readLine = (prompt: string) => {
         console.log("DONE")
         break
       }
-      let result = await pgClient.query(line)
-      console.log(result)
-    }       
+      try {
+        let result = await pgClient.query(line)
+        console.log(result) 
+      } catch (err) {
+        console.error("Error occured: ")
+        console.error(err)
+      }
+    }
   } catch (err) {
     console.error("Error occured: ")
     console.error(err)

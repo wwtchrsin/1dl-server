@@ -1,6 +1,6 @@
 import { limits, patterns } from "./limits"
 
-export const checkRoomid = (req: any): string | undefined => {
+export const checkDistrictid = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
     return "wrongValues.messages.region"
   }
@@ -10,6 +10,14 @@ export const checkRoomid = (req: any): string | undefined => {
     Math.round(district) !== district ) {
       return "wrongValues.messages.district"
     }
+  return undefined
+}
+
+export const checkRoomid = (req: any): string | undefined => {
+  let errorMessage = checkDistrictid(req)
+  if ( errorMessage !== undefined ) {
+    return errorMessage
+  }
   let room = Number(req?.room)
   if ( isNaN(room) || room < limits.messages.roomMin || 
     room > limits.messages.roomMax ||

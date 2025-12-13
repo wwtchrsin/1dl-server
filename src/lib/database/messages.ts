@@ -1,13 +1,17 @@
-import { checkRoomid, checkMessageid, checkMessageContent, checkUserid } from "./checkers"
+import { checkDistrictid, checkRoomid, checkMessageid, checkMessageContent, 
+  checkUserid } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
 import { getTimestamp } from "./miscs"
 import logger from "../logger"
 import type { TextResource } from "../langs"
 
-export type Roomid = {
+export type Districtid = {
   region: string,
   district: string,
+}
+
+export type Roomid = Districtid & {
   room: string,
 }
 
@@ -34,6 +38,41 @@ export type Message = UserMessage & {
   puid: string,
   username: string,
 }
+
+export type RoomMessageCount = {
+  room: number,
+  msgs: number,
+}
+
+export const getDistrictStats = async (districtid: any):
+  Promise<{ error: string | undefined, data: RoomMessageCount[] | undefined }> => {
+    let errorMessage = checkDistrictid(districtid)
+    if ( errorMessage !== undefined ) {
+      logger.warn(districtid, "db/messages/getDistrictStats#ERROR_ARGS_CHECK")
+      return {
+        error: errorMessage,
+        data: undefined,
+      }
+    }
+    let { region, district } = districtid as Districtid
+    let query = `
+      SELECT room, COUNT(*) as msgs FROM messages
+        WHERE region = $1 AND district = $2
+        GROUP BY room
+    `
+    let result = await queryDatabase(query, [region, district])
+    if ( !result ) {
+      logger.error(districtid, "db/messages/getDistrictStats#ERROR_DB_QUERY")
+      return {
+        error: "databaseErrors.getDistrictStats",
+        data: undefined
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows as RoomMessageCount[],
+    }
+  }
 
 export const getMessages = async (roomid: any): 
   Promise<{ error: string | undefined, data: Message[] | undefined }> => {
