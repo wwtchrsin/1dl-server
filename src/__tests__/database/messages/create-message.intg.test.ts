@@ -2,17 +2,14 @@ process.env.PG_SCHEMA = "createMessageTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createMessage } from "../../../lib/database/messages"
-import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
-
-let correctData = {}
-
-let username = "abcd 123"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)
+  await pool.query(populateDatabase.addUsers)
 })
 
 afterAll(async () => {
@@ -24,250 +21,234 @@ describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
-  test("Function createMessage. Preparing database...", async () => {
-    let args = {
-      login: examples.login.correct[1],
-      password: examples.password.correct[1],
-      name: examples.name.correct[1],
-    }
-    let result = await createProfile(args, "active")
-    let table = await pool.query("SELECT userid FROM users")
-    expect(result.error).toBeUndefined()
-    expect(result.data).toBeDefined()
-    expect(table).toBeDefined()
-    expect(table.rows).toHaveLength(1)
-    expect(table.rows[0].userid).toMatch(patterns.uuid)
-    correctData.userid = table.rows[0].userid
-  })
   let testcases = [{
     tag: 1,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "success",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
+    }]
   }, {
     tag: 2,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.last,
-        district: `${limits.messages.districtMax}`,
-        room: `${limits.messages.roomMax}`,
-        index: `${limits.messages.indexMax}`,
-      }, {
-        text: examples.text.maxLen,
-        color: examples.color.last,
-      }],
-      expres: "success",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.last,
+          district: limits.messages.districtMax,
+          room: limits.messages.roomMax,
+          index: limits.messages.indexMax,
+        },
+        content: {
+          text: examples.text.correct[1],
+          color: examples.color.last,
+        },
+      },
+      error: undefined,
+    }]
   }, {
     tag: 3,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.some,
-        district: `${limits.messages.districtMin + 1}`,
-        room: `${limits.messages.roomMin + 1}`,
-        index: `${limits.messages.indexMin + 1}`,
-      }, {
-        text: examples.text.regLen,
-        color: examples.color.some,
-      }],
-      expres: "success",
-    }],
+    actions: [{
+      args: {
+        userid: "abcd",
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: "wrongValues.users.userid",
+    }]
   }, {
     tag: 4,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: "abcd",
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.messages.region",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: "abcd",
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: "wrongValues.messages.region",
+    }]
   }, {
     tag: 5,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin - 1}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.messages.district",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: "abcd",
+        },
+      },
+      error: "wrongValues.messages.color",
+    }]
   }, {
     tag: 6,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin - 1}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.messages.room",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
+    }, {
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin + 1,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
+    }]
   }, {
     tag: 7,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMax + 1}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.messages.index",
-    }],
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
+    }, {
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: "databaseConflicts.messageAlreadyExists",
+    }]
   }, {
     tag: 8,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMax}`,
-      }, {
-        text: examples.text.tooShort,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.messages.text",
-    }],
-  }, {
-    tag: 9,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMax}`,
-      }, {
-        text: examples.text.minLen,
-        color: "abcd",
-      }],
-      expres: "wrongValues.messages.color",
-    }],
-  }, {
-    tag: 10,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "success",
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
     }, {
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "databaseConflicts.messageAlreadyExists",
-    }],
-  }, {
-    tag: 11,
-    calls: [{
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "success",
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: "databaseConflicts.messageAlreadyExists",
     }, {
-      wrongid: false,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin + 1}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "success",
-    }],
-  }, {
-    tag: 12,
-    calls: [{
-      wrongid: true,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: "wrongValues.users.userid",
-    }],
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: examples.region.first,
+          district: limits.messages.districtMin,
+          room: limits.messages.roomMin,
+          index: limits.messages.indexMin + 1,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: examples.color.first,
+        },
+      },
+      error: undefined,
+    }]
   }]
   for ( let testcase of testcases ) {
-    let { calls, table, tag } = testcase
+    let { actions, tag } = testcase
     test(`Function createMessage. Intg Test #${tag}`, async () => {
       let msgCount = 0
-      let table = []
-      for ( let call of calls ) {
-        let { args, wrongid, expres } = call
-        let id = !wrongid ? correctData.userid : "abcd"
-        let result = await createMessage(id, args[0], args[1])
-        if ( expres === "success" ) {
-          expect(result.data).toBeDefined()
-          expect(result.data.region).toBe(args[0].region)
-          expect(`${result.data.district}`).toBe(args[0].district)
-          expect(`${result.data.room}`).toBe(args[0].room) 
-          expect(`${result.data.index}`).toBe(args[0].index)
-          expect(result.data.text).toBe(args[1].text)
-          expect(result.data.color).toBe(args[1].color)
-          expect(result.data.timestamp).toMatch(patterns.timestamp)
+      for ( let action of actions ) {
+        let { args, error } = action
+        let { userid, messageid, content } = args
+        let result = await createMessage(userid, messageid, content)
+        if ( error === undefined ) {
           expect(result.error).toBeUndefined()
+          expect(result.data).toBeDefined()
+          expect(result.data.region).toBe(messageid.region)
+          expect(result.data.district).toBe(messageid.district)
+          expect(result.data.room).toBe(messageid.room)
+          expect(result.data.index).toBe(messageid.index)
+          expect(result.data.text).toBe(content.text)
+          expect(result.data.color).toBe(content.color)
+          expect(result.data.timestamp).toMatch(patterns.timestamp)
           msgCount++
-          continue
+        } else {
+          expect(result.error).toBe(error)
+          expect(result.data).toBeUndefined()
         }
-        expect(result.data).toBeUndefined()
-        expect(result.error).toBe(expres)
       }
       let result = await pool.query("SELECT * FROM messages")
       expect(result).toBeDefined()

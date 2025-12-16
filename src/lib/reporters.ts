@@ -13,7 +13,10 @@ export const client = await createClient({
   user: env.redis.user,
   password: env.redis.password,
 })
-.on(err => { logger.fatal(err, "redis/createClient") })
+.on("error", err => {
+  logger.fatal(err, "redis/createClient")
+  process.exit(1)
+})
 .connect()
 
 export const reportMessageUpdated = async (message: Message) => {

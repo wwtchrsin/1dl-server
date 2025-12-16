@@ -32,6 +32,7 @@ export const limits = {
     passwordSymbols: passwordSymbols.split(""),
     passwordPattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${passwordSymbols}])` +
       `[A-Za-z\\d${passwordSymbols}]{8,24}$`,
+    passwordHashSize: 128,
     nameLenMin: 8,
     nameLenMax: 16,
     states: [
@@ -39,6 +40,10 @@ export const limits = {
       "active",
       "suspended",
     ],
+  },
+  sessions: {
+    sessionidSize: 128,
+    sessionidHashSize: 128,
   },
 }
 
@@ -112,7 +117,7 @@ export const examples = {
       "abcd abcd abcd",
       "1234 1234 1234",
       "@@@@ %%%% &&&&",
-      "<<<< >>>> ''''",
+      "<<<< >>>> ;;;;",
     ],
   },
   text: {

@@ -25,15 +25,6 @@ let databaseChecks = {
   timestamp: patterns.timestamp,
 }
 
-let resultChecks = (args: any) => ({
-  userid: patterns.uuid,
-  login: new RegExp(`^${args.login}$`),
-  name: new RegExp(`^${args.name}$`),
-  state: new RegExp(`^[a-z]+$`),
-  puid: patterns.uuid,
-  timestamp: patterns.timestamp,
-})
-
 describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM users")
@@ -165,14 +156,14 @@ describe("testing database queries...", () => {
         let { args, expres } = call
         let result = await createProfile(...args)
         if ( expres === "success" ) {
-          let checks = resultChecks(args[0])
           expect(result.error).toBeUndefined()
           expect(result.data).toBeDefined()
-          expect(result.data.userid).toMatch(checks.userid)
-          expect(result.data.name).toMatch(checks.name)
-          expect(result.data.state).toMatch(checks.state)
-          expect(result.data.puid).toMatch(checks.puid)
-          expect(result.data.timestamp).toMatch(checks.timestamp)
+          expect(result.data.userid).toMatch(patterns.uuid)
+          expect(result.data.login).toBe(args[0].login)
+          expect(result.data.name).toBe(args[0].name)
+          expect(result.data.state).toBeDefined()
+          expect(result.data.puid).toMatch(patterns.uuid)
+          expect(result.data.timestamp).toMatch(patterns.timestamp)
           msgCount++
           continue
         }

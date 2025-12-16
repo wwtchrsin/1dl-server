@@ -1,13 +1,16 @@
 process.env.PG_SCHEMA = "createSessionTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { createProfile, createSession } from "../../../lib/database/users"
+import { createSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples, populateDatabase, databaseUsers } 
+  from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)
+  await pool.query(populateDatabase.addUsers)
 })
 
 afterAll(async () => {
@@ -15,78 +18,49 @@ afterAll(async () => {
   await pool.end()
 })
 
-let correctData = [{
-  login: examples.login.correct[0],
-  password: examples.password.correct[0],
-  name: examples.name.correct[0],
-}, {
-  login: examples.login.correct[2],
-  password: examples.password.correct[2],
-  name: examples.name.correct[2],
-}]
-
-let wrongData = {
-  login: examples.login.correct[1],
-  password: examples.password.correct[1],
-}
-
 describe("testing database queries...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM sessions")
   })
-  test("Function createSession. Preparing database...", async () => {
-    for ( let user of correctData ) {
-      let result = await createProfile(user, "active")
-      expect(result.error).toBeUndefined()
-      expect(result.data).toBeDefined()
-      expect(result.data.userid).toMatch(patterns.uuid)
-      expect(result.data.login).toBe(user.login)
-      expect(result.data.password).toBeUndefined() 
-      expect(result.data.name).toBe(user.name)
-      expect(result.data.state).toBeDefined()
-      expect(result.data.puid).toMatch(patterns.uuid)
-      expect(result.data.timestamp).toMatch(patterns.timestamp) 
-    }
-  })
   let testcases = [{
     tag: 1,
     args: {
-      login: correctData[0].login,
-      password: correctData[0].password,
+      login: databaseUsers[0].login,
+      password: databaseUsers[0].password,
     },
     expres: "success",
   }, {
     tag: 2,
     args: {
-      login: correctData[1].login,
-      password: correctData[1].password,
+      login: databaseUsers[2].login,
+      password: databaseUsers[2].password,
     },
     expres: "success",
   }, {
     tag: 3,
     args: {
-      login: wrongData.login,
-      password: wrongData.password,
+      login: databaseUsers[0].login,
+      password: databaseUsers[1].password,
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: {
-      login: correctData[0].login,
-      password: correctData[1].password,
+      login: examples.login.minLen,
+      password: examples.password.minLen,
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
     args: {
       login: undefined,
-      password: correctData[0].password,
+      password: databaseUsers[0].password,
     },
     expres: "wrongValues.auth.login",
   }, {
     tag: 6,
     args: {
-      login: correctData[0].login,
+      login: databaseUsers[0].login,
       password: undefined,
     },
     expres: "wrongValues.auth.password",
@@ -111,12 +85,12 @@ describe("testing database queries...", () => {
   }
   test("Function createSession. Intg Test #7", async () => {
     let args1 = {
-      login: correctData[0].login,
-      password: correctData[0].password,
+      login: databaseUsers[0].login,
+      password: databaseUsers[0].password,
     }
     let args2 = {
-      login: correctData[1].login,
-      password: correctData[1].password,
+      login: databaseUsers[1].login,
+      password: databaseUsers[1].password,
     }
     let resultA = await createSession(args1)
     let resultB = await createSession(args1)
