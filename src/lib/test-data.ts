@@ -482,21 +482,3 @@ export const populateDatabase = (() => {
   }
 })()
 
-/*
-console.log("databaseActiveUsers", databaseActiveUsers)
-console.log("databaseInactiveUsers", databaseInactiveUsers)
-console.log("databaseUsers", databaseUsers)
-console.log("userBySession", userBySession)
-console.log("sessionByUser", sessionByUser)
-console.log("databaseSessions", databaseSessions)
-console.log("userByMessage", userByMessage)
-console.log("messagesByUser", messagesByUser)
-console.log("databaseDistricts", databaseDistricts)
-console.log("databaseRooms", databaseRooms)
-console.log("districtByMessage", districtByMessage)
-console.log("messagesByDistrict", messagesByDistrict)
-console.log("roomByMessage", roomByMessage)
-console.log("messagesByRoom", messagesByRoom)
-console.log("databaseMessages", databaseMessages)
-*/
-

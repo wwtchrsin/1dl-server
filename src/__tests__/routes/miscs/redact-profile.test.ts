@@ -1,5 +1,5 @@
 import { redactProfile } from "../../../routes/miscs"
-import { examples } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 describe("testing auxilliary functions...", () => {
   let testcases = [{

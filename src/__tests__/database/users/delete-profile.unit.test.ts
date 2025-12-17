@@ -1,7 +1,8 @@
 import * as messages from "../../../lib/database/messages"
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import { limits, examples } from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 let msgs = [[{
   region: examples.region.first,

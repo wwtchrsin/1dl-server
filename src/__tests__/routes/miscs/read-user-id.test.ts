@@ -1,6 +1,6 @@
 import * as users from "../../../lib/database/users"
 import { readUserid } from "../../../routes/miscs"
-import { examples } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 describe("testing auxilliary functions...", () => {
   afterEach(() => {

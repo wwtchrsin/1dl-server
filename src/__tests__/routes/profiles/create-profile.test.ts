@@ -4,7 +4,8 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
