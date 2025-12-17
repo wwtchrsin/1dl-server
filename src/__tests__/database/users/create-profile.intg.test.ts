@@ -3,7 +3,8 @@ process.env.PG_SCHEMA = "createProfileTest"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
@@ -31,7 +32,7 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.minLen,
         password: examples.password.minLen,
@@ -41,7 +42,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 2,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.maxLen,
         password: examples.password.maxLen,
@@ -51,7 +52,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 3,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.regLen,
         password: examples.password.regLen,
@@ -61,7 +62,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 4,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.tooShort,
         password: examples.password.minLen,
@@ -71,7 +72,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 5,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.minLen,
         password: examples.password.tooShort,
@@ -81,7 +82,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 6,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.minLen,
         password: examples.password.minLen,
@@ -91,7 +92,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 7,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.correct[0],
         password: examples.password.minLen,
@@ -108,7 +109,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 8,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.correct[0],
         password: examples.password.minLen,
@@ -125,7 +126,7 @@ describe("testing database queries...", () => {
     }],
   }, {
     tag: 9,
-    calls: [{
+    actions: [{
       args: [{
         login: examples.login.correct[2],
         password: examples.password.minLen,
@@ -149,11 +150,11 @@ describe("testing database queries...", () => {
     }],
   }]
   for ( let testcase of testcases ) {
-    let { calls, tag } = testcase
+    let { actions, tag } = testcase
     test(`Function createProfile. Intg Test #${tag}`, async () => {
       let msgCount = 0
-      for ( let call of calls ) {
-        let { args, expres } = call
+      for ( let action of actions ) {
+        let { args, expres } = action
         let result = await createProfile(...args)
         if ( expres === "success" ) {
           expect(result.error).toBeUndefined()

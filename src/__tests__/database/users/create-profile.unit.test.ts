@@ -1,6 +1,7 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 let loginDoesntExist = () => {
   return Promise.resolve({ error: undefined, data: false })
@@ -27,15 +28,6 @@ let requestReturnsZeroUsers = () => {
 let requestReturnsError = () => {
   return Promise.resolve(undefined)
 }
-
-let resultChecks = (args: any) => ({
-  userid: patterns.uuid,
-  login: new RegExp(`^${args.login}$`),
-  name: new RegExp(`^${args.name}$`),
-  state: new RegExp(`^[a-z]+$`),
-  puid: patterns.uuid,
-  timestamp: patterns.timestamp,
-})
 
 describe("testing database queries...", () => {
   afterEach(() => {
@@ -167,21 +159,21 @@ describe("testing database queries...", () => {
     test(`Function createProfile. Unit Test #${tag}`, async () => {
       let loginExists = jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
       let queryDatabase = jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await users.createProfile(...args)
+      let [ userdata, state ] = args
+      let result = await users.createProfile(userdata, state)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        let checks = resultChecks(args[0])
-        expect(result.data.userid).toMatch(checks.userid)
-        expect(result.data.login).toMatch(checks.login)
-        expect(result.data.name).toMatch(checks.name)
-        expect(result.data.state).toMatch(checks.state)
-        expect(result.data.puid).toMatch(checks.puid)
-        expect(result.data.timestamp).toMatch(checks.timestamp)
-        return
+        expect(result.data.userid).toMatch(patterns.uuid)
+        expect(result.data.login).toBe(userdata.login)
+        expect(result.data.name).toBe(userdata.name)
+        expect(result.data.state).toBe(state)
+        expect(result.data.puid).toMatch(patterns.uuid)
+        expect(result.data.timestamp).toMatch(patterns.timestamp)
+      } else {
+        expect(result.error).toBe(expres)
+        expect(result.data).toBeUndefined()
       }
-      expect(result.error).toBe(expres)
-      expect(result.data).toBeUndefined()
     })
   }
 })

@@ -4,13 +4,18 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples, populateDatabase, databaseActiveUsers,
+  databaseInactiveUsers, sessionByUser, databaseSessions } 
+  from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)
+  await pool.query(populateDatabase.addUsers)
+  await pool.query(populateDatabase.addSessions)
 })
 
 afterAll(async () => {
@@ -18,52 +23,20 @@ afterAll(async () => {
   await pool.end()
 })
 
-const testServer = supertest(httpServer)
+let testServer = supertest(httpServer)
 
-let sessions = {
-  "active": "",
-  "inactive": "",
-  "unknown": examples.sessionid[0],
-}
+let sessionid = (userIndex: number) => {
+  return databaseSessions[sessionByUser[userIndex]].sessionid
+} 
 
 describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
   })
-  test("POST /messages/r/d/room/index. Preparing database...", async () => {
-    let users = [{
-      login: examples.login.correct[2],
-      password: examples.password.correct[2],
-      name: examples.name.correct[2],
-    }, {
-      login: examples.login.correct[3],
-      password: examples.password.correct[3],
-      name: examples.name.correct[3],
-    }]
-    jest.replaceProperty(env.users, "defaultState", "active")
-    let result = await testServer.post("/api/v1/profiles").send(users[0])
-    expect(result.statusCode).toBe(201)
-    expect(result.body).toBeDefined()
-    expect(result.body.error).toBeUndefined()
-    expect(result.body.profile).toBeDefined()
-    expect(result.body.profile.state).toBe("active")
-    expect(result.body.session).toMatch(patterns.sessionid)
-    sessions.active = result.body.session
-    jest.replaceProperty(env.users, "defaultState", "inactive")
-    result = await testServer.post("/api/v1/profiles").send(users[1])
-    expect(result.statusCode).toBe(201)
-    expect(result.body).toBeDefined()
-    expect(result.body.error).toBeUndefined()
-    expect(result.body.profile).toBeDefined()
-    expect(result.body.profile.state).toBe("inactive")
-    expect(result.body.session).toMatch(patterns.sessionid)
-    sessions.inactive = result.body.session
-    jest.restoreAllMocks()
-  })
   let testcases = [{
     tag: 1,
     actions: [{
-      auth: () => "Bearer " + sessions.active,
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
@@ -78,30 +51,11 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }],
-    exprows: 1,
+    rowCount: 1,
   }, {
     tag: 2,
     actions: [{
-      auth: () => "Bearer " + sessions.active,
-      args: [{
-        region: "abcd",
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: "wrongValues.messages.region",
-        status: 400,
-      },
-    }],
-    exprows: 0,
-  }, {
-    tag: 3,
-    actions: [{
-      auth: () => "Bearer " + sessions.inactive,
+      auth: () => "Bearer " + sessionid(databaseInactiveUsers[0]),
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
@@ -116,11 +70,11 @@ describe("testing endpoints...", () => {
         status: 403,
       },
     }],
-    exprows: 0,
+    rowCount: 0,
   }, {
-    tag: 4,
+    tag: 3,
     actions: [{
-      auth: () => "Bearer " + sessions.unknown,
+      auth: () => "Bearer " + examples.sessionid[0],
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
@@ -135,9 +89,9 @@ describe("testing endpoints...", () => {
         status: 401,
       },
     }],
-    exprows: 0,
+    rowCount: 0,
   }, {
-    tag: 5,
+    tag: 4,
     actions: [{
       auth: () => "abcd",
       args: [{
@@ -154,45 +108,49 @@ describe("testing endpoints...", () => {
         status: 401,
       },
     }],
-    exprows: 0,
+    rowCount: 0,
+  }, {
+    tag: 5,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: "abcd",
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "wrongValues.messages.region",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
   }, {
     tag: 6,
     actions: [{
-      auth: () => "Bearer " + sessions.active,
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
       }, {
-        text: examples.text.minLen,
+        text: examples.text.tooShort,
         color: examples.color.first,
       }],
       expres: {
-        error: undefined,
-        status: 201,
-      },
-    }, {
-      auth: () => "Bearer " + sessions.active,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin + 1}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: undefined,
-        status: 201,
+        error: "wrongValues.messages.text",
+        status: 400,
       },
     }],
-    exprows: 2,
+    rowCount: 0,
   }, {
     tag: 7,
     actions: [{
-      auth: () => "Bearer " + sessions.active,
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
@@ -207,56 +165,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
-      auth: () => "Bearer " + sessions.active,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: "databaseConflicts.messageAlreadyExists",
-        status: 409,
-      },
-    }],
-    exprows: 1,
-  }, {
-    tag: 8,
-    actions: [{
-      auth: () => "Bearer " + sessions.active,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: undefined,
-        status: 201,
-      },
-    }, {
-      auth: () => "Bearer " + sessions.active,
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: "databaseConflicts.messageAlreadyExists",
-        status: 409,
-      },
-    }, {
-      auth: () => "Bearer " + sessions.active,
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
@@ -271,10 +180,93 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }],
-    exprows: 2,
+    rowCount: 2,
+  }, {
+    tag: 8,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: undefined,
+        status: 201,
+      },
+    }, {
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "databaseConflicts.messageAlreadyExists",
+        status: 409,
+      },
+    }],
+    rowCount: 1,
+  }, {
+    tag: 9,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: undefined,
+        status: 201,
+      },
+    }, {
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "databaseConflicts.messageAlreadyExists",
+        status: 409,
+      },
+    }, {
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin + 1}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: undefined,
+        status: 201,
+      },
+    }],
+    rowCount: 2,
   }]
   for ( let testcase of testcases ) {
-    let { actions, exprows, tag } = testcase
+    let { actions, rowCount, tag } = testcase
     test(`POST /messages/r/d/room/index. Test #${tag}`, async () => {
       for ( let action of actions ) {
         let { auth, args, expres } = action
@@ -302,7 +294,7 @@ describe("testing endpoints...", () => {
       }
       let result = await queryDatabase("SELECT * FROM messages")
       expect(result).toBeDefined()
-      expect(result.rows).toHaveLength(exprows)
+      expect(result.rows).toHaveLength(rowCount)
     })
   }
 })

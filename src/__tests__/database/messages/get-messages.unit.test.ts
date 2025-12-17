@@ -2,7 +2,7 @@ import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
 import { limits, examples } from "../../../lib/database/limits"
 
-let getMessage = (args: any) => ({
+let toMessage = (args: any) => ({
   region: args.region,
   district: Number(args.district),
   room: Number(args.room),
@@ -12,20 +12,17 @@ let getMessage = (args: any) => ({
   timestamp: "123456789",
 })
 
+let toMessages = (args: any) => [toMessage(args)]
+
 let returnMessage = (queryString: string, queryParams: string[]) => {
   let [region, district, room] = queryParams
-  let message = getMessage({ region, district, room })
+  let message = toMessage({ region, district, room })
   return Promise.resolve({ rows: [message] })
 }
 
 let returnZeroMessages = () => Promise.resolve({ rows: [] })
 
 let returnError = () => Promise.resolve(undefined)
-
-let success = (args: any) => ({
-  error: undefined,
-  data: [getMessage(args)],
-})
 
 describe("testing database queries...", () => {
   afterEach(() => {
@@ -141,10 +138,11 @@ describe("testing database queries...", () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await messages.getMessages(args)
       if ( expres === "success" ) {
-        expect(result).toStrictEqual(success(args))
-        return
+        expect(result.error).toBeUndefined()
+        expect(result.data).toStrictEqual(toMessages(args))
+      } else {
+        expect(result).toStrictEqual(expres)
       }
-      expect(result).toStrictEqual(expres)
     })
   }
 })

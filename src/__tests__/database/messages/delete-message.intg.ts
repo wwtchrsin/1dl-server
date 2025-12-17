@@ -19,7 +19,7 @@ afterAll(async () => {
   await pool.end()
 })
 
-let toFunctionOutput = (message: any) => ({
+let toMessage = (message: any) => ({
   region: message.region,
   district: message.district,
   room: message.room,
@@ -43,7 +43,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: toFunctionOutput(databaseMessages[2]),
+      data: toMessage(databaseMessages[2]),
     },
     rowCount: databaseMessages.length - 1,
   }, {
@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: toFunctionOutput(databaseMessages[6]),
+      data: toMessage(databaseMessages[6]),
     },
     rowCount: databaseMessages.length - 2,
   }, {
@@ -143,7 +143,7 @@ describe("testing database queries...", () => {
     },
     rowCount: databaseMessages.length - 2,
   }, {
-    tag: 1,
+    tag: 8,
     args: {
       userid: databaseMessages[0].userid,
       messageid: {
@@ -155,7 +155,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: toFunctionOutput(databaseMessages[0]),
+      data: toMessage(databaseMessages[0]),
     },
     rowCount: databaseMessages.length - 3,
   }]

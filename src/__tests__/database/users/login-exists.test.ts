@@ -1,6 +1,7 @@
 import * as conn from "../../../lib/database/conn"
 import * as users from "../../../lib/database/users"
-import { limits, examples } from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 let login = examples.login.correct[0]
 

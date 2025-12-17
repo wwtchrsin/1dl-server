@@ -183,16 +183,16 @@ export const userByMessage = [
   /*[2]*/ 2,
   /*[3]*/ 3,
   /*[4]*/ 4,
-  /*[5]*/ 0,
-  /*[6]*/ 1,
-  /*[7]*/ 2,
-  /*[8]*/ 3,
-  /*[9]*/ 0,
-  /*[10]*/ 1,
-  /*[11]*/ 2,
-  /*[12]*/ 0,
-  /*[13]*/ 1,
-  /*[14]*/ 0,
+  /*[5]*/ 5,
+  /*[6]*/ 6,
+  /*[7]*/ 7,
+  /*[8]*/ 0,
+  /*[9]*/ 1,
+  /*[10]*/ 2,
+  /*[11]*/ 3,
+  /*[12]*/ 4,
+  /*[13]*/ 5,
+  /*[14]*/ 6,
   /*[15]*/ 13,
   /*[16]*/ 12,
   /*[17]*/ 11,
@@ -217,6 +217,23 @@ export const messagesByUser = (() => {
       result[userByMessage[i]] = []
     }
     result[userByMessage[i]].push(i)
+  }
+  return result
+})()
+
+export const databaseCompleteUsers = (() => {
+  let result = []  
+  for ( let i=0; i < databaseUsers.length; i++ ) {
+    if ( !databaseActiveUsers.includes(i) ) {
+      continue
+    }
+    if ( sessionByUser[i] === undefined ) {
+      continue
+    }
+    if ( messagesByUser[i] === undefined ) {
+      continue
+    }
+    result.push(i)
   }
   return result
 })()

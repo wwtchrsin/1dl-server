@@ -264,7 +264,7 @@ export const getUserid = async (sessionid: string):
       }
     }
     let sessionHash = hashSession(sessionid)
-    let query = "SELECT userid, sessionid FROM sessions WHERE sessionid = $1"
+    let query = "SELECT userid FROM sessions WHERE sessionid = $1"
     let result = await queryDatabase(query, [sessionHash])
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ sessionid }, "db/users/getUserid#ERROR_DB_QUERY")

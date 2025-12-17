@@ -19,8 +19,12 @@ afterAll(async () => {
   await pool.end()
 })
 
-let toFunctionOutput = (messageIndices: number[]) => {
-  return messageIndices.map((messageIndex) => ({
+let sortMessages = (messages: any[]) => {
+  return messages.sort((a, b) => +a.timestamp < +b.timestamp ? -1 : 1)
+}
+
+let toMessages = (messageIndices: number[]) => {
+  return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
     district: databaseMessages[messageIndex].district,
     room: databaseMessages[messageIndex].room,
@@ -30,11 +34,7 @@ let toFunctionOutput = (messageIndices: number[]) => {
     puid: databaseMessages[messageIndex].puid,
     username: databaseMessages[messageIndex].username,
     timestamp: databaseMessages[messageIndex].timestamp,
-  }))
-}
-
-let sortMessages = (messages: any[]) => {
-  return messages.sort((a, b) => +a.timestamp < +b.timestamp ? -1 : 1)
+  })))
 }
 
 describe("testing database queries...", () => {
@@ -48,7 +48,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: sortMessages(toFunctionOutput(messagesByRoom[0])),
+      data: toMessages(messagesByRoom[0]),
     },
   }, {
     tag: 2,
@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: sortMessages(toFunctionOutput(messagesByRoom[2])),
+      data: toMessages(messagesByRoom[2]),
     },
   }, {
     tag: 3,

@@ -1,6 +1,7 @@
 import * as conn from "../../../lib/database/conn"
 import * as messages from "../../../lib/database/messages"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 let timestamp = 123456789
 let userid = examples.uuid[0]
@@ -22,19 +23,6 @@ let returnOneMessage = (queryString: string, queryParams: string[]) => {
 let returnZeroMessages = () => Promise.resolve({ rows: [] })
 
 let returnError = () => Promise.resolve(undefined)
-
-let success = (args: any) => ({
-  error: undefined,
-  data: {
-    region: args.region,
-    district: Number(args.district),
-    room: Number(args.room),
-    index: Number(args.index),
-    text: args.text,
-    color: args.color,
-    timestamp: timestamp,
-  }
-})
 
 describe("testing database queries...", () => {
   afterEach(() => {
@@ -364,16 +352,17 @@ describe("testing database queries...", () => {
     test(`Function createMessage. Unit Test #${tag}`, async () => {
       jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await messages.createMessage(...args)
+      let [ userid, messageid, content ] = args
+      let result = await messages.createMessage(userid, messageid, content)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
-        expect(result.data.region).toBe(args[1].region)
-        expect(`${result.data.district}`).toBe(args[1].district)
-        expect(`${result.data.room}`).toBe(args[1].room)
-        expect(`${result.data.index}`).toBe(args[1].index)
-        expect(result.data.text).toBe(args[2].text)
-        expect(result.data.color).toBe(args[2].color)
+        expect(result.data.region).toBe(messageid.region)
+        expect(`${result.data.district}`).toBe(messageid.district)
+        expect(`${result.data.room}`).toBe(messageid.room)
+        expect(`${result.data.index}`).toBe(messageid.index)
+        expect(result.data.text).toBe(content.text)
+        expect(result.data.color).toBe(content.color)
         expect(`${result.data.timestamp}`).toMatch(patterns.timestamp)
         return
       }

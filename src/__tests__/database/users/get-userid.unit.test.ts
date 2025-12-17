@@ -2,6 +2,7 @@ import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
 import { limits, patterns, examples } from "../../../lib/database/limits"
 import { hashPassword } from "../../../lib/database/miscs"
+import { examples } from "../../../lib/test-data"
 
 let sessionid = examples.sessionid[0]
 let userid = examples.uuid[0]
@@ -53,10 +54,10 @@ describe("testing database queries...", () => {
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBe(userid)
-        return
+      } else {
+        expect(result.error).toBe(expres)
+        expect(result.data).toBeUndefined()
       }
-      expect(result.error).toBe(expres)
-      expect(result.data).toBeUndefined()
     })
   }
 })

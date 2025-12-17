@@ -1,15 +1,15 @@
-process.env.PG_SCHEMA = "getProfileTest"
+process.env.PG_SCHEMA = "getUseridTest"
 
 import { pool, queryDatabase } from "../../../lib/database/conn"
-import { getProfile } from "../../../lib/database/users"
+import { getUserid } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseUsers } from "../../../lib/test-data"
+import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)
-  await pool.query(populateDatabase.addUsers)
+  await pool.query(populateDatabase.addSessions)
 })
 
 afterAll(async () => {
@@ -17,60 +17,45 @@ afterAll(async () => {
   await pool.end()
 })
 
-let userid = (userIndex: number) => databaseUsers[userIndex].userid
+let userid = (sessionIndex: number) => databaseSessions[sessionIndex].userid
 
-let profile = (userIndex: number) => {
-  let user = databaseUsers[userIndex]
-  return {
-    userid: user.userid,
-    login: user.login,
-    name: user.name,
-    state: user.state,
-    puid: user.puid,
-    timestamp: user.timestamp,
-  }
-}
+let sessionid = (sessionIndex: number) => databaseSessions[sessionIndex].sessionid
 
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
-    args: userid(0),
+    args: sessionid(0),
     expres: {
       error: undefined,
-      data: profile(0),
+      data: userid(0),
     },
   }, {
     tag: 2,
-    args: userid(3),
+    args: sessionid(1),
     expres: {
       error: undefined,
-      data: profile(3),
+      data: userid(1),
     },
   }, {
     tag: 3,
-    args: examples.uuid[0],
+    args: examples.sessionid[0],
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflicts.sessionNotFound",
       data: undefined,
     },
   }, {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "wrongValues.users.userid",
+      error: "wrongValues.auth.sessionid",
       data: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function getProfile. Intg Test #${tag}`, async () => {
-      let result = await getProfile(args)
+    test(`Function getUserid. Intg Test ${tag}`, async () => {
+      let result = await getUserid(args)
       expect(result).toStrictEqual(expres)
     })
   }
 })
-
-
-
-
-      

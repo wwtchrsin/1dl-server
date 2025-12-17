@@ -19,7 +19,7 @@ afterAll(async () => {
   await pool.end()
 })
 
-let toFunctionOutput = (message: any) => ({
+let toMessage = (message: any) => ({
   region: message.region,
   district: message.district,
   room: message.room,
@@ -43,7 +43,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: toFunctionOutput(databaseMessages[0]),
+      data: toMessage(databaseMessages[0]),
     },
   }, {
     tag: 2,
@@ -55,7 +55,7 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: toFunctionOutput(databaseMessages[10]),
+      data: toMessage(databaseMessages[10]),
     },
   }, {
     tag: 3,

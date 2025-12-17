@@ -18,8 +18,12 @@ afterAll(async () => {
   await pool.end()
 })
 
-let toFunctionOutput = (messageIndices: number[]) => {
-  return messageIndices.map((messageIndex) => ({
+let sortMessages = (messages: any[]) => {
+  return messages.sort((a, b) => +a.timestamp < +b.timestamp ? -1 : 1)
+}
+
+let toMessages = (messageIndices: number[]) => {
+  return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
     district: databaseMessages[messageIndex].district,
     room: databaseMessages[messageIndex].room,
@@ -27,27 +31,27 @@ let toFunctionOutput = (messageIndices: number[]) => {
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,
     timestamp: databaseMessages[messageIndex].timestamp,
-  }))
+  })))
 }
 
-let sortMessages = (messages: any[]) => {
-  return messages.sort((a, b) => +a.timestamp < +b.timestamp ? -1 : 1)
+let userid = (messageIndices: number[]) => {
+  return databaseMessages[messageIndices[0]].userid
 }
 
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
-    args: databaseMessages[messagesByUser[0][0]].userid,
+    args: userid(messagesByUser[0]),
     expres: {
       error: undefined,
-      data: sortMessages(toFunctionOutput(messagesByUser[0])),
+      data: toMessages(messagesByUser[0]),
     },
   }, {
     tag: 2,
-    args: databaseMessages[messagesByUser[1][0]].userid,
+    args: userid(messagesByUser[1]),
     expres: {
       error: undefined,
-      data: sortMessages(toFunctionOutput(messagesByUser[1])),
+      data: toMessages(messagesByUser[1]),
     },
   }, {
     tag: 3,

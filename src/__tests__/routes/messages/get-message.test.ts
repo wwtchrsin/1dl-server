@@ -4,13 +4,17 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns, examples } from "../../../lib/database/limits"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples, populateDatabase, databaseMessages,
+  databaseEmptyRooms } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
   await pool.query(sql.resetTables)
+  await pool.query(populateDatabase.addUsers)
+  await pool.query(populateDatabase.addMessages)
 })
 
 afterAll(async () => {
@@ -20,136 +24,86 @@ afterAll(async () => {
 
 let testServer = supertest(httpServer)
 
-let messages = [[{
-  region: examples.region.first,
-  district: limits.messages.districtMin,
-  room: limits.messages.roomMin,
-  index: limits.messages.indexMin,
-}, {
-  text: examples.text.correct[0],
-  color: examples.color.first,
-}], [{
-  region: examples.region.first,
-  district: limits.messages.districtMin,
-  room: limits.messages.roomMin,
-  index: limits.messages.indexMin + 1,
-}, {
-  text: examples.text.correct[1],
-  color: examples.color.first,
-}], [{
-  region: examples.region.last,
-  district: limits.messages.districtMin,
-  room: limits.messages.roomMin,
-  index: limits.messages.indexMin,
-}, {
-  text: examples.text.correct[2],
-  color: examples.color.last,
-}]]
-
-let wrongMessageid = {
-  region: examples.region.first,
-  district: limits.messages.districtMin + 1,
-  room: limits.messages.roomMin + 2,
-  index: limits.messages.indexMin + 3,
+let message = (messageIndex: number) => {
+  let message = databaseMessages[messageIndex]
+  return {
+    region: message.region,
+    district: message.district,
+    room: message.room,
+    index: message.index,
+    text: message.text,
+    color: message.color,
+    puid: message.puid,
+    username: message.username,
+    timestamp: message.timestamp,
+  }
 }
 
 describe("testing endpoints...", () => {
-  test("GET /messages/r/d/room/index. Preparing database...", async () => {
-    let users = [{
-      login: examples.login.correct[0],
-      password: examples.password.correct[0],
-      name: examples.name.correct[0],
-    }, {
-      login: examples.login.correct[1],
-      password: examples.password.correct[1],
-      name: examples.name.correct[1],
-    }]
-    let sessionids = []
-    for ( let user of users ) {
-      let result = await testServer.post("/api/v1/profiles").send(user)
-      expect(result.statusCode).toBe(201)
-      expect(result.body).toBeDefined()
-      expect(result.body.error).toBeUndefined()
-      expect(result.body.profile).toBeDefined()
-      expect(result.body.session).toMatch(patterns.sessionid)
-      sessionids.push(result.body.session)
-    }
-    for ( let i=0; i < messages.length; i++ ) {
-      let [ msgid, content ] = messages[i]
-      let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.room}/${msgid.index}`
-      let result = await testServer.post(url)
-        .set("Authorization", "Bearer " + sessionids[i % sessionids.length])
-        .send(content)
-      expect(result.statusCode).toBe(201)
-      expect(result.body).toBeDefined()
-      expect(result.body.error).toBeUndefined()
-      expect(result.body.message).toBeDefined()
-      expect(result.body.message.region).toBe(msgid.region)
-      expect(result.body.message.district).toBe(msgid.district)
-      expect(result.body.message.room).toBe(msgid.room)
-      expect(result.body.message.index).toBe(msgid.index)
-      expect(result.body.message.text).toBe(content.text)
-      expect(result.body.message.color).toBe(content.color)
-      expect(result.body.message.userid).toBeUndefined()
-      expect(result.body.message.timestamp).toMatch(patterns.timestamp)
-    }
-  })
   let testcases = [{
     tag: 1,
-    args: messages[0][0],
+    args: {
+      region: databaseMessages[0].region,
+      district: databaseMessages[0].district,
+      room: databaseMessages[0].room,
+      index: databaseMessages[0].index,
+    },
     expres: {
       status: 200,
       error: undefined,
-      data: messages[0][1],
+      message: message(0),
     },
   }, {
     tag: 2,
-    args: messages[2][0],
+    args: {
+      region: databaseMessages[8].region,
+      district: databaseMessages[8].district,
+      room: databaseMessages[8].room,
+      index: databaseMessages[8].index,
+    },
     expres: {
       status: 200,
       error: undefined,
-      data: messages[2][1],
+      message: message(8),
     },
   }, {
     tag: 3,
-    args: wrongMessageid,
+    args: {
+      region: databaseEmptyRooms[2].region,
+      district: databaseEmptyRooms[2].district,
+      room: databaseEmptyRooms[2].room,
+      index: limits.messages.indexMin,
+    },
     expres: {
       status: 404,
       error: "databaseConflicts.messageNotFound",
-      data: undefined,
+      message: undefined,
     },
   }, {
     tag: 4,
     args: {
       region: "abcd",
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin,
-      index: limits.messages.indexMin,
+      district: databaseMessages[0].district,
+      room: databaseMessages[0].room,
+      index: databaseMessages[0].index,
     },
     expres: {
       status: 400,
       error: "wrongValues.messages.region",
-      data: undefined,
+      message: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`GET /messages/r/d/room/index. Test #${tag}`, async () => {
-      let url = `/api/v1/messages/${args.region}/${args.district}/${args.room}/${args.index}` 
+      let { region, district, room, index } = args
+      let url = `/api/v1/messages/${region}/${district}/${room}/${index}`
       let result = await testServer.get(url)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {
         expect(result.body.error).toBeUndefined()
-        expect(result.body.message).toBeDefined()
-        expect(result.body.message.region).toBe(args.region)
-        expect(result.body.message.district).toBe(args.district)
-        expect(result.body.message.room).toBe(args.room)
-        expect(result.body.message.index).toBe(args.index)
-        expect(result.body.message.text).toBe(expres.data.text)
-        expect(result.body.message.color).toBe(expres.data.color)
-        expect(result.body.message.username).toBeDefined()
-        expect(result.body.message.puid).toMatch(patterns.uuid)
+        expect(result.body.message).toStrictEqual(expres.message)
       } else {
         let errorMessage = getErrorMessage(expres.error)
         expect(result.body.error).toStrictEqual(errorMessage)

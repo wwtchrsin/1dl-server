@@ -1,5 +1,6 @@
 import { checkUserData } from "../../../lib/database/checkers"
-import { limits, examples } from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
+import { examples } from "../../../lib/test-data"
 
 describe("testing query validators...", () => {
   let testcases = [{
