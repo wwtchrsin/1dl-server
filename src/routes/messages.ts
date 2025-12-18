@@ -1,5 +1,6 @@
 import { Router } from "express"
-import { createMessage, deleteMessage, getMessage, getMessages } from "../lib/database/messages"
+import { createMessage, deleteMessage, getMessage, getMessages,
+  getDistrictStats } from "../lib/database/messages"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
 import type { Request, Response } from "express"
@@ -69,6 +70,22 @@ const getMessagesAction = async (req: Request, res: Response) => {
   })
 }
 
+const getDistrictStatsAction = async (req: Request, res:  Response) => {
+  let stats = await getDistrictStats(req.params)
+  if ( stats.error !== undefined ) {
+    let status = getStatusCode(stats.error)
+    res.status(status).json({
+      error: getErrorMessage(stats.error),
+      rooms: undefined,
+    })
+    return
+  }
+  res.status(200).json({
+    error: undefined,
+    rooms: stats.data,
+  })
+}
+
 const deleteMessageAction = async (req: Request, res: Response) => {
   let userid = await readUserid(req.header("Authorization"))
   if ( userid.error !== undefined ) {
@@ -96,6 +113,7 @@ const deleteMessageAction = async (req: Request, res: Response) => {
 
 const router = new Router()
 
+router.get("/:region/:district", getDistrictStatsAction)
 router.get("/:region/:district/:room", getMessagesAction)
 router.post("/:region/:district/:room/:index", createMessageAction)
 router.get("/:region/:district/:room/:index", getMessageAction)
