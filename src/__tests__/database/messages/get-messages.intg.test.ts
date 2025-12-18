@@ -38,7 +38,6 @@ let toMessages = (messageIndices: number[]) => {
 }
 
 describe("testing database queries...", () => {
-  let userids = []
   let testcases = [{
     tag: 1,
     args: {

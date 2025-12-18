@@ -291,6 +291,41 @@ export const databaseRooms = [
   },
 ]
 
+export const databaseEmptyDistricts = [
+  /*[0]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMin,
+  },
+  /*[1]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMax,
+  },
+  /*[2]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMin + 1,
+  },
+  /*[3]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMax - 1,
+  },
+  /*[4]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMin + 2,
+  },
+  /*[5]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMax - 2,
+  },
+  /*[6]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMin + 3,
+  },
+  /*[7]*/ {
+    region: limits.messages.regions[0],
+    district: limits.messages.districtMax - 3,
+  },
+]
+
 export const databaseEmptyRooms = [
   /*[0]*/ {
     region: limits.messages.regions[0],

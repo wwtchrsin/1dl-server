@@ -5,10 +5,10 @@ import { examples } from "../../../lib/test-data"
 
 let msgsCount = [{
   room: 1,
-  msgs: 2,
+  msgcount: 2,
 }, {
   room: 2,
-  msgs: 3,
+  msgcount: 3,
 }]
 
 let requestSuccess = () => Promise.resolve({ rows: msgsCount })

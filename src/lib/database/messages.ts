@@ -41,7 +41,7 @@ export type Message = UserMessage & {
 
 export type RoomMessageCount = {
   room: number,
-  msgs: number,
+  msgcount: number,
 }
 
 export const getDistrictStats = async (districtid: any):
@@ -56,7 +56,7 @@ export const getDistrictStats = async (districtid: any):
     }
     let { region, district } = districtid as Districtid
     let query = `
-      SELECT room, COUNT(*) as msgs FROM messages
+      SELECT room, COUNT(*)::INTEGER as msgcount FROM messages
         WHERE region = $1 AND district = $2
         GROUP BY room
     `
