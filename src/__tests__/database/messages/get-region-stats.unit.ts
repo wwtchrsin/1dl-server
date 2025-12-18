@@ -4,11 +4,11 @@ import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let stats = [{
-  room: 1,
-  msgcount: 2,
+  district: 5,
+  msgcount: 7,
 }, {
-  room: 2,
-  msgcount: 3,
+  district: 6,
+  msgcount: 8,
 }]
 
 let requestSuccess = () => Promise.resolve({ rows: stats })
@@ -23,10 +23,7 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestSuccess,
     },
@@ -36,10 +33,7 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 2,
-    args: {
-      region: examples.region.last,
-      district: limits.messages.districtMax,
-    },
+    args: examples.region.last,
     mocks: {
       queryDatabase: requestSuccess,
     },
@@ -49,10 +43,7 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 3,
-    args: {
-      region: "abcd",
-      district: limits.messages.districtMin,
-    },
+    args: "abcd",
     mocks: {
       queryDatabase: requestSuccess,
     },
@@ -62,23 +53,17 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 4,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMax + 1,
-    },
+    args: undefined,
     mocks: {
       queryDatabase: requestSuccess,
     },
     expres: {
-      error: "wrongValues.messages.district",
+      error: "wrongValues.messages.region",
       data: undefined,
     },
   }, {
     tag: 5,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestEmptyList,
     },
@@ -88,24 +73,22 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 6,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestFailure,
     },
     expres: {
-      error: "databaseErrors.getDistrictStats",
+      error: "databaseErrors.getRegionStats",
       data: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
-    test(`Function getDistrictStats. Unit Test #${tag}`, async () => {
+    test(`Function getRegionStats. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await messages.getDistrictStats(args)
+      let result = await messages.getRegionStats(args)
       expect(result).toStrictEqual(expres)
     })
   }
 })
+

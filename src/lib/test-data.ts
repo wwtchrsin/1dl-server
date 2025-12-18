@@ -435,6 +435,39 @@ export const districtByMessage = [
   /*[29]*/ 2,
 ]
 
+let regionByMessage = [
+  /*[0]*/ 0,
+  /*[1]*/ 0,
+  /*[2]*/ 0,
+  /*[3]*/ 0,
+  /*[4]*/ 0,
+  /*[5]*/ 0,
+  /*[6]*/ 0,
+  /*[7]*/ 0,
+  /*[8]*/ 0,
+  /*[9]*/ 0,
+  /*[10]*/ 0,
+  /*[11]*/ 0,
+  /*[12]*/ 0,
+  /*[13]*/ 0,
+  /*[14]*/ 0,
+  /*[15]*/ 0,
+  /*[16]*/ 0,
+  /*[17]*/ 0,
+  /*[18]*/ 0,
+  /*[19]*/ 0,
+  /*[20]*/ 1,
+  /*[21]*/ 1,
+  /*[22]*/ 1,
+  /*[23]*/ 1,
+  /*[24]*/ 1,
+  /*[25]*/ 1,
+  /*[26]*/ 1,
+  /*[27]*/ 1,
+  /*[28]*/ 1,
+  /*[29]*/ 1,
+]
+
 export const messagesByRoom = (() => {
   let result = []
   for ( let i=0; i < roomByMessage.length; i++ ) {
@@ -453,6 +486,17 @@ export const messagesByDistrict = (() => {
       result[districtByMessage[i]] = []
     }
     result[districtByMessage[i]].push(i)
+  }
+  return result
+})()
+
+export const messagesByRegion = (() => {
+  let result = []
+  for ( let i=0; i < regionByMessage.length; i++ ) {
+    if ( result[regionByMessage[i]] === undefined ) {
+      result[regionByMessage[i]] = []
+    }
+    result[regionByMessage[i]].push(i)
   }
   return result
 })()

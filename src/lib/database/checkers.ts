@@ -1,5 +1,12 @@
 import { limits, patterns } from "./limits"
 
+export const checkRegion = (region: string | undefined): string | undefined => {
+   if ( !limits.messages.regions.includes(region) ) {
+    return "wrongValues.messages.region"
+  }
+  return undefined
+}
+
 export const checkDistrictid = (req: any): string | undefined => {
   if ( !limits.messages.regions.includes(req?.region) ) {
     return "wrongValues.messages.region"

@@ -182,6 +182,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to get district stats",
     ru: "Невозможно получить данные района",
   },
+  getRegionStats: {
+    en: "Impossible to get region stats",
+    ru: "Невозможно получить данные региона",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {

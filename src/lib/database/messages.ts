@@ -1,5 +1,5 @@
-import { checkDistrictid, checkRoomid, checkMessageid, checkMessageContent, 
-  checkUserid } from "./checkers"
+import { checkRegion, checkDistrictid, checkRoomid, checkMessageid, 
+  checkMessageContent, checkUserid } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
 import { getTimestamp } from "./miscs"
@@ -44,11 +44,45 @@ export type RoomMessageCount = {
   msgcount: number,
 }
 
+export type DistrictMessageCount = {
+  district: number,
+  msgcount: number,
+}
+
+export const getRegionStats = async (region: string | undefined):
+  Promise<{ error: string | undefined, data: DistrictMessageCount[] | undefined }> => {
+    let errorMessage = checkRegion(region)
+    if ( errorMessage !== undefined ) {
+      logger.warn({ region }, "db/messages/getRegionStats#ERROR_ARGS_CHECK")
+      return {
+        error: errorMessage,
+        data: undefined,
+      }
+    }
+    let query = `
+      SELECT district, COUNT(*)::INTEGER as msgcount FROM messages
+        WHERE region = $1
+        GROUP BY district
+    `
+    let result = await queryDatabase(query, [region as string])
+    if ( !result ) {
+      logger.error({ region }, "db/messages/getRegionStats#ERROR_DB_QUERY")
+      return {
+        error: "databaseErrors.getRegionStats",
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows as DistrictMessageCount[],
+    }
+  }
+
 export const getDistrictStats = async (districtid: any):
   Promise<{ error: string | undefined, data: RoomMessageCount[] | undefined }> => {
     let errorMessage = checkDistrictid(districtid)
     if ( errorMessage !== undefined ) {
-      logger.warn(districtid, "db/messages/getDistrictStats#ERROR_ARGS_CHECK")
+      logger.warn({ districtid }, "db/messages/getDistrictStats#ERROR_ARGS_CHECK")
       return {
         error: errorMessage,
         data: undefined,
@@ -62,7 +96,7 @@ export const getDistrictStats = async (districtid: any):
     `
     let result = await queryDatabase(query, [region, district])
     if ( !result ) {
-      logger.error(districtid, "db/messages/getDistrictStats#ERROR_DB_QUERY")
+      logger.error({ districtid }, "db/messages/getDistrictStats#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.getDistrictStats",
         data: undefined
@@ -78,7 +112,7 @@ export const getMessages = async (roomid: any):
   Promise<{ error: string | undefined, data: Message[] | undefined }> => {
     let errorMessage = checkRoomid(roomid)
     if ( errorMessage !== undefined ) {
-      logger.warn(roomid, "db/messages/getMessages#ERROR_ARGS_CHECK")
+      logger.warn({ roomid }, "db/messages/getMessages#ERROR_ARGS_CHECK")
       return {
         error: errorMessage,
         data: undefined,
@@ -94,7 +128,7 @@ export const getMessages = async (roomid: any):
     `
     let result = await queryDatabase(query, [region, district, room])
     if ( !result?.rows ) {
-      logger.error(roomid, "db/messages/getMessages#ERROR_DB_QUERY")
+      logger.error({ roomid }, "db/messages/getMessages#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.getMessages",
         data: undefined
@@ -110,7 +144,7 @@ export const getMessage = async (messageid: any):
   Promise<{ error: string | undefined, data: Message | undefined }> => {
     let errorMessage = checkMessageid(messageid)
     if ( errorMessage !== undefined ) {
-      logger.warn(messageid, "db/messages/getMessage#ERROR_ARGS_CHECK")
+      logger.warn({ messageid }, "db/messages/getMessage#ERROR_ARGS_CHECK")
       return {
         error: errorMessage,
         data: undefined,
@@ -126,14 +160,14 @@ export const getMessage = async (messageid: any):
     `
     let result = await queryDatabase(query, [region, district, room, index])
     if ( result === undefined || result?.rows?.length > 1 ) {
-      logger.error(messageid, "db/messages/getMessage#ERROR_DB_QUERY")
+      logger.error({ messageid }, "db/messages/getMessage#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.getMessage",
         data: undefined,
       }
     }
     if ( result?.rows?.length === 0 ) {
-      logger.warn(messageid, "db/messages/getMessage#ERROR_NOT_FOUND")
+      logger.warn({ messageid }, "db/messages/getMessage#ERROR_NOT_FOUND")
       return {
         error: "databaseConflicts.messageNotFound",
         data: undefined,
@@ -185,7 +219,7 @@ export const createMessage = async (userid: string, messageid: any, content: any
     }
     let messageidCheckError = checkMessageid(messageid)
     if ( messageidCheckError !== undefined ) {
-      logger.warn(messageid, "db/messages/getMessage#ERROR_ID_CHECK")
+      logger.warn({ userid, messageid, content }, "db/messages/getMessage#ERROR_ID_CHECK")
       return {
         error: messageidCheckError,
         data: undefined,
