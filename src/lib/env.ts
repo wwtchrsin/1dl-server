@@ -10,7 +10,7 @@ const env = {
     schema: process.env.PG_SCHEMA ?? "public",
   },
   redis: {
-    user: process.env.REDIS_USER ?? "default",
+    username: process.env.REDIS_USERNAME ?? "default",
     password: process.env.REDIS_PASSWORD,
     host: process.env.REDIS_HOST ?? "localhost",
     port: Number(process.env.REDIS_PORT ?? "6379"),

@@ -3,7 +3,6 @@ import type { Result } from "pg"
 import env from "../env"
 import logger from "../logger"
 
-
 export const pool = new Pool({
   user: env.pg.user,
   password: env.pg.password,
