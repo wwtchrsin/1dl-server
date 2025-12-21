@@ -37,8 +37,8 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      region: examples.region.last,
-      district: limits.messages.districtMax,
+      region: "abcd",
+      district: limits.messages.districtMin,
     },
     mocks: {
       queryDatabase: requestSuccess,
@@ -49,32 +49,6 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 3,
-    args: {
-      region: "abcd",
-      district: limits.messages.districtMin,
-    },
-    mocks: {
-      queryDatabase: requestSuccess,
-    },
-    expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
-    },
-  }, {
-    tag: 4,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMax + 1,
-    },
-    mocks: {
-      queryDatabase: requestSuccess,
-    },
-    expres: {
-      error: "wrongValues.messages.district",
-      data: undefined,
-    },
-  }, {
-    tag: 5,
     args: {
       region: examples.region.first,
       district: limits.messages.districtMin,
@@ -87,7 +61,7 @@ describe("testing database queries...", () => {
       data: [],
     },
   }, {
-    tag: 6,
+    tag: 4,
     args: {
       region: examples.region.first,
       district: limits.messages.districtMin,

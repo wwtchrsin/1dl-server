@@ -43,28 +43,6 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      region: examples.region.last,
-      district: `${limits.messages.districtMax}`,
-      room: `${limits.messages.roomMax}`,
-    },
-    mocks: {
-      queryDatabase: returnMessage,
-    },
-    expres: "success",
-  }, {
-    tag: 3,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin + 1}`,
-      room: `${limits.messages.roomMin + 1}`,
-    },
-    mocks: {
-      queryDatabase: returnMessage,
-    },
-    expres: "success",
-  }, {
-    tag: 4,
-    args: {
       region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
@@ -77,7 +55,7 @@ describe("testing database queries...", () => {
       data: [],
     },
   }, {
-    tag: 4,
+    tag: 3,
     args: {
       region: examples.region.first,
       district: `${limits.messages.districtMin}`,
@@ -91,7 +69,7 @@ describe("testing database queries...", () => {
       data: undefined,
     },
   }, {
-    tag: 5,
+    tag: 4,
     args: {
       region: "abcdefg",
       district: `${limits.messages.districtMin}`,
@@ -100,38 +78,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnMessage,
     },
-    expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
-    },
-  }, {
-    tag: 6,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin - 1}`,
-      room: `${limits.messages.roomMin}`,
-    },
-    mocks: {
-      queryDatabase: returnMessage,
-    },
-    expres: {
-      error: "wrongValues.messages.district",
-      data: undefined,
-    },
-  }, {
-    tag: 7,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMax + 1}`,
-    },
-    mocks: {
-      queryDatabase: returnMessage,
-    },
-    expres: {
-      error: "wrongValues.messages.room",
-      data: undefined,
-    },
+    expres: "success",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase

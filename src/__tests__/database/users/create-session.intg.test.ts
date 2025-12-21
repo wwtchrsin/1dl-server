@@ -56,14 +56,14 @@ describe("testing database queries...", () => {
       login: undefined,
       password: databaseUsers[0].password,
     },
-    expres: "wrongValues.auth.login",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 6,
     args: {
       login: databaseUsers[0].login,
       password: undefined,
     },
-    expres: "wrongValues.auth.password",
+    expres: "databaseConflicts.profileNotFound",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

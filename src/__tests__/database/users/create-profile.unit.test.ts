@@ -48,66 +48,6 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: [{
-      login: examples.login.maxLen,
-      password: examples.password.maxLen,
-      name: examples.name.maxLen,
-    }, "active"],
-    mocks: {
-      loginExists: loginDoesntExist,
-      queryDatabase: requestReturnsUser
-    },
-    expres: "success",
-  }, {
-    tag: 3,
-    args: [{
-      login: examples.login.regLen,
-      password: examples.password.regLen,
-      name: examples.name.regLen,
-    }, "active"],
-    mocks: {
-      loginExists: loginDoesntExist,
-      queryDatabase: requestReturnsUser,
-    },
-    expres: "success",
-  }, {
-    tag: 4,
-    args: [{
-      login: examples.login.tooShort,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
-    mocks: {
-      loginExists: loginDoesntExist,
-      queryDatabase: requestReturnsUser,
-    },
-    expres: "wrongValues.users.login",
-  }, {
-    tag: 5,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.tooShort,
-      name: examples.name.minLen,
-    }, "active"],
-    mocks: {
-      loginExists: loginDoesntExist,
-      queryDatabase: requestReturnsUser,
-    },
-    expres: "wrongValues.users.password",
-  }, {
-    tag: 6,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.tooLong,
-    }, "active"],
-    mocks: {
-      loginExists: loginDoesntExist,
-      queryDatabase: requestReturnsUser,
-    },
-    expres: "wrongValues.users.name",
-  }, {
-    tag: 7,
-    args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
@@ -118,7 +58,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflicts.loginTaken",
   }, {
-    tag: 8,
+    tag: 3,
     args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
@@ -130,7 +70,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.checkUserExists",
   }, {
-    tag: 9,
+    tag: 4,
     args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,
@@ -142,7 +82,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.createProfile",
   }, {
-    tag: 10,
+    tag: 5,
     args: [{
       login: examples.login.minLen,
       password: examples.password.minLen,

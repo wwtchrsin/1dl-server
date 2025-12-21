@@ -1,4 +1,5 @@
 import { getUserid, getProfile } from "../lib/database/users"
+import { checkUserid, checkSessionid } from "../lib/database/checkers"
 import type { Profile } from "../lib/database/users"
 
 export const getToken = (header: string | undefined):
@@ -13,6 +14,13 @@ export const getToken = (header: string | undefined):
     if ( !session ) {
       return {
         error: "wrongValues.auth.header",
+        data: undefined,
+      }
+    }
+    let checkError = checkSessionid(session)
+    if ( checkError !== undefined ) {
+      return {
+        error: checkError,
         data: undefined,
       }
     }
@@ -41,6 +49,13 @@ export const readProfile = async (header: string | undefined):
     if ( userid.error !== undefined ) {
       return {
         error: userid.error,
+        data: undefined,
+      }
+    }
+    let checkError = checkUserid(userid.data)
+    if ( checkError !== undefined ) {
+      return {
+        error: checkError,
         data: undefined,
       }
     }

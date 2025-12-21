@@ -31,7 +31,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: sessionFound,
     },
-    expres: "wrongValues.auth.sessionid",
+    expres: "success",
   }, {
     tag: 3,
     args: sessionid,

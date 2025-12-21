@@ -1,10 +1,12 @@
 import { Router } from "express"
 import { createMessage, deleteMessage, getMessage, getMessages,
   getDistrictStats, getRegionStats } from "../lib/database/messages"
+import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
+  checkMessageData } from "../lib/database/checkers"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
 import type { Request, Response } from "express"
-import type { MessageContent, Messageid, Roomid } from "../lib/database/messages"
+import type { MessageContent, Messageid, Roomid, Districtid } from "../lib/database/messages"
 
 const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
   let profile = await readProfile(req.header("Authorization"))
@@ -19,6 +21,15 @@ const createMessageAction = async (req: Request<MessageContent>, res: Response) 
   if ( profile.data.state !== "active" ) {
     res.status(403).json({
       error: getErrorMessage("appErrors.actionNotAllowed"),
+      message: undefined,
+    })
+    return
+  }
+  let checkError = checkMessageData(profile.data.userid, req.params, req.body)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
       message: undefined,
     })
     return
@@ -39,7 +50,16 @@ const createMessageAction = async (req: Request<MessageContent>, res: Response) 
 }
 
 const getMessageAction = async (req: Request, res: Response) => {
-  let message = await getMessage(req.params)
+  let checkError = checkMessageid(req.params)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
+      message: undefined,
+    })
+    return
+  }
+  let message = await getMessage(req.params as Messageid)
   if ( message.error !== undefined ) {
     let status = getStatusCode(message.error)
     res.status(status).json({
@@ -55,6 +75,15 @@ const getMessageAction = async (req: Request, res: Response) => {
 }
 
 const getMessagesAction = async (req: Request, res: Response) => {
+  let checkError = checkRoomid(req.params)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
+      message: undefined,
+    })
+    return
+  }
   let messages = await getMessages(req.params)
   if ( messages.error !== undefined ) {
     let status = getStatusCode(messages.error)
@@ -70,8 +99,17 @@ const getMessagesAction = async (req: Request, res: Response) => {
   })
 }
 
-const getDistrictStatsAction = async (req: Request, res:  Response) => {
-  let stats = await getDistrictStats(req.params)
+const getDistrictStatsAction = async (req: Request, res: Response) => {
+  let checkError = checkDistrictid(req.params)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
+      rooms: undefined,
+    })
+    return
+  }
+  let stats = await getDistrictStats(req.params as Districtid)
   if ( stats.error !== undefined ) {
     let status = getStatusCode(stats.error)
     res.status(status).json({
@@ -87,7 +125,17 @@ const getDistrictStatsAction = async (req: Request, res:  Response) => {
 }
 
 const getRegionStatsAction = async (req: Request, res: Response) => {
-  let stats = await getRegionStats(req.params?.region)
+  let region = req.params?.region
+  let checkError = checkRegion(region)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
+      districts: undefined,
+    })
+    return
+  }
+  let stats = await getRegionStats(region)
   if ( stats.error !== undefined ) {
     let status = getStatusCode(stats.error)
     res.status(status).json({
@@ -103,6 +151,15 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
 }
 
 const deleteMessageAction = async (req: Request, res: Response) => {
+  let checkError = checkMessageid(req.params)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)
+    res.status(status).json({
+      error: getErrorMessage(checkError),
+      message: undefined,
+    })
+    return
+  }
   let userid = await readUserid(req.header("Authorization"))
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))

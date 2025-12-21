@@ -59,15 +59,8 @@ describe("testing database queries...", () => {
     tag: 3,
     args: "abcd",
     expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
-    },
-  }, {
-    tag: 4,
-    args: undefined,
-    expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
+      error: undefined,
+      data: [],
     },
   }]
   for ( let testcase of testcases ) {

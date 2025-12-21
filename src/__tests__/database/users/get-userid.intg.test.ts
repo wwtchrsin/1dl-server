@@ -47,7 +47,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "wrongValues.auth.sessionid",
+      error: "databaseConflicts.sessionNotFound",
       data: undefined,
     },
   }]

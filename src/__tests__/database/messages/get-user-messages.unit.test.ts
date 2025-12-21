@@ -58,8 +58,8 @@ describe("testing database queries...", () => {
       queryDatabase: requestSucceeds,
     },
     expres: {
-      error: "wrongValues.users.userid",
-      data: undefined,
+      error: undefined,
+      data: [],
     },
   }, {
     tag: 4,

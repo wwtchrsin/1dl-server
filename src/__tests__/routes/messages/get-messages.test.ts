@@ -70,8 +70,32 @@ describe("testing endpoints...", () => {
   }, {
     tag: 4,
     args: {
-      region: databaseRooms[0].region,
+      region: "abcd",
       district: databaseRooms[0].district,
+      room: databaseRooms[0].room,
+    },
+    expres: {
+      status: 400,
+      error: "wrongValues.messages.region",
+      messages: undefined,
+    },
+  }, {
+    tag: 5,
+    args: {
+      region: databaseRooms[0].region,
+      district: limits.messages.districtMax + 1,
+      room: databaseRooms[0].room,
+    },
+    expres: {
+      status: 400,
+      error: "wrongValues.messages.district",
+      messages: undefined,
+    },
+  }, {
+    tag: 6,
+    args: {
+      region: databaseRooms[0].region,
+      district: limits.messages.districtMax,
       room: "abcd",
     },
     expres: {

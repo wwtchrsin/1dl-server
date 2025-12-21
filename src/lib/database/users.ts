@@ -7,7 +7,7 @@ import { hashPassword, hashSession, generateToken, getTimestamp } from "./miscs"
 import type { UserMessage } from "../messages"
 import logger from "../logger"
 
-export type ProfileData = {
+export type UserData = {
   login: string,
   password: string,
   name: string,
@@ -44,27 +44,19 @@ export const loginExists = async (login: string):
     }
   }
 
-export const createProfile = async(req: any, defaultState: string):
+export const createProfile = async(profileData: ProfileData, defaultState: string):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
-    let errorMessage = checkUserData(req)
-    if ( errorMessage !== undefined ) {
-      logger.warn(req, "db/users/createProfile#ERROR_ARGS_CHECK")
-      return {
-        error: errorMessage,
-        data: undefined,
-      }
-    }
-    let { login, password, name } = req as ProfileData
+    let { login, password, name } = profileData
     let checkResult = await loginExists(login)
     if ( checkResult.error !== undefined ) {
-      logger.error(req, "db/users/createProfile#ERROR_LOGIN_CHECK")
+      logger.error(profileData, "db/users/createProfile#ERROR_LOGIN_CHECK")
       return {
         error: checkResult.error,
         data: undefined,
       }
     }
     if ( checkResult.data !== false ) {
-      logger.warn(req, "db/users/createProfile#ERROR_LOGIN_TAKEN")
+      logger.warn(profileData, "db/users/createProfile#ERROR_LOGIN_TAKEN")
       return {
         error: "databaseConflicts.loginTaken",
         data: undefined,
@@ -81,7 +73,7 @@ export const createProfile = async(req: any, defaultState: string):
     let queryParams = [userid, login, passwordHash, name, defaultState, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
-      logger.error(req, "db/users/createProfile#ERROR_DB_QUERY")
+      logger.error(profileData, "db/users/createProfile#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.createProfile",
         data: undefined,
@@ -94,11 +86,6 @@ export const createProfile = async(req: any, defaultState: string):
   }
 
 export const deleteSession = async (userid: string): Promise<string | undefined> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/users/deleteSession#ERROR_ARGS_CHECK")
-      return useridCheckError
-    }
     let query = "DELETE FROM sessions WHERE userid = $1"
     let result = await queryDatabase(query, [userid])
     if ( !result || result.rowCount > 1 ) {
@@ -112,29 +99,21 @@ export const deleteSession = async (userid: string): Promise<string | undefined>
     return undefined
   }
 
-export const createSession = async (req: any):
+export const createSession = async (credentials: Credentials):
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let credentialsError = checkUserCredentials(req)
-    if ( credentialsError !== undefined ) {
-      logger.warn(req, "db/users/createSession#ERROR_ARGS_CHECK")
-      return {
-        error: credentialsError,
-        data: undefined,
-      }
-    }
-    let { login, password } = req as Credentials
+    let { login, password } = credentials
     let passwordHash = hashPassword(login, password)
     let checkQuery = "SELECT userid FROM users WHERE login = $1 AND password = $2"
     let checkResult = await queryDatabase(checkQuery, [login, passwordHash])
     if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
-      logger.error(req, "db/users/createSession#ERROR_CREDENTIALS_CHECK")
+      logger.error(credentials, "db/users/createSession#ERROR_CREDENTIALS_CHECK")
       return {
         error: "databaseErrors.checkCredentials",
         data: undefined,
       }
     }
     if ( checkResult.rows.length === 0 ) {
-      logger.warn(req, "db/users/createSession#ERROR_NOT_FOUND")
+      logger.warn(credentials, "db/users/createSession#ERROR_NOT_FOUND")
       return {
         error: "databaseConflicts.profileNotFound",
         data: undefined,
@@ -144,7 +123,7 @@ export const createSession = async (req: any):
     let deleteQuery = "DELETE FROM sessions WHERE userid = $1"
     let deleteResult = await queryDatabase(deleteQuery, [userid])
     if ( deleteResult === undefined ) {
-      logger.error(req, "db/users/createSession#ERROR_SESSION_REMOVE")
+      logger.error(credentials, "db/users/createSession#ERROR_SESSION_REMOVE")
       return {
         error: "databaseErrors.deleteSession",
         data: undefined,
@@ -156,7 +135,7 @@ export const createSession = async (req: any):
     let queryParams = [userid, sessionHash, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result === undefined || result.rowCount !== 1 ) {
-      logger.error(req, "db/users/createSession#ERROR_DB_QUERY")
+      logger.error(credentials, "db/users/createSession#ERROR_DB_QUERY")
       return {
         error: "databaseErrors.createSession",
         data: undefined,
@@ -170,14 +149,6 @@ export const createSession = async (req: any):
      
 export const getProfile = async (userid: string): 
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/users/getProfile#ERROR_ARGS_CHECK")
-      return {
-        error: useridCheckError,
-        data: undefined,
-      }
-    }
     let query = `
       SELECT userid, login, name, state, puid, timestamp
         FROM users WHERE userid = $1
@@ -205,15 +176,6 @@ export const getProfile = async (userid: string):
 
 export const deleteProfile = async (userid: string):
   Promise<{ error: string | undefined, messages: UserMessage[] | undefined, profile: Profile | undefined }> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/users/deleteProfile#ERROR_ARGS_CHECK")
-      return {
-        error: useridCheckError,
-        messages: undefined,
-        profile: undefined,
-      }
-    }
     let profile = await getProfile(userid)
     if ( profile.error !== undefined ) {
       logger.error({ userid }, "db/users/deleteProfile#ERROR_GETTING_PROFILE")
@@ -255,14 +217,6 @@ export const deleteProfile = async (userid: string):
 
 export const getUserid = async (sessionid: string):
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let sessionidCheckError = checkSessionid(sessionid)
-    if ( sessionidCheckError !== undefined ) {
-      logger.warn({ sessionid }, "db/users/getUserid#ERROR_ARGS_CHECK")
-      return {
-        error: sessionidCheckError,
-        data: undefined,
-      }
-    }
     let sessionHash = hashSession(sessionid)
     let query = "SELECT userid FROM sessions WHERE sessionid = $1"
     let result = await queryDatabase(query, [sessionHash])

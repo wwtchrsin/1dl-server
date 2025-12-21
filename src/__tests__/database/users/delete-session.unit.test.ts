@@ -25,7 +25,7 @@ describe("testing database queries...", () => {
         rowCount: 1,
       },
     },
-    expres: "wrongValues.users.userid",
+    expres: undefined,
   }, {
     tag: 3,
     args: correctData.userid,

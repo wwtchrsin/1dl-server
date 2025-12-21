@@ -139,7 +139,7 @@ describe("testing database queries...", () => {
       executeTransaction: transactionSucceeds,
     },
     expres: {
-      error: "wrongValues.users.userid",
+      error: "databaseConflicts.profileNotFound",
       messages: undefined,
       profile: undefined,
     }

@@ -61,6 +61,23 @@ export const checkMessageContent = (req: any): string | undefined => {
   return undefined
 }
 
+export const checkMessageData = (userid: string | undefined, messageid: any, content: any):
+  string | undefined => {
+    let useridCheckError = checkUserid(userid)
+    if ( useridCheckError !== undefined ) {
+      return useridCheckError
+    }
+    let messageidCheckError = checkMessageid(messageid)
+    if ( messageidCheckError !== undefined ) {
+      return messageidCheckError
+    }
+    let contentCheckError = checkMessageContent(content)
+    if ( contentCheckError !== undefined ) {
+      return contentCheckError
+    }
+    return undefined
+  }
+
 export const checkUserData = (req: any): string | undefined => {
   let loginLen = Number(req?.login?.length)
   if ( isNaN(loginLen) || loginLen < limits.users.loginLenMin ||

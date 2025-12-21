@@ -41,7 +41,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: "abcd",
-    expres: "wrongValues.users.userid",
+    expres: "databaseErrors.deleteSession",
     rowCount: databaseSessions.length - 2,
   }]
   for ( let testcase of testcases ) {

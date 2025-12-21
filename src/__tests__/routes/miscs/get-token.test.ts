@@ -13,8 +13,8 @@ describe("testing auxilliary functions...", () => {
     tag: 2,
     args: "Bearer abcd",
     expres: {
-      error: undefined,
-      data: "abcd",
+      error: "wrongValues.auth.sessionid",
+      data: undefined,
     },
   }, {
     tag: 3,

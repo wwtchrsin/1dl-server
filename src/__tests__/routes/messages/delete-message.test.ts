@@ -152,6 +152,25 @@ describe("testing endpoints...", () => {
       args: {
         auth: "Bearer " + sessionid(2), 
         messageid: {
+          region: "abcd",
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
+          index: limits.messages.indexMin,
+        },
+      },
+      expres: {
+        error: "wrongValues.messages.region",
+        message: undefined,
+        status: 400,
+      },
+    }],
+    rowCount: databaseMessages.length - 2,
+  }, {
+    tag: 8,
+    actions: [{
+      args: {
+        auth: "Bearer " + sessionid(2), 
+        messageid: {
           region: databaseEmptyRooms[0].region,
           district: limits.messages.districtMax + 1,
           room: databaseEmptyRooms[0].room,
@@ -166,7 +185,45 @@ describe("testing endpoints...", () => {
     }],
     rowCount: databaseMessages.length - 2,
   }, {
-    tag: 8,
+    tag: 9,
+    actions: [{
+      args: {
+        auth: "Bearer " + sessionid(2), 
+        messageid: {
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: limits.messages.roomMin - 1,
+          index: limits.messages.indexMin,
+        },
+      },
+      expres: {
+        error: "wrongValues.messages.room",
+        message: undefined,
+        status: 400,
+      },
+    }],
+    rowCount: databaseMessages.length - 2,
+  }, {
+    tag: 10,
+    actions: [{
+      args: {
+        auth: "Bearer " + sessionid(2), 
+        messageid: {
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
+          index: limits.messages.indexMax + 1,
+        },
+      },
+      expres: {
+        error: "wrongValues.messages.index",
+        message: undefined,
+        status: 400,
+      },
+    }],
+    rowCount: databaseMessages.length - 2,
+  }, {
+    tag: 11,
     actions: [{
      args: {
         auth: "Bearer " + sessionid(2), 

@@ -51,14 +51,6 @@ export type DistrictMessageCount = {
 
 export const getRegionStats = async (region: string | undefined):
   Promise<{ error: string | undefined, data: DistrictMessageCount[] | undefined }> => {
-    let errorMessage = checkRegion(region)
-    if ( errorMessage !== undefined ) {
-      logger.warn({ region }, "db/messages/getRegionStats#ERROR_ARGS_CHECK")
-      return {
-        error: errorMessage,
-        data: undefined,
-      }
-    }
     let query = `
       SELECT district, COUNT(*)::INTEGER as msgcount FROM messages
         WHERE region = $1
@@ -78,16 +70,8 @@ export const getRegionStats = async (region: string | undefined):
     }
   }
 
-export const getDistrictStats = async (districtid: any):
+export const getDistrictStats = async (districtid: Districtid):
   Promise<{ error: string | undefined, data: RoomMessageCount[] | undefined }> => {
-    let errorMessage = checkDistrictid(districtid)
-    if ( errorMessage !== undefined ) {
-      logger.warn({ districtid }, "db/messages/getDistrictStats#ERROR_ARGS_CHECK")
-      return {
-        error: errorMessage,
-        data: undefined,
-      }
-    }
     let { region, district } = districtid as Districtid
     let query = `
       SELECT room, COUNT(*)::INTEGER as msgcount FROM messages
@@ -108,17 +92,9 @@ export const getDistrictStats = async (districtid: any):
     }
   }
 
-export const getMessages = async (roomid: any): 
+export const getMessages = async (roomid: Roomid): 
   Promise<{ error: string | undefined, data: Message[] | undefined }> => {
-    let errorMessage = checkRoomid(roomid)
-    if ( errorMessage !== undefined ) {
-      logger.warn({ roomid }, "db/messages/getMessages#ERROR_ARGS_CHECK")
-      return {
-        error: errorMessage,
-        data: undefined,
-      }
-    }
-    let { region, district, room } = roomid as Roomid
+    let { region, district, room } = roomid
     let query = `
       SELECT region, district, room, index, text, color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
@@ -140,17 +116,9 @@ export const getMessages = async (roomid: any):
     }
   }
 
-export const getMessage = async (messageid: any):
+export const getMessage = async (messageid: Messageid):
   Promise<{ error: string | undefined, data: Message | undefined }> => {
-    let errorMessage = checkMessageid(messageid)
-    if ( errorMessage !== undefined ) {
-      logger.warn({ messageid }, "db/messages/getMessage#ERROR_ARGS_CHECK")
-      return {
-        error: errorMessage,
-        data: undefined,
-      }
-    }
-    let { region, district, room, index } = messageid as Messageid
+    let { region, district, room, index } = messageid
     let query = `
       SELECT region, district, room, index, text, color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
@@ -181,14 +149,6 @@ export const getMessage = async (messageid: any):
 
 export const getUserMessages = async (userid: string): 
   Promise<{ error: string | undefined, data: UserMessage[] }> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid }, "db/messages/getUserMessages#ERROR_ID_CHECK")
-      return {
-        error: useridCheckError,
-        data: undefined,
-      }
-    }
     let query = `
       SELECT region, district, room, index, text, color, timestamp
         FROM messages WHERE userid = $1
@@ -207,34 +167,10 @@ export const getUserMessages = async (userid: string):
     }
   }
 
-export const createMessage = async (userid: string, messageid: any, content: any): 
+export const createMessage = async (userid: string, messageid: Messageid, content: MessageContent): 
   Promise<{ error: string | undefined, data: UserMessage | undefined }> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid, messageid, content }, "db/messages/createMessage#ERROR_ID_CHECK")
-      return {
-        error: useridCheckError,
-        data: undefined,
-      }
-    }
-    let messageidCheckError = checkMessageid(messageid)
-    if ( messageidCheckError !== undefined ) {
-      logger.warn({ userid, messageid, content }, "db/messages/getMessage#ERROR_ID_CHECK")
-      return {
-        error: messageidCheckError,
-        data: undefined,
-      }
-    }
-    let contentCheckError = checkMessageContent(content)
-    if ( contentCheckError !== undefined ) {
-      logger.warn({ userid, messageid, content }, "db/messages/createMessage#ERROR_CONTENT_CHECK")
-      return {
-        error: contentCheckError,
-        data: undefined,
-      }
-    }
-    let { region, district, room, index } = messageid as Messageid
-    let { text, color } = content as MessageContent
+    let { region, district, room, index } = messageid
+    let { text, color } = content
     let message = await getMessage({ region, district, room, index })
     if ( message.error === "databaseErrors.getMessage" ) {
       logger.error({ userid, messageid, content }, "db/messages/createMessage#ERROR_GET_MESSAGE")
@@ -270,24 +206,8 @@ export const createMessage = async (userid: string, messageid: any, content: any
     }
   }
 
-export const deleteMessage = async (userid: string, messageid: any):
+export const deleteMessage = async (userid: string, messageid: Messageid):
   Promise<{ error: TextResource | undefined, data: UserMessage | undefined }> => {
-    let useridCheckError = checkUserid(userid)
-    if ( useridCheckError !== undefined ) {
-      logger.warn({ userid, messageid }, "db/messages/deleteMessage#ERROR_USER_ID")
-      return {
-        error: useridCheckError,
-        data: undefined,
-      }
-    }
-    let messageidCheckError = checkMessageid(messageid)
-    if ( messageidCheckError !== undefined ) {
-      logger.warn({ userid, messageid }, "db/messages/deleteMessage#ERROR_MESSAGE_ID")
-      return {
-        error: messageidCheckError,
-        data: undefined,
-      }
-    }
     let { region, district, room, index } = messageid as Messageid
     let query = `
       DELETE FROM messages 

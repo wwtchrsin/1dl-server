@@ -65,30 +65,30 @@ describe("testing database queries...", () => {
     actions: [{
       args: [{
         login: examples.login.tooShort,
-        password: examples.password.minLen,
-        name: examples.name.minLen,
+        password: examples.password.regLen,
+        name: examples.name.regLen,
       }, "active"],
-      expres: "wrongValues.users.login",
+      expres: "databaseErrors.createProfile",
     }],
   }, {
     tag: 5,
     actions: [{
       args: [{
-        login: examples.login.minLen,
-        password: examples.password.tooShort,
-        name: examples.name.minLen,
+        login: examples.login.regLen,
+        password: examples.password.noDigits,
+        name: examples.name.regLen,
       }, "active"],
-      expres: "wrongValues.users.password",
+      expres: "success",
     }],
   }, {
     tag: 6,
     actions: [{
       args: [{
-        login: examples.login.minLen,
-        password: examples.password.minLen,
-        name: examples.name.tooShort,
+        login: examples.login.regLen,
+        password: examples.password.regLen,
+        name: examples.name.tooLong,
       }, "active"],
-      expres: "wrongValues.users.name",
+      expres: "databaseErrors.createProfile",
     }],
   }, {
     tag: 7,

@@ -55,62 +55,24 @@ describe("testing endpoints...", () => {
   }, {
     tag: 2,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseInactiveUsers[0]),
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: examples.region.last,
+        district: `${limits.messages.districtMax}`,
+        room: `${limits.messages.roomMax}`,
+        index: `${limits.messages.indexMax}`,
       }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
+        text: examples.text.maxLen,
+        color: examples.color.last,
       }],
       expres: {
-        error: "appErrors.actionNotAllowed",
-        status: 403,
+        error: undefined,
+        status: 201,
       },
     }],
-    rowCount: 0,
+    rowCount: 1,
   }, {
     tag: 3,
-    actions: [{
-      auth: () => "Bearer " + examples.sessionid[0],
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: "databaseConflicts.sessionNotFound",
-        status: 401,
-      },
-    }],
-    rowCount: 0,
-  }, {
-    tag: 4,
-    actions: [{
-      auth: () => "abcd",
-      args: [{
-        region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
-      }, {
-        text: examples.text.minLen,
-        color: examples.color.first,
-      }],
-      expres: {
-        error: "wrongValues.auth.header",
-        status: 401,
-      },
-    }],
-    rowCount: 0,
-  }, {
-    tag: 5,
     actions: [{
       auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
@@ -129,7 +91,64 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
+    tag: 4,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin - 1}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "wrongValues.messages.district",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 5,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMax + 1}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "wrongValues.messages.room",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
     tag: 6,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMax + 1}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "wrongValues.messages.index",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 7,
     actions: [{
       auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
@@ -148,7 +167,83 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 7,
+    tag: 8,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: "abcd",
+      }],
+      expres: {
+        error: "wrongValues.messages.color",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 9,
+    actions: [{
+      auth: () => "Bearer " + sessionid(databaseInactiveUsers[0]),
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "appErrors.actionNotAllowed",
+        status: 403,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 10,
+    actions: [{
+      auth: () => "Bearer " + examples.sessionid[0],
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "databaseConflicts.sessionNotFound",
+        status: 401,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 11,
+    actions: [{
+      auth: () => "abcd",
+      args: [{
+        region: examples.region.first,
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "wrongValues.auth.header",
+        status: 401,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 12,
     actions: [{
       auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
@@ -182,7 +277,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 2,
   }, {
-    tag: 8,
+    tag: 13,
     actions: [{
       auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{
@@ -216,7 +311,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 9,
+    tag: 14,
     actions: [{
       auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
       args: [{

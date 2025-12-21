@@ -1,12 +1,25 @@
 import { Router } from "express"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
+import { checkUserData } from "../lib/database/checkers"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readUserid, redactProfile } from "./miscs"
 import env from "../lib/env"
 import type { Request, Response } from "express"
 import type { ProfileData } from "../lib/database/users"
+import logger from "../lib/logger"
 
-const createProfileAction = async (req: Request<UserData>, res: Response) => {
+const createProfileAction = async (req: Request<ProfileData>, res: Response) => {
+  let checkError = checkUserData(req.body)
+  if ( checkError !== undefined ) {
+    let status = getStatusCode(checkError)    
+    logger.warn(req.body, "routes/profiles/createProfile#ERROR_ARGS_CHECK")
+    res.status(status).json({ 
+      error: getErrorMessage(checkError),
+      session: undefined,
+      profile: undefined,
+    })
+    return
+  }
   let result = await createProfile(req.body, env.users.defaultState)
   if ( result.error !== undefined ) {
     let status = getStatusCode(result.error)    
@@ -17,7 +30,7 @@ const createProfileAction = async (req: Request<UserData>, res: Response) => {
     })
     return
   }
-  let { login, password } = req.body as ProfileData
+  let { login, password } = req.body
   let session = await createSession({ login, password })
   res.status(201).json({
     error: undefined,
@@ -27,7 +40,8 @@ const createProfileAction = async (req: Request<UserData>, res: Response) => {
 }
 
 const deleteProfileAction = async (req: Request, res: Response) => {
-  let userid = await readUserid(req.header("Authorization"))
+  let header = req.header("Authorization")
+  let userid = await readUserid(header)
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))
     res.status(status).json({

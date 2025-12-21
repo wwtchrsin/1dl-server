@@ -64,7 +64,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "wrongValues.users.userid",
+      error: "databaseErrors.getUserMessages",
       data: undefined,
     },
   }]

@@ -92,6 +92,45 @@ describe("testing endpoints...", () => {
       error: "wrongValues.messages.region",
       message: undefined,
     },
+  }, {
+    tag: 5,
+    args: {
+      region: databaseMessages[0].region,
+      district: limits.messages.districtMax + 1,
+      room: databaseMessages[0].room,
+      index: databaseMessages[0].index,
+    },
+    expres: {
+      status: 400,
+      error: "wrongValues.messages.district",
+      message: undefined,
+    },
+  }, {
+    tag: 6,
+    args: {
+      region: databaseMessages[0].region,
+      district: databaseMessages[0].district,
+      room: limits.messages.roomMax + 1,
+      index: databaseMessages[0].index,
+    },
+    expres: {
+      status: 400,
+      error: "wrongValues.messages.room",
+      message: undefined,
+    },
+  }, {
+    tag: 7,
+    args: {
+      region: databaseMessages[0].region,
+      district: databaseMessages[0].district,
+      room: databaseMessages[0].district,
+      index: limits.messages.indexMax + 1,
+    },
+    expres: {
+      status: 400,
+      error: "wrongValues.messages.index",
+      message: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

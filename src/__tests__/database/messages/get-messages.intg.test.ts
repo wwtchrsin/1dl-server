@@ -79,8 +79,8 @@ describe("testing database queries...", () => {
       room: limits.messages.roomMin,
     },
     expres: {
-      error: "wrongValues.messages.district",
-      data: undefined,
+      error: undefined,
+      data: [],
     },
   }]
   for ( let testcase of testcases ) {

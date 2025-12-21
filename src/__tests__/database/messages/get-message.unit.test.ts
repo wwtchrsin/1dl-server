@@ -78,30 +78,6 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      region: examples.region.last,
-      district: `${limits.messages.districtMax}`,
-      room: `${limits.messages.roomMax}`,
-      index: `${limits.messages.indexMax}`,
-    },
-    mocks: {
-      queryDatabase: returnOneMessage,
-    },
-    expres: "success",
-  }, {
-    tag: 3,
-    args: {
-      region: examples.region.some,
-      district: `${limits.messages.districtMin + 1}`,
-      room: `${limits.messages.roomMin + 1}`,
-      index: `${limits.messages.indexMin + 1}`,
-    },
-    mocks: {
-      queryDatabase: returnOneMessage,
-    },
-    expres: "success",
-  }, {
-    tag: 4,
-    args: {
       region: examples.region.first,
       district: `${limits.messages.districtMin}`,
       room: `${limits.messages.roomMin}`,
@@ -112,7 +88,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflicts.messageNotFound",
   }, {
-    tag: 5,
+    tag: 3,
     args: {
       region: examples.region.first,
       district: `${limits.messages.districtMin}`,
@@ -124,7 +100,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.getMessage",
   }, {
-    tag: 6,
+    tag: 4,
     args: {
       region: examples.region.first,
       district: `${limits.messages.districtMin}`,
@@ -136,7 +112,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.getMessage",
   }, {
-    tag: 7,
+    tag: 5,
     args: {
       region: "abcdefg",
       district: `${limits.messages.districtMin}`,
@@ -146,43 +122,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnOneMessage,
     },
-    expres: "wrongValues.messages.region",
-  }, {
-    tag: 8,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin - 1}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
-    },
-    mocks: {
-      queryDatabase: returnOneMessage,
-    },
-    expres: "wrongValues.messages.district",
-  }, {
-    tag: 9,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMax + 1}`,
-      index: `${limits.messages.indexMin}`,
-    },
-    mocks: {
-      queryDatabase: returnOneMessage,
-    },
-    expres: "wrongValues.messages.room",
-  }, {
-    tag: 10,
-    args: {
-      region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin - 1}`,
-    },
-    mocks: {
-      queryDatabase: returnOneMessage,
-    },
-    expres: "wrongValues.messages.index",
+    expres: "success",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase

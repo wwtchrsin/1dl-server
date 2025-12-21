@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "wrongValues.users.userid",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 4,
     args: wrongUserid,

@@ -55,23 +55,16 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds
     },
-    expres: "wrongValues.users.userid",
+    expres: "success",
   }, {
     tag: 3,
-    args: [examples.uuid[0], wrongRoomMessageid],
-    mocks: {
-      queryDatabase: requestSucceeds
-    },
-    expres: "wrongValues.messages.room",
-  }, {
-    tag: 4,
     args: [examples.uuid[0], correctMessageid],
     mocks: {
       queryDatabase: messageNotFound,
     },
     expres: "databaseConflicts.messageNotFound",
   }, {
-    tag: 5,
+    tag: 4,
     args: [examples.uuid[0], correctMessageid],
     mocks: {
       queryDatabase: requestFails,

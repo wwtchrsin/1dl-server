@@ -86,7 +86,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      login: undefined,
+      login: "a",
       password: correctData.password,
     },
     mocks: {
@@ -96,12 +96,12 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "wrongValues.auth.login",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 5,
     args: {
       login: correctData.login,
-      password: undefined,
+      password: "a",
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -110,7 +110,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "wrongValues.auth.password",
+    expres: "databaseConflicts.profileNotFound",
   }, {
     tag: 6,
     args: {

@@ -43,24 +43,6 @@ describe("testing database queries...", () => {
     tag: 2,
     actions: [{
       args: {
-        userid: databaseSessions[0].userid,
-        messageid: {
-          region: examples.region.last,
-          district: limits.messages.districtMax,
-          room: limits.messages.roomMax,
-          index: limits.messages.indexMax,
-        },
-        content: {
-          text: examples.text.correct[1],
-          color: examples.color.last,
-        },
-      },
-      error: undefined,
-    }]
-  }, {
-    tag: 3,
-    actions: [{
-      args: {
         userid: "abcd",
         messageid: {
           region: examples.region.first,
@@ -73,10 +55,10 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "wrongValues.users.userid",
+      error: "databaseErrors.createMessage",
     }]
   }, {
-    tag: 4,
+    tag: 3,
     actions: [{
       args: {
         userid: databaseSessions[0].userid,
@@ -91,10 +73,10 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "wrongValues.messages.region",
+      error: "databaseErrors.createMessage",
     }]
   }, {
-    tag: 5,
+    tag: 4,
     actions: [{
       args: {
         userid: databaseSessions[0].userid,
@@ -109,10 +91,10 @@ describe("testing database queries...", () => {
           color: "abcd",
         },
       },
-      error: "wrongValues.messages.color",
+      error: "databaseErrors.createMessage",
     }]
   }, {
-    tag: 6,
+    tag: 5,
     actions: [{
       args: {
         userid: databaseSessions[0].userid,
@@ -145,40 +127,7 @@ describe("testing database queries...", () => {
       error: undefined,
     }]
   }, {
-    tag: 7,
-    actions: [{
-      args: {
-        userid: databaseSessions[0].userid,
-        messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
-          index: limits.messages.indexMin,
-        },
-        content: {
-          text: examples.text.correct[0],
-          color: examples.color.first,
-        },
-      },
-      error: undefined,
-    }, {
-      args: {
-        userid: databaseSessions[0].userid,
-        messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
-          index: limits.messages.indexMin,
-        },
-        content: {
-          text: examples.text.correct[0],
-          color: examples.color.first,
-        },
-      },
-      error: "databaseConflicts.messageAlreadyExists",
-    }]
-  }, {
-    tag: 8,
+    tag: 6,
     actions: [{
       args: {
         userid: databaseSessions[0].userid,

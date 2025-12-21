@@ -119,7 +119,7 @@ describe("testing database queries...", () => {
     tag: 5,
     args: "abcd",
     expres: {
-      error: "wrongValues.users.userid",
+      error: "databaseErrors.getProfile",
       profile: undefined,
       messages: undefined,
     },

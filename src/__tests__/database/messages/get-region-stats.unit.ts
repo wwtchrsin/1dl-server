@@ -33,7 +33,7 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 2,
-    args: examples.region.last,
+    args: "abcd",
     mocks: {
       queryDatabase: requestSuccess,
     },
@@ -43,26 +43,6 @@ describe("testing database queries...", () => {
     },
   }, {
     tag: 3,
-    args: "abcd",
-    mocks: {
-      queryDatabase: requestSuccess,
-    },
-    expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
-    },
-  }, {
-    tag: 4,
-    args: undefined,
-    mocks: {
-      queryDatabase: requestSuccess,
-    },
-    expres: {
-      error: "wrongValues.messages.region",
-      data: undefined,
-    },
-  }, {
-    tag: 5,
     args: examples.region.first,
     mocks: {
       queryDatabase: requestEmptyList,
@@ -72,7 +52,7 @@ describe("testing database queries...", () => {
       data: [],
     },
   }, {
-    tag: 6,
+    tag: 4,
     args: examples.region.first,
     mocks: {
       queryDatabase: requestFailure,

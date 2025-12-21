@@ -69,8 +69,8 @@ describe("testing database queries...", () => {
       district: limits.messages.districtMax + 1,
     },
     expres: {
-      error: "wrongValues.messages.district",
-      data: undefined,
+      error: undefined,
+      data: [],
     },
   }]
   for ( let testcase of testcases ) {

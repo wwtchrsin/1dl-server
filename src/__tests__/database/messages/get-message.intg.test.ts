@@ -78,7 +78,7 @@ describe("testing database queries...", () => {
       index: limits.messages.indexMin,
     },
     expres: {
-      error: "wrongValues.messages.region",
+      error: "databaseConflicts.messageNotFound",
       data: undefined,
     },
   }]

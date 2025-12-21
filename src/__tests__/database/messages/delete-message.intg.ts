@@ -122,7 +122,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "wrongValues.messages.room",
+      error: "databaseConflicts.messageNotFound",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
@@ -138,7 +138,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "wrongValues.users.userid",
+      error: "databaseErrors.deleteMessage",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
