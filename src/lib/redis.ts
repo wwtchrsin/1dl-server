@@ -19,6 +19,7 @@ export const getClient = async () => {
         },
         username: env.redis.username,
         password: env.redis.password,
+        database: env.redis.database,
       })
       .on("error", err => {
         logger.error({ stack: err.stack }, "redis/client#Error")
@@ -42,6 +43,7 @@ export const getChannels = async () => {
         },
         username: env.redis.username,
         password: env.redis.password,
+        database: env.redis.database,
       })
       .on("error", err => {
         logger.error({ stack: err.stack }, "redis/channels#Error")

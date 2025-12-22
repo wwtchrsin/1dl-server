@@ -1,6 +1,11 @@
+process.env.REDIS_NAMESPACE = "1dlRedisTest"
+
 import * as redis from "../../lib/redis"
 
 afterAll(async () => {
+  let client = await redis.getClient()
+  let keys = await client.keys(`${redis.redisns}:*`)
+  if ( keys.length ) await client.del(keys)
   await redis.closeConns()
 })
 

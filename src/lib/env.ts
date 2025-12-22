@@ -14,6 +14,7 @@ const env = {
     password: process.env.REDIS_PASSWORD,
     host: process.env.REDIS_HOST ?? "localhost",
     port: Number(process.env.REDIS_PORT ?? "6379"),
+    database: Number(process.env.REDIS_DATABASE ?? "0"),
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
   },
   hashSalt: process.env.HASH_SALT ?? "",
