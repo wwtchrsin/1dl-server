@@ -40,4 +40,15 @@ export const generateToken = async () => {
 
 export const getTimestamp = () => Math.floor((new Date()).valueOf() / 1000)
 
+export const redactPassword = (data: any) => {
+  if ( !data || typeof data !== "object" || Array.isArray(data) ) {
+    return data
+  }
+  let redacted = { ...data }
+  if ( redacted.password ) {
+    redacted.password = "[REDACTED]"
+  }
+  return redacted
+}
+
 

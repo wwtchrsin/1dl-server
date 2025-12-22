@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { createSession, deleteSession, getProfile } from "../lib/database/users"
 import { checkUserCredentials } from "../lib/database/checkers"
+import { redactPassword } from "../lib/database/miscs"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readUserid } from "./miscs"
 import type { Request, Response } from "express"
@@ -9,10 +10,11 @@ import logger from "../lib/logger"
 
 const createSessionAction = async (req: Request<Credentials>, res: Response) => {
   let TAG = "routes/sessions/createSession"
+  let args = { credentials: redactPassword(req.body) }
   let checkError = checkUserCredentials(req.body)
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
-    logger.warn(req.body, `${TAG}#ERROR_ARGS_CHECK`)
+    logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({ 
       error: getErrorMessage(checkError),
       session: undefined,
@@ -22,14 +24,14 @@ const createSessionAction = async (req: Request<Credentials>, res: Response) => 
   let result = await createSession(req.body)
   if ( result.error !== undefined ) {
     let status = getStatusCode(result.error)
-    logger.warn(req.body, `${TAG}#ERROR_DB_QUERY`)    
+    logger.info(args, `${TAG}#ERROR_DB_QUERY`)    
     res.status(status).json({
       error: getErrorMessage(result.error),
       session: undefined,
     })
     return
   }
-  logger.info(req.body, `${TAG}#DONE`)
+  logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
     session: result.data,
@@ -42,7 +44,7 @@ const deleteSessionAction = async (req: Request, res: Response) => {
   let userid = await readUserid(header)
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))
-    logger.warn({ header }, `${TAG}#ERROR_ARGS_CHECK`)
+    logger.info(`${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
       error: getErrorMessage(userid.error)
     })
@@ -51,13 +53,13 @@ const deleteSessionAction = async (req: Request, res: Response) => {
   let error = await deleteSession(userid.data)
   if ( error !== undefined ) {
     let status = getStatusCode(error)
-    logger.warn({ header }, `${TAG}#ERROR_DB_QUERY`)
+    logger.info(`${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
       error: getErrorMessage(error)
     })
     return
   }
-  logger.info({ header }, `${TAG}#DONE`)
+  logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined
   })

@@ -51,6 +51,7 @@ export type DistrictMessageCount = {
 
 export const getRegionStats = async (region: string | undefined):
   Promise<{ error: string | undefined, data: DistrictMessageCount[] | undefined }> => {
+    let TAG = "db/messages/getRegionStats"
     let query = `
       SELECT district, COUNT(*)::INTEGER as msgcount FROM messages
         WHERE region = $1
@@ -58,12 +59,13 @@ export const getRegionStats = async (region: string | undefined):
     `
     let result = await queryDatabase(query, [region as string])
     if ( !result ) {
-      logger.error({ region }, "db/messages/getRegionStats#ERROR_DB_QUERY")
+      logger.error({ region }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.getRegionStats",
         data: undefined,
       }
     }
+    logger.debug({ region }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows as DistrictMessageCount[],
@@ -72,6 +74,7 @@ export const getRegionStats = async (region: string | undefined):
 
 export const getDistrictStats = async (districtid: Districtid):
   Promise<{ error: string | undefined, data: RoomMessageCount[] | undefined }> => {
+    let TAG = "db/messages/getDistrictStats"
     let { region, district } = districtid as Districtid
     let query = `
       SELECT room, COUNT(*)::INTEGER as msgcount FROM messages
@@ -80,12 +83,13 @@ export const getDistrictStats = async (districtid: Districtid):
     `
     let result = await queryDatabase(query, [region, district])
     if ( !result ) {
-      logger.error({ districtid }, "db/messages/getDistrictStats#ERROR_DB_QUERY")
+      logger.error({ districtid }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.getDistrictStats",
         data: undefined
       }
     }
+    logger.debug({ districtid }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows as RoomMessageCount[],
@@ -94,6 +98,7 @@ export const getDistrictStats = async (districtid: Districtid):
 
 export const getMessages = async (roomid: Roomid): 
   Promise<{ error: string | undefined, data: Message[] | undefined }> => {
+    let TAG = "db/messages/getMessages"
     let { region, district, room } = roomid
     let query = `
       SELECT region, district, room, index, text, color, 
@@ -104,12 +109,13 @@ export const getMessages = async (roomid: Roomid):
     `
     let result = await queryDatabase(query, [region, district, room])
     if ( !result?.rows ) {
-      logger.error({ roomid }, "db/messages/getMessages#ERROR_DB_QUERY")
+      logger.error({ roomid }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.getMessages",
         data: undefined
       }
     }
+    logger.debug({ roomid }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows as Message[]
@@ -118,6 +124,7 @@ export const getMessages = async (roomid: Roomid):
 
 export const getMessage = async (messageid: Messageid):
   Promise<{ error: string | undefined, data: Message | undefined }> => {
+    let TAG = "db/messages/getMessage"
     let { region, district, room, index } = messageid
     let query = `
       SELECT region, district, room, index, text, color, 
@@ -128,19 +135,20 @@ export const getMessage = async (messageid: Messageid):
     `
     let result = await queryDatabase(query, [region, district, room, index])
     if ( result === undefined || result?.rows?.length > 1 ) {
-      logger.error({ messageid }, "db/messages/getMessage#ERROR_DB_QUERY")
+      logger.error({ messageid }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.getMessage",
         data: undefined,
       }
     }
     if ( result?.rows?.length === 0 ) {
-      logger.warn({ messageid }, "db/messages/getMessage#ERROR_NOT_FOUND")
+      logger.info({ messageid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
         error: "databaseConflicts.messageNotFound",
         data: undefined,
       }
     }
+    logger.debug({ messageid }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows[0] as Message,
@@ -149,18 +157,20 @@ export const getMessage = async (messageid: Messageid):
 
 export const getUserMessages = async (userid: string): 
   Promise<{ error: string | undefined, data: UserMessage[] }> => {
+    let TAG = "db/messages/getUserMessages"
     let query = `
       SELECT region, district, room, index, text, color, timestamp
         FROM messages WHERE userid = $1
     `
     let result = await queryDatabase(query, [userid])
     if ( result === undefined ) {
-      logger.error({ userid }, "db/messages/getUserMessages#ERROR_DB_QUERY")
+      logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.getUserMessages",
         data: undefined,
       }
     }
+    logger.debug({ userid }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows as UserMessage[],
@@ -169,18 +179,19 @@ export const getUserMessages = async (userid: string):
 
 export const createMessage = async (userid: string, messageid: Messageid, content: MessageContent): 
   Promise<{ error: string | undefined, data: UserMessage | undefined }> => {
+    let TAG = "db/messages/createMessage"    
     let { region, district, room, index } = messageid
     let { text, color } = content
     let message = await getMessage({ region, district, room, index })
     if ( message.error === "databaseErrors.getMessage" ) {
-      logger.error({ userid, messageid, content }, "db/messages/createMessage#ERROR_GET_MESSAGE")
+      logger.error({ userid, messageid, content }, `${TAG}#ERROR_GET_MESSAGE`)
       return {
         error: "databaseErrors.checkMessage",
         data: undefined,
       }
     }
     if ( message.data !== undefined ) {
-      logger.warn({ userid, messageid, content }, "db/messages/createMessage#ERROR_MESSAGE_EXISTS")
+      logger.info({ userid, messageid, content }, `${TAG}#ERROR_MESSAGE_EXISTS`)
       return {
         error: "databaseConflicts.messageAlreadyExists",
         data: undefined,
@@ -194,12 +205,13 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
     let queryParams = [region, district, room, index, text, color, userid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
-      logger.error({ userid, messageid, content }, "db/messages/createMessage#ERROR_DB_QUERY")
+      logger.error({ userid, messageid, content }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.createMessage",
         data: undefined,
       }
     }
+    logger.debug({ userid, messageid, content }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows[0] as UserMessage,
@@ -208,6 +220,7 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
 
 export const deleteMessage = async (userid: string, messageid: Messageid):
   Promise<{ error: TextResource | undefined, data: UserMessage | undefined }> => {
+    let TAG = "db/messages/deleteMessage"
     let { region, district, room, index } = messageid as Messageid
     let query = `
       DELETE FROM messages 
@@ -218,19 +231,20 @@ export const deleteMessage = async (userid: string, messageid: Messageid):
     let queryParams = [userid, region, district, room, index]
     let result = await queryDatabase(query, queryParams)
     if ( !result?.rows || result.rows.length > 1 ) {
-      logger.error({ userid, messageid }, "db/messages/deleteMessage#ERROR_DB_QUERY")
+      logger.error({ userid, messageid }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.deleteMessage",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
-      logger.warn({ userid, messageid }, "db/messages/deleteMessage#ERROR_NOT_FOUND")
+      logger.info({ userid, messageid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
         error: "databaseConflicts.messageNotFound",
         data: undefined,
       }
     }
+    logger.debug({ userid, messageid }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result.rows[0] as UserMessage,
