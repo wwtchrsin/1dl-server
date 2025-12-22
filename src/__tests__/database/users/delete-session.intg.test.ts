@@ -1,19 +1,17 @@
-process.env.PG_SCHEMA = "deleteSessionTest"
-
-import { pool, queryDatabase } from "../../../lib/database/conn"
+import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { deleteSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
 
 beforeAll(async () => {
-  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
+  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addSessions)
 })
 
 afterAll(async () => {
-  await pool.query(`DROP SCHEMA ${process.env.PG_SCHEMA} CASCADE`)
+  await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
 })
 

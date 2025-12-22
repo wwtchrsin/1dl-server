@@ -1,5 +1,3 @@
-process.env.REDIS_NAMESPACE = "1dlRedisTest"
-
 import * as redis from "../../lib/redis"
 
 afterAll(async () => {

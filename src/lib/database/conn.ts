@@ -1,7 +1,13 @@
+import { randomBytes } from "node:crypto"
 import { Client, Pool } from "pg"
 import type { Result } from "pg"
 import env from "../env"
 import logger from "../logger"
+
+export const schema = (() => {
+  if ( env.mode !== "test" ) return env.pg.schema
+  return "_" + randomBytes(12).toString("hex")
+})()
 
 export const pool = new Pool({
   user: env.pg.user,
@@ -10,7 +16,7 @@ export const pool = new Pool({
   port: env.pg.port,
   database: env.pg.database,
   max: 20,
-  options: `--search_path=${env.pg.schema}`,
+  options: `--search_path=${schema}`,
 })
 
 export const getClient = async () => {
@@ -20,7 +26,7 @@ export const getClient = async () => {
     host: env.pg.host,
     port: env.pg.port,
     database: env.pg.database,
-    options: `--search_path=${env.pg.schema}`,
+    options: `--search_path=${schema}`,
   })
 }
 

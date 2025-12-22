@@ -1,6 +1,4 @@
-process.env.PG_SCHEMA = "getDistrictStatsTest"
-
-import { pool } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { getDistrictStats } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
@@ -8,14 +6,14 @@ import { examples, populateDatabase, databaseMessages, databaseDistricts,
   messagesByDistrict, databaseEmptyDistricts } from "../../../lib/test-data"
 
 beforeAll(async () => {
-  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
+  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
   await pool.query(populateDatabase.addMessages)
 })
 
 afterAll(async () => {
-  await pool.query(`DROP SCHEMA ${process.env.PG_SCHEMA} CASCADE`)
+  await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
 })
 

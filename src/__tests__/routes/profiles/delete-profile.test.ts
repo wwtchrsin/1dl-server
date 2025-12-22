@@ -1,8 +1,6 @@
-process.env.PG_SCHEMA = "deleteProfileEndpointTest"
-
 import supertest from "supertest"
 import httpServer from "../../../http-server"
-import { pool, queryDatabase } from "../../../lib/database/conn"
+import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions,
@@ -11,7 +9,7 @@ import { examples, populateDatabase, databaseSessions,
 import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
-  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${process.env.PG_SCHEMA}`)
+  await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
   await pool.query(populateDatabase.addSessions)
@@ -19,7 +17,7 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
-  await pool.query(`DROP SCHEMA ${process.env.PG_SCHEMA} CASCADE`)
+  await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
 })
 

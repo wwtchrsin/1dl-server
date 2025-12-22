@@ -1,4 +1,5 @@
 const env = {
+  mode: process.env.NODE_ENV ?? "dev",
   httpPort: Number(process.env.HTTP_PORT ?? "3000"),
   wsPort: Number(process.env.WS_PORT ?? "8080"),
   pg: {

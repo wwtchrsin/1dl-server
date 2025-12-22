@@ -1,9 +1,13 @@
+import { randomBytes } from "node:crypto"
 import env from "./env"
 import logger from "./logger"
 import { createClient } from "redis"
 import type { SetOptions } from "redis"
 
-export const redisns = env.redis.namespace
+export const redisns = (() => {
+  if ( env.mode !== "test" ) return env.redis.namespace
+  return "_" + randomBytes(12).toString("hex")
+})()
 
 let client: ReturnType<typeof createClient> | undefined = undefined
 
