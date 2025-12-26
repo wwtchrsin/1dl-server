@@ -26,6 +26,30 @@ export const changeRoomMsgcount = async (roomid: Roomid, delta: number):
     }
   }
 
+export const changeRoomMsgcounts = async (roomids: Roomid[], delta: number):
+  Promise<boolean> => {
+    let TAG = "redis/cache/changeRoomMsgcounts"
+    try {
+      let client = await redisConn.getClient()
+      let promises: Promise[] = []
+      for ( let roomid of roomids ) {
+        let { region, district, room } = roomid
+        let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+        promises.push(client.hIncrBy(key, `${room}`, delta))
+      }
+      await Promise.all(promises)
+      logger.debug({ roomids: roomids.length }, `${TAG}#DONE`)
+      return true
+    } catch (err) {
+      let errmsg = {
+        roomids: roomids.length,
+        stack: err.stack,
+      }
+      logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
+      return false
+    }
+  }
+
 export const changeDistrictMsgcount = async (districtid: Districtid, delta: number):
   Promise<boolean> => {
     let TAG = "redis/cache/changeDistrictMsgcount"
@@ -40,6 +64,30 @@ export const changeDistrictMsgcount = async (districtid: Districtid, delta: numb
       let errmsg = {
         region: region,
         district: district,
+        stack: err.stack,
+      }
+      logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
+      return false
+    }
+  }
+
+export const changeDistrictMsgcounts = async (districtids: Districtids[], delta: number):
+  Promise<boolean> => {
+    let TAG = "redis/cache/changeDistrictMsgcounts"
+    try {
+      let client = await redisConn.getClient()
+      let promises: Promise[] = []
+      for ( let districtid of districtids ) {
+        let { region, district } = districtid
+        let key = `${redisConn.redisns}:msgcounts:districts:${region}`
+        promises.push(client.hIncrBy(key, `${district}`, delta))
+      }
+      await Promise.all(promises)
+      logger.debug({ districtids: districtids.length }, `${TAG}#DONE`)
+      return true
+    } catch (err) {
+      let errmsg = {
+        districtids: districtids.length,
         stack: err.stack,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
