@@ -5,7 +5,7 @@ import { redactPassword } from "../lib/database/miscs"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readUserid } from "./miscs"
 import type { Request, Response } from "express"
-import type { Credentials } from "../lib/database/users"
+import type { Credentials } from "../lib/database/interfaces"
 import logger from "../lib/logger"
 
 const createSessionAction = async (req: Request<Credentials>, res: Response) => {

@@ -2,12 +2,14 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
+import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, messagesByDistrict,
   databaseMessages, databaseDistricts, databaseEmptyDistricts } 
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import env from "../../../lib/env"
+import * as redisConn from "../../../lib/redis/conn"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -17,17 +19,17 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  let client = await redisConn.getClient()
+  let keys = await client.keys(`${redisConn.redisns}:*`)
+  if ( keys.length ) await client.del(keys)
+  await redisConn.closeConns()
   await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
 })
 
 let testServer = supertest(httpServer)
 
-let sortStats = (stats: any[]) => {
-  return stats.sort((a, b) => +a.room < b.room ? -1 : 1)
-} 
-
-let stats = (districtIndex: number) => {
+let msgcounts = (districtIndex: number) => {
   let messageIndices = messagesByDistrict[districtIndex]
   let rooms = new Map()
   for ( let messageIndex of messageIndices ) {
@@ -41,7 +43,7 @@ let stats = (districtIndex: number) => {
   for ( let [room, msgcount] of rooms ) {
     result.push({ room, msgcount })
   }
-  return sortStats(result)
+  return result
 }
 
 describe("testing endpoints...", () => {
@@ -51,7 +53,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      rooms: stats(0),
+      msgcounts: process(msgcounts(0)),
     },
   }, {
     tag: 2,
@@ -59,7 +61,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      rooms: stats(1),
+      msgcounts: process(msgcounts(1)),
     },
   }, {
     tag: 3,
@@ -67,7 +69,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      rooms: [],
+      msgcounts: process([]),
     },
   }, {
     tag: 4,
@@ -78,7 +80,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 400,
       error: "wrongValues.messages.region",
-      rooms: undefined,
+      msgcounts: undefined,
     },
   }]
   for ( let testcase of testcases ) {
@@ -89,9 +91,6 @@ describe("testing endpoints...", () => {
       let result = await testServer.get(url)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
-      if ( result.body.rooms !== undefined ) {
-        result.body.rooms = sortStats(result.body.rooms)
-      }
       if ( expres.error === undefined ) {
         expect(result.body.error).toBeUndefined()
         expect(result.body.rooms).toStrictEqual(expres.rooms)

@@ -1,5 +1,6 @@
 import { pool, schema } from "../../../lib/database/conn"
-import { getDistrictStats } from "../../../lib/database/messages"
+import { countDistrictMessages } from "../../../lib/database/messages"
+import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseMessages, databaseDistricts, 
@@ -17,10 +18,6 @@ afterAll(async () => {
   await pool.end()
 })
 
-let sortStats = (stats: any[]) => {
-  return stats.sort((a, b) => +a.room < +b.room ? -1 : 1)
-} 
-
 let stats = (districtIndex: number) => {
   let messageIndices = messagesByDistrict[districtIndex]
   let rooms = new Map()
@@ -35,7 +32,7 @@ let stats = (districtIndex: number) => {
   for ( let [room, msgcount] of rooms ) {
     result.push({ room, msgcount })
   }
-  return sortStats(result)
+  return result
 }
 
 describe("testing database queries...", () => {
@@ -44,21 +41,21 @@ describe("testing database queries...", () => {
     args: databaseDistricts[0],
     expres: {
       error: undefined,
-      data: stats(0),
+      data: process(stats(0)),
     },
   }, {
     tag: 2,
     args: databaseDistricts[1],
     expres: {
       error: undefined,
-      data: stats(1),
+      data: process(stats(1)),
     },
   }, {
     tag: 3,
     args: databaseEmptyDistricts[0],
     expres: {
       error: undefined,
-      data: [],
+      data: process([]),
     },
   }, {
     tag: 4,
@@ -68,16 +65,13 @@ describe("testing database queries...", () => {
     },
     expres: {
       error: undefined,
-      data: [],
+      data: process([]),
     },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function getDistrictStats. Intg Test ${tag}`, async () => {
-      let result = await getDistrictStats(args)
-      if ( result.data !== undefined ) {
-        result.data = sortStats(result.data)
-      }
+    test(`Function countDistrictMessages. Intg Test ${tag}`, async () => {
+      let result = await countDistrictMessages(args)
       expect(result).toStrictEqual(expres)
     })
   }

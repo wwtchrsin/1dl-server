@@ -1,5 +1,6 @@
 import { pool, schema } from "../../../lib/database/conn"
-import { getRegionStats } from "../../../lib/database/messages"
+import { countRegionMessages } from "../../../lib/database/messages"
+import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseMessages, messagesByRegion } 
@@ -17,10 +18,6 @@ afterAll(async () => {
   await pool.end()
 })
 
-let sortStats = (stats: any[]) => {
-  return stats.sort((a, b) => +a.district < +b.district ? -1 : 1)
-}
-
 let stats = (regionIndex: number) => {
   let messageIndices = messagesByRegion[regionIndex]
   let districts = new Map()
@@ -35,7 +32,7 @@ let stats = (regionIndex: number) => {
   for ( let [district, msgcount] of districts ) {
     result.push({ district, msgcount })
   }
-  return sortStats(result)
+  return result
 }
 
 describe("testing database queries...", () => {
@@ -44,30 +41,27 @@ describe("testing database queries...", () => {
     args: limits.messages.regions[0],
     expres: {
       error: undefined,
-      data: stats(0),
+      data: process(stats(0)),
     },
   }, {
     tag: 2,
     args: limits.messages.regions[1],
     expres: {
       error: undefined,
-      data: stats(1),
+      data: process(stats(1)),
     },
   }, {
     tag: 3,
     args: "abcd",
     expres: {
       error: undefined,
-      data: [],
+      data: process([]),
     },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function getRegionStats. Intg Test #${tag}`, async () => {
-      let result = await getRegionStats(args)
-      if ( result.data !== undefined ) {
-        result.data = sortStats(result.data)
-      }
+    test(`Function countRegionMessages. Intg Test #${tag}`, async () => {
+      let result = await countRegionMessages(args)
       expect(result).toStrictEqual(expres)
     })
   }

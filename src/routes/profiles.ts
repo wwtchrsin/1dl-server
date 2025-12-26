@@ -6,7 +6,7 @@ import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-mess
 import { readUserid, redactProfile } from "./miscs"
 import env from "../lib/env"
 import type { Request, Response } from "express"
-import type { UserData } from "../lib/database/users"
+import type { UserData } from "../lib/database/interfaces"
 import logger from "../lib/logger"
 
 const createProfileAction = async (req: Request<UserData>, res: Response) => {

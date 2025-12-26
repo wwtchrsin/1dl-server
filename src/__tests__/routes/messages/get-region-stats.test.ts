@@ -1,6 +1,7 @@
 import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, messagesByRegion, databaseMessages } 
@@ -22,11 +23,7 @@ afterAll(async () => {
 
 let testServer = supertest(httpServer)
 
-let sortStats = (stats: any[]) => {
-  return stats.sort((a, b) => +a.district < +b.district ? -1 : 1)
-}
-
-let stats = (regionIndex: number) => {
+let msgcounts = (regionIndex: number) => {
   let messageIndices = messagesByRegion[regionIndex]
   let districts = new Map()
   for ( let messageIndex of messageIndices ) {
@@ -40,7 +37,7 @@ let stats = (regionIndex: number) => {
   for ( let [district, msgcount] of districts ) {
     result.push({ district, msgcount })
   }
-  return sortStats(result)
+  return result
 }
 
 describe("testing endpoints...", () => {
@@ -50,7 +47,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      districts: stats(0),
+      msgcounts: process(msgcounts(0)),
     },
   }, {
     tag: 2,
@@ -58,7 +55,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      districts: stats(1),
+      msgcounts: process(msgcounts(1)),
     },
   }, {
     tag: 3,
@@ -66,7 +63,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 400,
       error: "wrongValues.messages.region",
-      districts: undefined,
+      msgcounts: undefined,
     },
   }]
   for ( let testcase of testcases ) {
@@ -75,9 +72,6 @@ describe("testing endpoints...", () => {
       let result = await testServer.get(`/api/v1/messages/${args}`)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
-      if ( result.body.districts !== undefined ) {
-        result.body.district = sortStats(result.body.districts)
-      }
       if ( expres.error === undefined ) {
         expect(result.body.error).toBeUndefined()
         expect(result.body.districts).toStrictEqual(expres.districts)

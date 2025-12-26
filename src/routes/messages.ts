@@ -1,13 +1,13 @@
 import { Router } from "express"
 import { createMessage, deleteMessage, getMessage, getMessages,
-  getDistrictStats, getRegionStats } from "../lib/database/messages"
+  countDistrictMessages, countRegionMessages } from "../lib/database/messages"
 import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
   checkMessageData } from "../lib/database/checkers"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
-import type { Request, Response } from "express"
-import type { MessageContent, Messageid, Roomid, Districtid } from "../lib/database/messages"
 import logger from "../lib/logger"
+import type { Request, Response } from "express"
+import type { MessageContent, Messageid, Roomid, Districtid } from "../lib/database/interfaces"
 
 const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
   let TAG = "routes/messages/createMessage"
@@ -123,24 +123,25 @@ const getDistrictStatsAction = async (req: Request, res: Response) => {
     logger.info({ districtid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
       error: getErrorMessage(checkError),
-      rooms: undefined,
+      msgcounts: undefined,
     })
     return
   }
-  let stats = await getDistrictStats(req.params as Districtid)
-  if ( stats.error !== undefined ) {
-    let status = getStatusCode(stats.error)
+  let { region, district } = req.params as Districtid
+  let msgcounts = await countDistrictMessages({ region, district })
+  if ( msgcounts.error !== undefined ) {
+    let status = getStatusCode(msgcounts.error)
     logger.info({ districtid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(stats.error),
-      rooms: undefined,
+      error: getErrorMessage(msgcounts.error),
+      msgcounts: undefined,
     })
     return
   }
   logger.debug({ districtid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
-    rooms: stats.data,
+    msgcounts: msgcounts.data,
   })
 }
 
@@ -157,12 +158,12 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let stats = await getRegionStats(region)
-  if ( stats.error !== undefined ) {
-    let status = getStatusCode(stats.error)
+  let msgcounts = await countRegionMessages(region)
+  if ( msgcounts.error !== undefined ) {
+    let status = getStatusCode(msgcounts.error)
     logger.info({ region }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(stats.error),
+      error: getErrorMessage(msgcounts.error),
       districts: undefined,
     })
     return
@@ -170,7 +171,7 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
   logger.debug({ region }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
-    districts: stats.data,
+    msgcounts: msgcounts.data,
   })
 }
 

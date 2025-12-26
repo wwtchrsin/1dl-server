@@ -1,14 +1,15 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
+import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
 import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let stats = [{
-  room: 1,
-  msgcount: 2,
+  district: 5,
+  msgcount: 7,
 }, {
-  room: 2,
-  msgcount: 3,
+  district: 6,
+  msgcount: 8,
 }]
 
 let requestSuccess = () => Promise.resolve({ rows: stats })
@@ -23,63 +24,52 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestSuccess,
     },
     expres: {
       error: undefined,
-      data: stats,
+      data: process(stats),
     },
   }, {
     tag: 2,
-    args: {
-      region: "abcd",
-      district: limits.messages.districtMin,
-    },
+    args: "abcd",
     mocks: {
       queryDatabase: requestSuccess,
     },
     expres: {
       error: undefined,
-      data: stats,
+      data: process(stats),
     },
   }, {
     tag: 3,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestEmptyList,
     },
     expres: {
       error: undefined,
-      data: [],
+      data: process([]),
     },
   }, {
     tag: 4,
-    args: {
-      region: examples.region.first,
-      district: limits.messages.districtMin,
-    },
+    args: examples.region.first,
     mocks: {
       queryDatabase: requestFailure,
     },
     expres: {
-      error: "databaseErrors.getDistrictStats",
+      error: "databaseErrors.countRegionMessages",
       data: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
-    test(`Function getDistrictStats. Unit Test #${tag}`, async () => {
+    test(`Function countRegionMessages. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await messages.getDistrictStats(args)
+      let result = await messages.countRegionMessages(args)
       expect(result).toStrictEqual(expres)
     })
   }
 })
+

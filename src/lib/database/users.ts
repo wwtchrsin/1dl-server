@@ -7,26 +7,7 @@ import { hashPassword, hashSession, generateToken, getTimestamp,
   redactPassword } from "./miscs"
 import type { UserMessage } from "../messages"
 import logger from "../logger"
-
-export type UserData = {
-  login: string,
-  password: string,
-  name: string,
-}
-
-export type Profile = {
-  userid: string,
-  login: string,
-  name: string,
-  state: string,
-  puid: string,
-  timestamp: string,
-}
-
-export type Credentials = {
-  login: string,
-  password: string,
-}
+import { UserData, Profile, Credentials, UserMessage } from "./interfaces"
 
 export const loginExists = async (login: string):
   Promise<{ error: string | undefined, data: boolean | undefined }> => {

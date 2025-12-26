@@ -2,56 +2,15 @@ import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
   checkMessageContent, checkUserid } from "./checkers"
 import { queryDatabase } from "./conn"
 import { databaseErrors, databaseConflicts } from "../error-messages"
-import { getTimestamp } from "./miscs"
+import { getTimestamp, processRoomMsgcounts, processDistrictMsgcounts } from "./miscs"
 import logger from "../logger"
 import type { TextResource } from "../langs"
+import type { Districtid, Roomid, Messageid, MessageContent, UserMessage,
+  Message, RoomMsgcount, DistrictMsgcount } from "./interfaces"
 
-export type Districtid = {
-  region: string,
-  district: string,
-}
-
-export type Roomid = Districtid & {
-  room: string,
-}
-
-export type Messageid = Roomid & {
-  index: string,
-}
-
-export type MessageContent = {
-  text: string,
-  color: string,
-}
-
-export type UserMessage = {
-  region: string,
-  district: number,
-  room: number,
-  index: number,
-  text: string,
-  color: string,
-  timestamp: string
-}
-
-export type Message = UserMessage & {
-  puid: string,
-  username: string,
-}
-
-export type RoomMessageCount = {
-  room: number,
-  msgcount: number,
-}
-
-export type DistrictMessageCount = {
-  district: number,
-  msgcount: number,
-}
-
-export const getRegionStats = async (region: string | undefined):
-  Promise<{ error: string | undefined, data: DistrictMessageCount[] | undefined }> => {
-    let TAG = "db/messages/getRegionStats"
+export const countRegionMessages = async (region: string | undefined):
+  Promise<{ error: string | undefined, data: Record<string | number, number> | undefined }> => {
+    let TAG = "db/messages/countRegionMessages"
     let query = `
       SELECT district, COUNT(*)::INTEGER as msgcount FROM messages
         WHERE region = $1
@@ -61,20 +20,21 @@ export const getRegionStats = async (region: string | undefined):
     if ( !result ) {
       logger.error({ region }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getRegionStats",
+        error: "databaseErrors.countRegionMessages",
         data: undefined,
       }
     }
+    let data = processDistrictMsgcounts(result.rows as DistrictMsgcount[])
     logger.debug({ region }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows as DistrictMessageCount[],
+      data: data,
     }
   }
 
-export const getDistrictStats = async (districtid: Districtid):
-  Promise<{ error: string | undefined, data: RoomMessageCount[] | undefined }> => {
-    let TAG = "db/messages/getDistrictStats"
+export const countDistrictMessages = async (districtid: Districtid):
+  Promise<{ error: string | undefined, data: Record<string | number, number> | undefined }> => {
+    let TAG = "db/messages/countDistrictMessages"
     let { region, district } = districtid as Districtid
     let query = `
       SELECT room, COUNT(*)::INTEGER as msgcount FROM messages
@@ -85,14 +45,15 @@ export const getDistrictStats = async (districtid: Districtid):
     if ( !result ) {
       logger.error({ districtid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getDistrictStats",
+        error: "databaseErrors.countDistrictMessages",
         data: undefined
       }
     }
+    let data = processRoomMsgcounts(result.rows as RoomMsgcount[])
     logger.debug({ districtid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows as RoomMessageCount[],
+      data: data,
     }
   }
 
