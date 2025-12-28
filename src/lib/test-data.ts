@@ -561,3 +561,40 @@ export const populateDatabase = (() => {
   }
 })()
 
+export const roomMsgcounts = (() => {
+  let result = {}
+  for ( let i=0; i < roomByMessage.length; i++ ) {
+    let roomid = databaseRooms[roomByMessage[i]]
+    let { region, district, room } = roomid
+    if ( result[region] === undefined ) {
+      result[region] = {}
+    }
+    if ( result[region][district] === undefined ) {
+      result[region][district] = {}
+    }
+    if ( result[region][district][room] === undefined ) {
+      result[region][district][room] = 0
+    }
+    result[region][district][room]++
+  }
+  return result
+})()
+
+export const districtMsgcounts = (() => {
+  let result = {}
+  for ( let i=0; i < districtByMessage.length; i++ ) {
+    let districtid = databaseDistricts[districtByMessage[i]]
+    let { region, district } = districtid
+    if ( result[region] === undefined ) {
+      result[region] = {}
+    }
+    if ( result[region][district] === undefined ) {
+      result[region][district] = 0
+    }
+    result[region][district]++
+  }
+  return result
+})()
+
+    
+

@@ -2,26 +2,26 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
+import * as messages from "../../../lib/database/messages"
 import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, messagesByDistrict,
-  databaseMessages, databaseDistricts, databaseEmptyDistricts } 
-  from "../../../lib/test-data"
+import { populateDatabase, databaseDistricts, databaseEmptyDistricts,
+  roomMsgcounts } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import env from "../../../lib/env"
 import * as redisConn from "../../../lib/redis/conn"
+import * as redisCache from "../../../lib/redis/cache"
+import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
   await pool.query(populateDatabase.addMessages)
+  await initRedisCache()
 })
 
 afterAll(async () => {
-  let client = await redisConn.getClient()
-  let keys = await client.keys(`${redisConn.redisns}:*`)
-  if ( keys.length ) await client.del(keys)
+  await clearRedis()
   await redisConn.closeConns()
   await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
@@ -29,53 +29,87 @@ afterAll(async () => {
 
 let testServer = supertest(httpServer)
 
-let msgcounts = (districtIndex: number) => {
-  let messageIndices = messagesByDistrict[districtIndex]
-  let rooms = new Map()
-  for ( let messageIndex of messageIndices ) {
-    let room = databaseMessages[messageIndex].room
-    if ( !rooms.has(room) ) {
-      rooms.set(room, 0)
-    }
-    rooms.set(room, rooms.get(room) + 1)
-  }
-  let result = []
-  for ( let [room, msgcount] of rooms ) {
-    result.push({ room, msgcount })
-  }
-  return result
+let msgcounts = (districtid: any) => {
+  let { region, district } = districtid
+  return roomMsgcounts[region][district]
 }
 
+let cacheEmpty = () => Promise.resolve({ error: false, data: undefined })
+
 describe("testing endpoints...", () => {
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
   let testcases = [{
     tag: 1,
     args: databaseDistricts[0],
+    mocks: {
+      getRoomMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 1,
+      updateRoomMsgcounts: 1,
+    },
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: process(msgcounts(0)),
+      msgcounts: msgcounts(databaseDistricts[0]),
     },
   }, {
     tag: 2,
-    args: databaseDistricts[1],
+    args: databaseDistricts[0],
+    mocks: {},
+    calls: {
+      countDistrictMessages: 0,
+      updateRoomMsgcounts: 0,
+    },
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: process(msgcounts(1)),
+      msgcounts: msgcounts(databaseDistricts[0]),
     },
   }, {
     tag: 3,
-    args: databaseEmptyDistricts[2],
+    args: databaseDistricts[1],
+    mocks: {
+      getRoomMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 1,
+      updateRoomMsgcounts: 1,
+    },
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: process([]),
+      msgcounts: msgcounts(databaseDistricts[1]),
     },
   }, {
     tag: 4,
+    args: databaseEmptyDistricts[2],
+    mocks: {
+      getRoomMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 1,
+      updateRoomMsgcounts: 1,
+    },
+    expres: {
+      status: 200,
+      error: undefined,
+      msgcounts: {},
+    },
+  }, {
+    tag: 5,
     args: {
       region: "abcd",
       district: databaseDistricts[0].district,
+    },
+    mocks: {
+      getRoomMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 0,
+      updateRoomMsgcounts: 0,
     },
     expres: {
       status: 400,
@@ -84,8 +118,14 @@ describe("testing endpoints...", () => {
     },
   }]
   for ( let testcase of testcases ) {
-    let { args, expres, tag } = testcase
+    let { args, mocks, calls, expres, tag } = testcase
     test(`GET /messages/region/district. Test #${tag}`, async () => {
+      if ( mocks.getRoomMsgcounts ) {
+        jest.spyOn(redisCache, "getRoomMsgcounts")
+          .mockImplementation(mocks.getRoomMsgcounts)
+      }
+      let countDistrictMessages = jest.spyOn(messages, "countDistrictMessages")
+      let updateRoomMsgcounts = jest.spyOn(redisCache, "updateRoomMsgcounts")
       let { region, district } = args
       let url = `/api/v1/messages/${region}/${district}`
       let result = await testServer.get(url)
@@ -99,6 +139,8 @@ describe("testing endpoints...", () => {
         expect(result.body.error).toStrictEqual(errorMessage)
         expect(result.body.rooms).toBeUndefined()
       }
+      expect(countDistrictMessages).toHaveBeenCalledTimes(calls.countDistrictMessages)
+      expect(updateRoomMsgcounts).toHaveBeenCalledTimes(calls.updateRoomMsgcounts)
     })
   }
 })
