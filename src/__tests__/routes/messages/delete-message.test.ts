@@ -8,6 +8,7 @@ import { examples, populateDatabase, databaseSessions, databaseMessages,
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import env from "../../../lib/env"
+import * as redisConn from "../../../lib/redis/conn"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -18,6 +19,10 @@ beforeAll(async () => {
 })
 
 afterAll(async () => {
+  let client = await redisConn.getClient()
+  let keys = await client.keys(`${redisConn.redisns}:*`)
+  if ( keys.length ) await client.del(keys)
+  await redisConn.closeConns()
   await pool.query(`DROP SCHEMA ${schema} CASCADE`)
   await pool.end()
 })

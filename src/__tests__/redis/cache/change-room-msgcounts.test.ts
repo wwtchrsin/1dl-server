@@ -206,7 +206,7 @@ describe("testing redis operations...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tables, tag } = testcase
-    test(`Function changeRommMsgcounts. Test #${tag}`, async () => {
+    test(`Function changeRoomMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( mocks.getClient ) {
         jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)

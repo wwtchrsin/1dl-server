@@ -3,6 +3,7 @@ import { createMessage, deleteMessage, getMessage, getMessages,
   countDistrictMessages, countRegionMessages } from "../lib/database/messages"
 import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
   checkMessageData } from "../lib/database/checkers"
+import * as redisCache from "../lib/redis/cache"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readProfile, readUserid } from "./miscs"
 import logger from "../lib/logger"
@@ -50,6 +51,8 @@ const createMessageAction = async (req: Request<MessageContent>, res: Response) 
     })
     return
   }
+  await redisCache.changeRoomMsgcount(req.params, 1)
+  await redisCache.changeDistrictMsgcount(req.params, 1)
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
@@ -128,6 +131,15 @@ const getDistrictStatsAction = async (req: Request, res: Response) => {
     return
   }
   let { region, district } = req.params as Districtid
+  let cache = await redisCache.getRoomMsgcounts({ region, district })
+  if ( cache.data ) {
+    logger.debug({ districtid: req.params }, `${TAG}#CACHED_VALUE_RETURNED`)
+    res.status(200).json({
+      error: undefined,
+      msgcounts: cache.data,
+    })
+    return
+  }
   let msgcounts = await countDistrictMessages({ region, district })
   if ( msgcounts.error !== undefined ) {
     let status = getStatusCode(msgcounts.error)
@@ -138,6 +150,7 @@ const getDistrictStatsAction = async (req: Request, res: Response) => {
     })
     return
   }
+  await redisCache.updateRoomMsgcounts({ region, district }, msgcounts.data)
   logger.debug({ districtid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
@@ -158,6 +171,15 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     })
     return
   }
+  let cache = await redisCache.getDistrictMsgcounts(region)
+  if ( cache.data ) {
+    logger.debug({ region }, `${TAG}#CACHED_VALUE_RETURNED`)
+    res.status(200).json({
+      error: undefined,
+      msgcounts: cache.data,
+    })
+    return
+  }
   let msgcounts = await countRegionMessages(region)
   if ( msgcounts.error !== undefined ) {
     let status = getStatusCode(msgcounts.error)
@@ -168,6 +190,7 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     })
     return
   }
+  await redisCache.updateDistrictMsgcounts(region, msgcounts.data)
   logger.debug({ region }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
@@ -207,6 +230,8 @@ const deleteMessageAction = async (req: Request, res: Response) => {
     })
     return
   }
+  await redisCache.changeRoomMsgcount(req.params as Messageid, -1)
+  await redisCache.changeDistrictMsgcount(req.params as Messageid, -1)
   logger.debug({ messageid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,

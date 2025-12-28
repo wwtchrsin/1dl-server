@@ -2,6 +2,7 @@ import { Router } from "express"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
 import { checkUserData } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
+import * as redisCache from "../lib/redis/cache"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
 import { readUserid, redactProfile } from "./miscs"
 import env from "../lib/env"
@@ -69,6 +70,8 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     })
     return
   }
+  await redisCache.changeRoomMsgcounts(result.messages, -1)
+  await redisCache.changeDistrictMsgcounts(result.messages, -1)
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
