@@ -1,6 +1,6 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import { limits, patterns } from "../../../lib/database/limits"
+import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 import { hashPassword } from "../../../lib/database/miscs"
 

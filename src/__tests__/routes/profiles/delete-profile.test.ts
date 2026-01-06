@@ -2,7 +2,6 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions,
   sessionByUser, databaseCompleteUsers, databaseUsers,
   databaseMessages, messagesByUser } from "../../../lib/test-data"
@@ -117,7 +116,7 @@ describe("testing endpoints...", () => {
     },
   }]
   for ( let testcase of testcases ) {
-    let { args, expres, exprows, tag } = testcase
+    let { args, expres, tag } = testcase
     test(`DELETE /profiles. Test #${tag}`, async () => {
       let result = await testServer.delete("/api/v1/profiles")
         .set("Authorization", args)

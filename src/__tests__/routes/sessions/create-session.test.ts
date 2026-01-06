@@ -2,7 +2,7 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
+import { patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseUsers } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 

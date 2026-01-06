@@ -1,14 +1,11 @@
 import supertest from "supertest"
 import httpServer from "../../../http-server"
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
-import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
+import { pool, schema } from "../../../lib/database/conn"
 import * as messages from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
-import { populateDatabase, districtMsgcounts } 
-  from "../../../lib/test-data"
+import { limits } from "../../../lib/database/limits"
+import { populateDatabase, districtMsgcounts } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
-import env from "../../../lib/env"
 import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
@@ -111,11 +108,11 @@ describe("testing endpoints...", () => {
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {
         expect(result.body.error).toBeUndefined()
-        expect(result.body.districts).toStrictEqual(expres.districts)
+        expect(result.body.msgcounts).toStrictEqual(expres.msgcounts)
       } else {
         let errorMessage = getErrorMessage(expres.error)
         expect(result.body.error).toStrictEqual(errorMessage)
-        expect(result.body.districts).toBeUndefined()
+        expect(result.body.msgcounts).toBeUndefined()
       }
       expect(countRegionMessages).toHaveBeenCalledTimes(calls.countRegionMessages)
       expect(updateDistrictMsgcounts).toHaveBeenCalledTimes(calls.updateDistrictMsgcounts)

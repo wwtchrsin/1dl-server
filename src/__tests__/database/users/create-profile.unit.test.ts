@@ -35,11 +35,14 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
+    args: {
+      data: {
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      state: "active",
+    },
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsUser,
@@ -47,11 +50,14 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 2,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
+    args: {
+      data: {
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      state: "active",
+    },
     mocks: {
       loginExists: loginExists,
       queryDatabase: requestReturnsUser,
@@ -59,11 +65,14 @@ describe("testing database queries...", () => {
     expres: "databaseConflicts.loginTaken",
   }, {
     tag: 3,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
+    args: {
+      data: {
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      state: "active",
+    },
     mocks: {
       loginExists: loginCheckError,
       queryDatabase: requestReturnsUser,
@@ -71,11 +80,14 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.checkUserExists",
   }, {
     tag: 4,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
+    args: {
+      data: {
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      state: "active",
+    },
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
@@ -83,11 +95,14 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.createProfile",
   }, {
     tag: 5,
-    args: [{
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      name: examples.name.minLen,
-    }, "active"],
+    args: {
+      data: {
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      state: "active",
+    },
     mocks: {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
@@ -97,17 +112,16 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function createProfile. Unit Test #${tag}`, async () => {
-      let loginExists = jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
-      let queryDatabase = jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let [ userdata, state ] = args
-      let result = await users.createProfile(userdata, state)
+      jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
+      jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
+      let result = await users.createProfile(args.data, args.state)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.userid).toMatch(patterns.uuid)
-        expect(result.data.login).toBe(userdata.login)
-        expect(result.data.name).toBe(userdata.name)
-        expect(result.data.state).toBe(state)
+        expect(result.data.login).toBe(args.data.login)
+        expect(result.data.name).toBe(args.data.name)
+        expect(result.data.state).toBe(args.state)
         expect(result.data.puid).toMatch(patterns.uuid)
         expect(result.data.timestamp).toMatch(patterns.timestamp)
       } else {

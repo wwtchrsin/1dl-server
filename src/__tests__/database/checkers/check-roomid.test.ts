@@ -1,6 +1,5 @@
 import { checkRoomid } from "../../../lib/database/checkers"
 import { limits } from "../../../lib/database/limits"
-import { examples } from "../../../lib/test-data"
 
 describe("testing query validators...", () => {
   let testcases = [{

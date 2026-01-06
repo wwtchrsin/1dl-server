@@ -1,6 +1,5 @@
 import * as users from "../../../lib/database/users"
 import * as miscs from "../../../routes/miscs"
-import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let profile = (userid: string) => ({

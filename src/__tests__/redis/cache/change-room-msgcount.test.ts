@@ -121,7 +121,7 @@ describe("testing redis operations...", () => {
     mocks: {},
     expres: true,
     table: process({
-      [limits.messages.roomMin + 4]: "1",
+      [limits.messages.roomMin + 4]: 1,
     }),
   }, {
     tag: 4,
@@ -154,7 +154,7 @@ describe("testing redis operations...", () => {
         await client.hSet(key, msgcounts)
       }
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let { roomid, delta } = args
       let { region, district } = roomid

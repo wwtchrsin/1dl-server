@@ -2,8 +2,8 @@ import { pool, schema } from "../../../lib/database/conn"
 import { countDistrictMessages } from "../../../lib/database/messages"
 import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseMessages, databaseDistricts, 
+import { limits } from "../../../lib/database/limits"
+import { populateDatabase, databaseMessages, databaseDistricts, 
   messagesByDistrict, databaseEmptyDistricts } from "../../../lib/test-data"
 
 beforeAll(async () => {

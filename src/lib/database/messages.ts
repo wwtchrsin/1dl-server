@@ -1,10 +1,6 @@
-import { checkRegion, checkDistrictid, checkRoomid, checkMessageid, 
-  checkMessageContent, checkUserid } from "./checkers"
 import { queryDatabase } from "./conn"
-import { databaseErrors, databaseConflicts } from "../error-messages"
 import { getTimestamp, processRoomMsgcounts, processDistrictMsgcounts } from "./miscs"
 import logger from "../logger"
-import type { TextResource } from "../langs"
 import type { Districtid, Roomid, Messageid, MessageContent, UserMessage,
   Message, RoomMsgcount, DistrictMsgcount } from "./interfaces"
 
@@ -180,7 +176,7 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
   }
 
 export const deleteMessage = async (userid: string, messageid: Messageid):
-  Promise<{ error: TextResource | undefined, data: UserMessage | undefined }> => {
+  Promise<{ error: string | undefined, data: UserMessage | undefined }> => {
     let TAG = "db/messages/deleteMessage"
     let { region, district, room, index } = messageid as Messageid
     let query = `

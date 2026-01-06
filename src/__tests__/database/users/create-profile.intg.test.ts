@@ -1,4 +1,4 @@
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { createProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
@@ -31,119 +31,158 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     actions: [{
-      args: [{
-        login: examples.login.minLen,
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.minLen,
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }],
   }, {
     tag: 2,
     actions: [{
-      args: [{
-        login: examples.login.maxLen,
-        password: examples.password.maxLen,
-        name: examples.name.maxLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.maxLen,
+          password: examples.password.maxLen,
+          name: examples.name.maxLen,
+        },
+        state: "active"
+      },
       expres: "success",
     }],
   }, {
     tag: 3,
     actions: [{
-      args: [{
-        login: examples.login.regLen,
-        password: examples.password.regLen,
-        name: examples.name.regLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.regLen,
+          password: examples.password.regLen,
+          name: examples.name.regLen,
+        },
+        state: "active"
+      },
       expres: "success",
     }],
   }, {
     tag: 4,
     actions: [{
-      args: [{
-        login: examples.login.tooShort,
-        password: examples.password.regLen,
-        name: examples.name.regLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.tooShort,
+          password: examples.password.regLen,
+          name: examples.name.regLen,
+        },
+        state: "active"
+      },
       expres: "databaseErrors.createProfile",
     }],
   }, {
     tag: 5,
     actions: [{
-      args: [{
-        login: examples.login.regLen,
-        password: examples.password.noDigits,
-        name: examples.name.regLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.regLen,
+          password: examples.password.noDigits,
+          name: examples.name.regLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }],
   }, {
     tag: 6,
     actions: [{
-      args: [{
-        login: examples.login.regLen,
-        password: examples.password.regLen,
-        name: examples.name.tooLong,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.regLen,
+          password: examples.password.regLen,
+          name: examples.name.tooLong,
+        },
+        state: "active",
+      },
       expres: "databaseErrors.createProfile",
     }],
   }, {
     tag: 7,
     actions: [{
-      args: [{
-        login: examples.login.correct[0],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[0],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }, {
-      args: [{
-        login: examples.login.correct[1],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[1],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }],
   }, {
     tag: 8,
     actions: [{
-      args: [{
-        login: examples.login.correct[0],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[0],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }, {
-      args: [{
-        login: examples.login.correct[0],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[0],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "databaseConflicts.loginTaken",
     }],
   }, {
     tag: 9,
     actions: [{
-      args: [{
-        login: examples.login.correct[2],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[2],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }, {
-      args: [{
-        login: examples.login.correct[2],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[2],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "databaseConflicts.loginTaken",
     }, {
-      args: [{
-        login: examples.login.correct[3],
-        password: examples.password.minLen,
-        name: examples.name.minLen,
-      }, "active"],
+      args: {
+        data: {
+          login: examples.login.correct[3],
+          password: examples.password.minLen,
+          name: examples.name.minLen,
+        },
+        state: "active",
+      },
       expres: "success",
     }],
   }]
@@ -153,13 +192,13 @@ describe("testing database queries...", () => {
       let msgCount = 0
       for ( let action of actions ) {
         let { args, expres } = action
-        let result = await createProfile(...args)
+        let result = await createProfile(args.data, args.state)
         if ( expres === "success" ) {
           expect(result.error).toBeUndefined()
           expect(result.data).toBeDefined()
           expect(result.data.userid).toMatch(patterns.uuid)
-          expect(result.data.login).toBe(args[0].login)
-          expect(result.data.name).toBe(args[0].name)
+          expect(result.data.login).toBe(args.data.login)
+          expect(result.data.name).toBe(args.data.name)
           expect(result.data.state).toBeDefined()
           expect(result.data.puid).toMatch(patterns.uuid)
           expect(result.data.timestamp).toMatch(patterns.timestamp)

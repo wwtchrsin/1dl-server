@@ -1,7 +1,6 @@
 import * as redisConn from "./conn"
-import { limits } from "../database/limits"
 import { encodeMsgcounts, decodeMsgcounts } from "./miscs"
-import type { Roomid, Districtid, DistrictStats } from "../database/interfaces"
+import type { Roomid, Districtid } from "../database/interfaces"
 import logger from "../logger"
 
 export const changeRoomMsgcount = async (roomid: Roomid, delta: number): 
@@ -31,7 +30,7 @@ export const changeRoomMsgcounts = async (roomids: Roomid[], delta: number):
     let TAG = "redis/cache/changeRoomMsgcounts"
     try {
       let client = await redisConn.getClient()
-      let promises: Promise[] = []
+      let promises: Promise<number | string>[] = []
       for ( let roomid of roomids ) {
         let { region, district, room } = roomid
         let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
@@ -71,12 +70,12 @@ export const changeDistrictMsgcount = async (districtid: Districtid, delta: numb
     }
   }
 
-export const changeDistrictMsgcounts = async (districtids: Districtids[], delta: number):
+export const changeDistrictMsgcounts = async (districtids: Districtid[], delta: number):
   Promise<boolean> => {
     let TAG = "redis/cache/changeDistrictMsgcounts"
     try {
       let client = await redisConn.getClient()
-      let promises: Promise[] = []
+      let promises: Promise<number | string>[] = []
       for ( let districtid of districtids ) {
         let { region, district } = districtid
         let key = `${redisConn.redisns}:msgcounts:districts:${region}`
@@ -142,7 +141,7 @@ export const getRoomMsgcounts = async (districtid: Districtid):
     let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
     try {
       let client = await redisConn.getClient()
-      let msgcounts = await client.hGetAll(key)
+      let msgcounts = (await client.hGetAll(key)) as Record<string, any> 
       if ( !msgcounts?.timestamp ) {
         logger.debug({ districtid }, `${TAG}#ENTRY_NOT_FOUND`)
         return {
@@ -175,7 +174,7 @@ export const getDistrictMsgcounts = async (region: string):
     let key = `${redisConn.redisns}:msgcounts:districts:${region}`
     try {
       let client = await redisConn.getClient()
-      let msgcounts = await client.hGetAll(key)
+      let msgcounts = (await client.hGetAll(key)) as Record<string, any>
       if ( !msgcounts?.timestamp ) {
         logger.debug({ region }, `${TAG}#ENTRY_NOT_FOUND`)
         return {

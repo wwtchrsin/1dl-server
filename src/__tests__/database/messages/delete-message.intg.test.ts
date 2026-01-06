@@ -1,7 +1,7 @@
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { deleteMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseMessages, databaseEmptyRooms } 
   from "../../../lib/test-data"
 

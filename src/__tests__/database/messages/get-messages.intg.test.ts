@@ -1,8 +1,8 @@
 import { pool, schema } from "../../../lib/database/conn"
 import { getMessages } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
-import { examples, databaseMessages, databaseRooms, databaseEmptyRooms,
+import { limits } from "../../../lib/database/limits"
+import { databaseMessages, databaseRooms, databaseEmptyRooms,
   messagesByRoom, populateDatabase } from "../../../lib/test-data"
 
 beforeAll(async () => {

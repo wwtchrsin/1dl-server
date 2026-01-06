@@ -1,7 +1,6 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
 import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
-import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let stats = [{

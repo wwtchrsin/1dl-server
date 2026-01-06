@@ -1,6 +1,6 @@
 import { getUserid, getProfile } from "../lib/database/users"
 import { checkUserid, checkSessionid } from "../lib/database/checkers"
-import type { Profile } from "../lib/database/users"
+import type { Profile } from "../lib/database/interfaces"
 
 export const getToken = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
@@ -31,7 +31,7 @@ export const getToken = (header: string | undefined):
   }
 
 export const readUserid = async (header: string | undefined):
-  { error: string | undefined, data: string | undefined } => {
+  Promise<{ error: string | undefined, data: string | undefined }> => {
     let session = getToken(header)
     if ( session.error !== undefined ) {
       return {
@@ -44,7 +44,7 @@ export const readUserid = async (header: string | undefined):
   }
 
 export const readProfile = async (header: string | undefined):
-  { error: string | undefined, data: Profile | undefined } => {
+  Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let userid = await readUserid(header)
     if ( userid.error !== undefined ) {
       return {

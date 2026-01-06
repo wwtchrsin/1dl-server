@@ -2,8 +2,8 @@ import { pool, schema } from "../../../lib/database/conn"
 import { countRegionMessages } from "../../../lib/database/messages"
 import { processDistrictMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseMessages, messagesByRegion } 
+import { limits } from "../../../lib/database/limits"
+import { populateDatabase, databaseMessages, messagesByRegion } 
   from "../../../lib/test-data"
 
 beforeAll(async () => {

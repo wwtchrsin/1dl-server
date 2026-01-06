@@ -80,7 +80,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
   })
 }
 
-const router = new Router()
+const router = Router()
 
 router.post("/", createProfileAction)
 router.delete("/", deleteProfileAction)

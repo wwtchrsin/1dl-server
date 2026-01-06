@@ -89,7 +89,7 @@ describe("testing auxilliary functions...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`Function getStatusCode. Test #${tag}`, () => {
-      let result = getStatusCode(...args)
+      let result = getStatusCode(...(args as [string | undefined, number | undefined]))
       expect(result).toBe(expres)
     })
   }

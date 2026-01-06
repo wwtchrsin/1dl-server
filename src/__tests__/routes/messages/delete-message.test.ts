@@ -2,12 +2,11 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
+import { limits } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions, databaseMessages,
   messagesByUser, sessionByUser, databaseEmptyRooms, databaseCompleteUsers } 
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
-import env from "../../../lib/env"
 import * as redisConn from "../../../lib/redis/conn"
 
 beforeAll(async () => {

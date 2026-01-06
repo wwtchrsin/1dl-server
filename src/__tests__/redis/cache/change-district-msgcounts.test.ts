@@ -13,7 +13,7 @@ let stats = [{
   region: limits.messages.regions[0],
   msgcounts: {
     [limits.messages.districtMin + 2]: 2,
-    [limits.messages.districtmMax - 2]: 4,
+    [limits.messages.districtMax - 2]: 4,
   },
 }, {
   region: limits.messages.regions[1],
@@ -21,9 +21,9 @@ let stats = [{
     [limits.messages.districtMin + 2]: 2,
     [limits.messages.districtMin + 4]: 4,
     [limits.messages.districtMin + 8]: 6,
-    [limits.messages.distrcitMax - 8]: 8,
-    [limits.messages.distrcitMax - 4]: 6,
-    [limits.messages.distrcitMax - 2]: 4,
+    [limits.messages.districtMax - 8]: 8,
+    [limits.messages.districtMax - 4]: 6,
+    [limits.messages.districtMax - 2]: 4,
   },
 }]
 
@@ -33,7 +33,7 @@ let requestFails = () => Promise.resolve({
 
 let timestamp = "1234567890"
 
-let addts = (msgcounts: Record<string, string>) => {
+let addts = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
   for ( let district in msgcounts ) {
     result[district] = `${msgcounts[district]}`
@@ -191,7 +191,7 @@ describe("testing redis operations...", () => {
     test(`Function changeDistrictMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let { districtids, delta } = args
       let result = await changeDistrictMsgcounts(districtids, delta)

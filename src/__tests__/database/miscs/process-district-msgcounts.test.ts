@@ -29,17 +29,17 @@ describe("testing auxilliary functions...", () => {
       district: limits.messages.districtMin,
       msgcount: 1,
     }, {
-      district: limits.messages.districtMsc - 2,
+      district: limits.messages.districtMax - 2,
       msgcount: 3,
     }, {
-      district: limits.messages.districtMsc,
+      district: limits.messages.districtMax,
       msgcount: 4,
     }],
     expres: {
       [limits.messages.districtMin + 2]: 2,
       [limits.messages.districtMin]: 1,
-      [limits.messages.districtMsc - 2]: 3,
-      [limits.messages.districtMsc]: 4,
+      [limits.messages.districtMax - 2]: 3,
+      [limits.messages.districtMax]: 4,
     },
   }]
   for ( let testcase of testcases ) {

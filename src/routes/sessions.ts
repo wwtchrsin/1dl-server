@@ -65,7 +65,7 @@ const deleteSessionAction = async (req: Request, res: Response) => {
   })
 }
 
-const router = new Router()
+const router = Router()
 
 router.post("/", createSessionAction)
 router.delete("/", deleteSessionAction)

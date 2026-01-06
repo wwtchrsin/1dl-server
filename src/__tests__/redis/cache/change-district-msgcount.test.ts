@@ -35,7 +35,7 @@ let process = (msgcounts: Record<string, number>) => {
   return result
 }
 
-let addts = (msgcounts: Record<string, string>) => {
+let addts = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
   for ( let district in msgcounts ) {
     result[district] = `${msgcounts[district]}`
@@ -113,7 +113,7 @@ describe("testing redis operations...", () => {
     mocks: {},
     expres: true,
     table: process({
-      [limits.messages.districtMin + 4]: "1",
+      [limits.messages.districtMin + 4]: 1,
     }),
   }, {
     tag: 4,
@@ -144,7 +144,7 @@ describe("testing redis operations...", () => {
         await client.hSet(key, msgcounts)
       }
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let { districtid, delta } = args
       let { region } = districtid

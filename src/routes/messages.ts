@@ -8,9 +8,9 @@ import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-mess
 import { readProfile, readUserid } from "./miscs"
 import logger from "../lib/logger"
 import type { Request, Response } from "express"
-import type { MessageContent, Messageid, Roomid, Districtid } from "../lib/database/interfaces"
+import type { Messageid, Roomid, Districtid } from "../lib/database/interfaces"
 
-const createMessageAction = async (req: Request<MessageContent>, res: Response) => {
+const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/createMessage"
   let args = { messageid: req.params, content: req.body }
   let profile = await readProfile(req.header("Authorization"))
@@ -239,7 +239,7 @@ const deleteMessageAction = async (req: Request, res: Response) => {
   })
 }
 
-const router = new Router()
+const router = Router()
 
 router.get("/:region", getRegionStatsAction)
 router.get("/:region/:district", getDistrictStatsAction)

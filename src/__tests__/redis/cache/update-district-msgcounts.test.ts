@@ -28,7 +28,7 @@ let requestFails = () => Promise.resolve({
   hSet: () => Promise.reject(new Error("error"))
 })
 
-let getTimestamp = () => timestamp
+let getTimestamp = () => +timestamp
 
 let process = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
@@ -103,7 +103,7 @@ describe("testing redis operations...", () => {
         jest.spyOn(miscs, "getTimestamp").mockImplementation(mocks.getTimestamp)
       }
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let { region, msgcounts } = args
       let key = `${redisConn.redisns}:msgcounts:districts:${region}`

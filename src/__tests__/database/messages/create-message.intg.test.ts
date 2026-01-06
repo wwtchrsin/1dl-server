@@ -1,4 +1,4 @@
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { createMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"

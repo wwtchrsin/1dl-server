@@ -10,13 +10,6 @@ let correctMessageid = {
   index: `${limits.messages.indexMin}`,
 }
 
-let wrongRoomMessageid = {
-  region: examples.region.first,
-  district: `${limits.messages.districtMin}`,
-  room: `${limits.messages.roomMin - 1}`,
-  index: `${limits.messages.indexMin}`,
-}
-
 let requestSucceeds = (query: string, queryParams: string[]) => {
   let [userid, region, district, room, index] = queryParams
   return Promise.resolve({
@@ -44,28 +37,40 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: [examples.uuid[0], correctMessageid],
+    args: {
+      uuid: examples.uuid[0],
+      messageid: correctMessageid,
+    },
     mocks: {
       queryDatabase: requestSucceeds
     },
     expres: "success",
   }, {
     tag: 2,
-    args: ["abcd", correctMessageid],
+    args: {
+      uuid: "abcd",
+      messageid: correctMessageid
+    },
     mocks: {
       queryDatabase: requestSucceeds
     },
     expres: "success",
   }, {
     tag: 3,
-    args: [examples.uuid[0], correctMessageid],
+    args: {
+      uuid: examples.uuid[0],
+      messageid: correctMessageid
+    },
     mocks: {
       queryDatabase: messageNotFound,
     },
     expres: "databaseConflicts.messageNotFound",
   }, {
     tag: 4,
-    args: [examples.uuid[0], correctMessageid],
+    args: {
+      uuid: examples.uuid[0],
+      messageid: correctMessageid
+    },
     mocks: {
       queryDatabase: requestFails,
     },
@@ -75,7 +80,7 @@ describe("testing database queries...", () => {
     let { args, mocks, expres, tag } = testcase
     test(`Function deleteMessage. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let result = await messages.deleteMessage(...args)
+      let result = await messages.deleteMessage(args.uuid, args.messageid)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()

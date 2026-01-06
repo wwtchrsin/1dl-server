@@ -1,12 +1,11 @@
 import supertest from "supertest"
 import httpServer from "../../../http-server"
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseRooms,
+import { limits } from "../../../lib/database/limits"
+import { populateDatabase, databaseRooms,
   databaseMessages, messagesByRoom, databaseEmptyRooms } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
-import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)

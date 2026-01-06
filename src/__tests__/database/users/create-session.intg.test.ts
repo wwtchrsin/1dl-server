@@ -1,7 +1,7 @@
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { createSession } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
+import { patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseUsers } 
   from "../../../lib/test-data"
 

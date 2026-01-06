@@ -7,7 +7,6 @@ import { examples, populateDatabase, databaseActiveUsers,
   databaseInactiveUsers, sessionByUser, databaseSessions } 
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
-import env from "../../../lib/env"
 import * as redisConn from "../../../lib/redis/conn"
 
 beforeAll(async () => {

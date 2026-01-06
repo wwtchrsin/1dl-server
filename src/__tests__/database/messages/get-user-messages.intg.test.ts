@@ -1,7 +1,6 @@
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { getUserMessages } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
-import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseMessages, messagesByUser } 
   from "../../../lib/test-data"
 

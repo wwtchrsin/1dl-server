@@ -1,6 +1,5 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let correctData = {

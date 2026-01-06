@@ -128,7 +128,7 @@ describe("testing redis operations...", () => {
         await client.hSet(key, msgcounts)
       }
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let result = await getDistrictMsgcounts(args)
       expect(result).toStrictEqual(expres)

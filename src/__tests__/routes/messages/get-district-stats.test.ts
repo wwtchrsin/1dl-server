@@ -1,13 +1,11 @@
 import supertest from "supertest"
 import httpServer from "../../../http-server"
-import { pool, queryDatabase, schema } from "../../../lib/database/conn"
+import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import * as messages from "../../../lib/database/messages"
-import { limits, patterns } from "../../../lib/database/limits"
 import { populateDatabase, databaseDistricts, databaseEmptyDistricts,
   roomMsgcounts } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
-import env from "../../../lib/env"
 import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
@@ -133,11 +131,11 @@ describe("testing endpoints...", () => {
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {
         expect(result.body.error).toBeUndefined()
-        expect(result.body.rooms).toStrictEqual(expres.rooms)
+        expect(result.body.msgcounts).toStrictEqual(expres.msgcounts)
       } else {
         let errorMessage = getErrorMessage(expres.error)
         expect(result.body.error).toStrictEqual(errorMessage)
-        expect(result.body.rooms).toBeUndefined()
+        expect(result.body.msgcounts).toBeUndefined()
       }
       expect(countDistrictMessages).toHaveBeenCalledTimes(calls.countDistrictMessages)
       expect(updateRoomMsgcounts).toHaveBeenCalledTimes(calls.updateRoomMsgcounts)

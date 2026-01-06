@@ -39,7 +39,7 @@ let requestFails = () => Promise.resolve({
 
 let timestamp = "1234567890"
 
-let addts = (msgcounts: Record<string, string>) => {
+let addts = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
   for ( let room in msgcounts ) {
     result[room] = `${msgcounts[room]}`
@@ -209,7 +209,7 @@ describe("testing redis operations...", () => {
     test(`Function changeRoomMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( mocks.getClient ) {
-        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient)
+        jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
       let { roomids, delta } = args
       let result = await changeRoomMsgcounts(roomids, delta)

@@ -1,13 +1,10 @@
 import { randomUUID } from "node:crypto"
-import { checkUserData, checkUserid, checkSessionid, checkUserCredentials } from "./checkers"
 import { queryDatabase, executeTransaction } from "./conn"
-import { databaseErrors, databaseConflicts } from "../error-messages"
 import { getUserMessages } from "./messages"
 import { hashPassword, hashSession, generateToken, getTimestamp,
   redactPassword } from "./miscs"
-import type { UserMessage } from "../messages"
 import logger from "../logger"
-import { UserData, Profile, Credentials, UserMessage } from "./interfaces"
+import type { UserData, Profile, Credentials, UserMessage } from "./interfaces"
 
 export const loginExists = async (login: string):
   Promise<{ error: string | undefined, data: boolean | undefined }> => {

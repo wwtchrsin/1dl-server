@@ -30,18 +30,19 @@ describe("testing database queries...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-      }, {
+      }, 
+      content: {
         text: examples.text.minLen,
         color: examples.color.first,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: "databaseConflicts.messageNotFound",
@@ -52,18 +53,19 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 2,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: examples.region.last,
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
-      }, {
+      },
+      content: {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: "databaseErrors.getMessage",
@@ -74,18 +76,19 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.checkMessage",
   }, {
     tag: 3,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: "12345678",
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
-      }, {
+      },
+      content: {
         text: "1".repeat(limits.messages.textLenMax),
         color: examples.color.last,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: "databaseConflicts.messageNotFound",
@@ -96,18 +99,19 @@ describe("testing database queries...", () => {
     expres: "success",
   }, {
     tag: 4,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-      }, {
+      },
+      content: {
         text: examples.text.minLen,
         color: examples.color.first,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: undefined,
@@ -128,18 +132,19 @@ describe("testing database queries...", () => {
     expres: "databaseConflicts.messageAlreadyExists",
   }, {
     tag: 5,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-      }, {
+      },
+      content: {
         text: examples.text.minLen,
         color: examples.color.first,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: "databaseConflicts.messageNotFound",
@@ -150,18 +155,19 @@ describe("testing database queries...", () => {
     expres: "databaseErrors.createMessage",
   }, {
     tag: 6,
-    args: [
-      userid,
-      {
+    args: {
+      userid: userid,
+      messageid: {
         region: examples.region.first,
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
-      }, {
+      },
+      content: {
         text: examples.text.minLen,
         color: examples.color.first,
       },
-    ],
+    },
     mocks: {
       getMessage: {
         error: "databaseConflicts.messageNotFound",
@@ -174,9 +180,9 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function createMessage. Unit Test #${tag}`, async () => {
-      jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage)
+      jest.spyOn(messages, "getMessage").mockResolvedValue(mocks.getMessage as any)
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
-      let [ userid, messageid, content ] = args
+      let { userid, messageid, content } = args
       let result = await messages.createMessage(userid, messageid, content)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
