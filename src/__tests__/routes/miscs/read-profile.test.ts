@@ -4,6 +4,7 @@ import { examples } from "../../../lib/test-data"
 
 let profile = (userid: string) => ({
   userid: userid,
+  region: examples.region.first,
   login: examples.login.correct[0],
   name: examples.name.correct[0],
   state: "inactive",

@@ -10,7 +10,7 @@ import type { Request, Response } from "express"
 import type { UserData } from "../lib/database/interfaces"
 import logger from "../lib/logger"
 
-const createProfileAction = async (req: Request<UserData>, res: Response) => {
+const createProfileAction = async (req: Request, res: Response) => {
   let TAG = "routes/profiles/createProfile"
   let args = { userData: redactPassword(req.body) }
   let checkError = checkUserData(req.body)
@@ -24,7 +24,7 @@ const createProfileAction = async (req: Request<UserData>, res: Response) => {
     })
     return
   }
-  let result = await createProfile(req.body, env.users.defaultState)
+  let result = await createProfile(req.body as UserData, env.users.defaultState)
   if ( result.error !== undefined ) {
     let status = getStatusCode(result.error)    
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)
@@ -35,7 +35,7 @@ const createProfileAction = async (req: Request<UserData>, res: Response) => {
     })
     return
   }
-  let { login, password } = req.body
+  let { login, password } = req.body as UserData
   let session = await createSession({ login, password })
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({

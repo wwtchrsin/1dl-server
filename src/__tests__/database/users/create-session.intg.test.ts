@@ -81,12 +81,14 @@ describe("testing database queries...", () => {
       expect(table.rows).toHaveLength(rowCount)
     })
   }
-  test("Function createSession. Intg Test #7", async () => {
+  test("Function createSession. Intg Test #8", async () => {
     let args1 = {
+      region: databaseUsers[0].login,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
     }
     let args2 = {
+      region: databaseUsers[1].login,
       login: databaseUsers[1].login,
       password: databaseUsers[1].password,
     }

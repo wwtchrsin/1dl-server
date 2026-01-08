@@ -63,6 +63,12 @@ export const wrongValues: WrongValues = {
     },
   },
   users: {
+    region: {
+      en: getErrorCause("en", "region") + " Valid values: " + 
+        limits.messages.regions.join(", ") + ".",
+      ru: getErrorCause("ru", "region") + " Корректные значения: " +
+        limits.messages.regions.join(", ") + ".",
+    },
     login: {
       en: "Login not accepted. The login can only contain latin letters, digits, " +
         'and symbols "-" and "_". The login length must be between ' +

@@ -21,7 +21,7 @@ let msgs = [[{
   color: examples.color.first,
   timestamp: "123456781",
 }], [{
-  region: examples.region.last,
+  region: examples.region.first,
   district: limits.messages.districtMin,
   room: limits.messages.roomMin,
   index: limits.messages.indexMin,
@@ -39,6 +39,7 @@ let wrongUserid = examples.uuid[2]
 
 let profiles = [{
   userid: correctUserids[0],
+  region: examples.region.first,
   login: examples.login.correct[0],
   name: examples.name.correct[0],
   state: "inactive",
@@ -46,6 +47,7 @@ let profiles = [{
   timestamp: "123456700",
 }, {
   userid: correctUserids[1],
+  region: examples.region.first,
   login: examples.login.correct[1],
   name: examples.name.correct[1],
   state: "inactive",

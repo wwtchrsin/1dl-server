@@ -1,6 +1,6 @@
 import * as users from "../../../lib/database/users"
 import * as conn from "../../../lib/database/conn"
-import { limits, patterns } from "../../../lib/database/limits"
+import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let loginDoesntExist = () => {
@@ -16,8 +16,8 @@ let loginCheckError = () => {
 }
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
-  let [userid, login, password, name, state, puid, timestamp] = queryParams
-  let user = { userid, login, name, state, puid, timestamp: `${timestamp}` }
+  let [userid, region, login, password, name, state, puid, timestamp] = queryParams
+  let user = { userid, region, login, name, state, puid, timestamp: `${timestamp}` }
   return Promise.resolve({ rows: [user] })
 }
 
@@ -37,6 +37,7 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       data: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -52,6 +53,7 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       data: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -67,6 +69,7 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       data: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -82,6 +85,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       data: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -97,6 +101,7 @@ describe("testing database queries...", () => {
     tag: 5,
     args: {
       data: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -119,6 +124,7 @@ describe("testing database queries...", () => {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.userid).toMatch(patterns.uuid)
+        expect(result.data.region).toBe(args.data.region)
         expect(result.data.login).toBe(args.data.login)
         expect(result.data.name).toBe(args.data.name)
         expect(result.data.state).toBe(args.state)

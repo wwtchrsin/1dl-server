@@ -68,6 +68,7 @@ export const redactProfile = (profile: Profile | undefined) => {
     return undefined
   }
   return {
+    region: profile.region,
     login: profile.login,
     name: profile.name,
     state: profile.state,

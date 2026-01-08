@@ -20,6 +20,7 @@ let profile = (userIndex: number) => {
   let user = databaseUsers[userIndex]
   return {
     userid: user.userid,
+    region: user.region,
     login: user.login,
     name: user.name,
     state: user.state,

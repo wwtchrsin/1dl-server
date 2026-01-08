@@ -79,6 +79,9 @@ export const checkMessageData = (userid: string | undefined, messageid: any, con
   }
 
 export const checkUserData = (req: any): string | undefined => {
+  if ( !limits.messages.regions.includes(req?.region) ) {
+    return "wrongValues.users.region"
+  }
   let loginLen = Number(req?.login?.length)
   if ( isNaN(loginLen) || loginLen < limits.users.loginLenMin ||
     loginLen > limits.users.loginLenMax ||
@@ -103,7 +106,7 @@ export const checkUserData = (req: any): string | undefined => {
 }
 
 export const checkUserCredentials = (req: any): string | undefined => {
-  let { login, password } = req
+  let { login, password } = req ?? {}
   if ( typeof login !== "string" ) {
     return "wrongValues.auth.login"
   }

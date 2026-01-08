@@ -23,20 +23,21 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     })
     return
   }
-  if ( profile.data.state !== "active" ) {
-    logger.info(args, `${TAG}#ERROR_PERMISSIONS`)
-    res.status(403).json({
-      error: getErrorMessage("appErrors.actionNotAllowed"),
-      message: undefined,
-    })
-    return
-  }
   let checkError = checkMessageData(profile.data.userid, req.params, req.body)
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
       error: getErrorMessage(checkError),
+      message: undefined,
+    })
+    return
+  }
+  let { region } = req.params as Messageid
+  if ( profile.data.state !== "active" || profile.data.region !== region ) {
+    logger.info(args, `${TAG}#ERROR_PERMISSIONS`)
+    res.status(403).json({
+      error: getErrorMessage("appErrors.actionNotAllowed"),
       message: undefined,
     })
     return
@@ -60,7 +61,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   })
 }
 
-const getMessageAction = async (req: Request, res: Response) => {
+const getMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/getMessage"
   let checkError = checkMessageid(req.params)
   if ( checkError !== undefined ) {
@@ -89,7 +90,7 @@ const getMessageAction = async (req: Request, res: Response) => {
   })
 }
 
-const getMessagesAction = async (req: Request, res: Response) => {
+const getMessagesAction = async (req: Request<Roomid>, res: Response) => {
   let TAG = "routes/messages/getMessages"
   let checkError = checkRoomid(req.params)
   if ( checkError !== undefined ) {
@@ -118,7 +119,7 @@ const getMessagesAction = async (req: Request, res: Response) => {
   })
 }
 
-const getDistrictStatsAction = async (req: Request, res: Response) => {
+const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) => {
   let TAG = "routes/messages/getDistrictStats"
   let checkError = checkDistrictid(req.params)
   if ( checkError !== undefined ) {
@@ -198,7 +199,7 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
   })
 }
 
-const deleteMessageAction = async (req: Request, res: Response) => {
+const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/deleteMessage"
   let checkError = checkMessageid(req.params)
   if ( checkError !== undefined ) {

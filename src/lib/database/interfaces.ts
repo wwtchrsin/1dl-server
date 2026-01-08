@@ -1,4 +1,5 @@
 export type UserData = {
+  region: string,
   login: string,
   password: string,
   name: string,
@@ -6,6 +7,7 @@ export type UserData = {
 
 export type Profile = {
   userid: string,
+  region: string,
   login: string,
   name: string,
   state: string,

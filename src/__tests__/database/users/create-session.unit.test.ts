@@ -70,7 +70,7 @@ describe("testing database queries...", () => {
     },
     expres: "success",
   }, {
-    tag: 3,
+    tag: 2,
     args: {
       login: wrongData.login,
       password: wrongData.password,
@@ -84,7 +84,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
-    tag: 4,
+    tag: 3,
     args: {
       login: "a",
       password: correctData.password,
@@ -98,7 +98,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
-    tag: 5,
+    tag: 4,
     args: {
       login: correctData.login,
       password: "a",
@@ -112,7 +112,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflicts.profileNotFound",
   }, {
-    tag: 6,
+    tag: 5,
     args: {
       login: correctData.login,
       password: correctData.password,
@@ -126,7 +126,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.checkCredentials",
   }, {
-    tag: 8,
+    tag: 6,
     args: {
       login: correctData.login,
       password: correctData.password,
@@ -140,7 +140,7 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.deleteSession",
   }, {
-    tag: 9,
+    tag: 7,
     args: {
       login: correctData.login,
       password: correctData.password,

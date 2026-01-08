@@ -2,7 +2,8 @@ import { pool, schema } from "../../../lib/database/conn"
 import { createMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
+import { examples, populateDatabase, databaseSessions,
+  databaseEmptyRooms } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -25,9 +26,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -41,11 +42,11 @@ describe("testing database queries...", () => {
     tag: 2,
     actions: [{
       args: {
-        userid: "abcd",
+        userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[1].region,
+          district: databaseEmptyRooms[1].district,
+          room: databaseEmptyRooms[1].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -53,17 +54,17 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "databaseErrors.createMessage",
+      error: undefined,
     }]
   }, {
     tag: 3,
     actions: [{
       args: {
-        userid: databaseSessions[0].userid,
+        userid: "abcd",
         messageid: {
-          region: "abcd",
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -79,14 +80,14 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: "abcd",
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
           text: examples.text.correct[0],
-          color: "abcd",
+          color: examples.color.first,
         },
       },
       error: "databaseErrors.createMessage",
@@ -97,9 +98,27 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
+          index: limits.messages.indexMin,
+        },
+        content: {
+          text: examples.text.correct[0],
+          color: "abcd",
+        },
+      },
+      error: "databaseErrors.createMessage",
+    }]
+  }, {
+    tag: 6,
+    actions: [{
+      args: {
+        userid: databaseSessions[0].userid,
+        messageid: {
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -112,9 +131,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin + 1,
         },
         content: {
@@ -125,14 +144,14 @@ describe("testing database queries...", () => {
       error: undefined,
     }]
   }, {
-    tag: 6,
+    tag: 7,
     actions: [{
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -145,9 +164,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin,
         },
         content: {
@@ -160,9 +179,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: examples.region.first,
-          district: limits.messages.districtMin,
-          room: limits.messages.roomMin,
+          region: databaseEmptyRooms[0].region,
+          district: databaseEmptyRooms[0].district,
+          room: databaseEmptyRooms[0].room,
           index: limits.messages.indexMin + 1,
         },
         content: {

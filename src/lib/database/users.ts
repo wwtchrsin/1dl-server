@@ -29,7 +29,7 @@ export const createProfile = async(userData: UserData, defaultState: string):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let TAG = "db/users/createProfile"
     let args = { userData: redactPassword(userData), defaultState }
-    let { login, password, name } = userData
+    let { region, login, password, name } = userData
     let checkResult = await loginExists(login)
     if ( checkResult.error !== undefined ) {
       logger.error(args, `${TAG}#ERROR_LOGIN_CHECK`)
@@ -50,10 +50,11 @@ export const createProfile = async(userData: UserData, defaultState: string):
     let passwordHash = hashPassword(login, password)
     let query = `
       INSERT INTO users VALUES
-        ($1, $2, $3, $4, $5, $6, $7)
-        RETURNING userid, login, name, state, puid, timestamp
+        ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING userid, region, login, name, state, puid, timestamp
     `
-    let queryParams = [userid, login, passwordHash, name, defaultState, puid, getTimestamp()]
+    let queryParams = [userid, region, login, passwordHash, name, 
+      defaultState, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
@@ -91,10 +92,14 @@ export const createSession = async (credentials: Credentials):
     let args = { credentials: redactPassword(credentials) }
     let { login, password } = credentials
     let passwordHash = hashPassword(login, password)
-    let checkQuery = "SELECT userid FROM users WHERE login = $1 AND password = $2"
-    let checkResult = await queryDatabase(checkQuery, [login, passwordHash])
+    let checkQuery = `
+      SELECT userid FROM users 
+        WHERE login = $1 AND password = $2
+    `
+    let queryParameters = [login, passwordHash]
+    let checkResult = await queryDatabase(checkQuery, queryParameters)
     if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
-      logger.error(args, `${TAG}#ERROR_CREDENTIALS_CHECK`)
+      logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.checkCredentials",
         data: undefined,
@@ -140,7 +145,7 @@ export const getProfile = async (userid: string):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let TAG = "db/users/getProfile"
     let query = `
-      SELECT userid, login, name, state, puid, timestamp
+      SELECT userid, region, login, name, state, puid, timestamp
         FROM users WHERE userid = $1
     `
     let result = await queryDatabase(query, [userid])

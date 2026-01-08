@@ -59,6 +59,7 @@ const sqlCreateTables = `
   );
   CREATE TABLE IF NOT EXISTS users (
     userid UUID NOT NULL PRIMARY KEY,
+    region VARCHAR NOT NULL,
     login VARCHAR(${limits.users.loginLenMax}) NOT NULL,
     password CHAR(${limits.users.passwordHashSize}) NOT NULL,
     name VARCHAR(${limits.users.nameLenMax}) NOT NULL,

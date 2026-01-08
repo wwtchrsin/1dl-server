@@ -36,6 +36,7 @@ let profile = (uIndex: number) => {
   let userIndex = databaseCompleteUsers[uIndex] 
   let user = databaseUsers[userIndex]
   return {
+    region: user.region,
     login: user.login,
     name: user.name,
     state: user.state,

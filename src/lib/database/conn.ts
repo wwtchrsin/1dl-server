@@ -36,6 +36,7 @@ export const queryDatabase = async (queryString: string, queryParams: (string | 
       let result = await pool.query(queryString, queryParams)
       return result
     } catch (err) {
+      //console.log("####", err)
       let errmsg = {
         query: queryString,
         params: queryParams?.length ?? 0,

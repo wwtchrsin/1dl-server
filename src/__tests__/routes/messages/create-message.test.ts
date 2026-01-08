@@ -3,13 +3,14 @@ import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseActiveUsers,
-  databaseInactiveUsers, sessionByUser, databaseSessions } 
+import { examples, populateDatabase, completeUsersByRegion,
+  inactiveUsersByRegion, sessionByUser, databaseSessions } 
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 
 beforeAll(async () => {
+  console.log("%%%%", completeUsersByRegion)
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
@@ -31,6 +32,7 @@ let sessionid = (userIndex: number) => {
   return databaseSessions[sessionByUser[userIndex]].sessionid
 } 
 
+
 describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
@@ -38,9 +40,9 @@ describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -57,9 +59,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 2,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[1][0]),
       args: [{
-        region: examples.region.last,
+        region: limits.messages.regions[1],
         district: `${limits.messages.districtMax}`,
         room: `${limits.messages.roomMax}`,
         index: `${limits.messages.indexMax}`,
@@ -76,7 +78,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 3,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
         region: "abcd",
         district: `${limits.messages.districtMin}`,
@@ -95,9 +97,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 4,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin - 1}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -114,9 +116,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 5,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMax + 1}`,
         index: `${limits.messages.indexMin}`,
@@ -133,9 +135,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 6,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMax + 1}`,
@@ -152,9 +154,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 7,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -171,9 +173,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 8,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -190,9 +192,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 9,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseInactiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[1][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -209,9 +211,28 @@ describe("testing endpoints...", () => {
   }, {
     tag: 10,
     actions: [{
+      auth: () => "Bearer " + sessionid(inactiveUsersByRegion[1][0]),
+      args: [{
+        region: limits.messages.regions[0],
+        district: `${limits.messages.districtMin}`,
+        room: `${limits.messages.roomMin}`,
+        index: `${limits.messages.indexMin}`,
+      }, {
+        text: examples.text.minLen,
+        color: examples.color.first,
+      }],
+      expres: {
+        error: "appErrors.actionNotAllowed",
+        status: 403,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 11,
+    actions: [{
       auth: () => "Bearer " + examples.sessionid[0],
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -226,11 +247,11 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 11,
+    tag: 12,
     actions: [{
       auth: () => "abcd",
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -245,11 +266,11 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 12,
+    tag: 13,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -262,9 +283,9 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,
@@ -279,11 +300,11 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 2,
   }, {
-    tag: 13,
+    tag: 14,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -296,9 +317,9 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -313,11 +334,11 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 14,
+    tag: 15,
     actions: [{
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -330,9 +351,9 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin}`,
@@ -345,9 +366,9 @@ describe("testing endpoints...", () => {
         status: 409,
       },
     }, {
-      auth: () => "Bearer " + sessionid(databaseActiveUsers[0]),
+      auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: examples.region.first,
+        region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
         room: `${limits.messages.roomMin}`,
         index: `${limits.messages.indexMin + 1}`,

@@ -5,6 +5,7 @@ describe("testing query validators...", () => {
   let testcases = [{
     tag: 1,
     args: {
+      region: examples.region.first,
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
@@ -13,6 +14,7 @@ describe("testing query validators...", () => {
   }, {
     tag: 2,
     args: {
+      region: examples.region.last,
       login: examples.login.maxLen,
       password: examples.password.maxLen,
       name: examples.name.maxLen,
@@ -21,6 +23,7 @@ describe("testing query validators...", () => {
   }, {
     tag: 3,
     args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.regLen,
@@ -29,6 +32,7 @@ describe("testing query validators...", () => {
   }, {
     tag: 4,
     args: {
+      region: examples.region.some,
       login: examples.login.correct[0],
       password: examples.password.correct[0],
       name: examples.name.correct[0],
@@ -37,15 +41,17 @@ describe("testing query validators...", () => {
   }, {
     tag: 5,
     args: {
+      region: "abcd",
       login: examples.login.tooShort,
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.login",
+    expres: "wrongValues.users.region",
   }, {
     tag: 6,
     args: {
-      login: examples.login.tooLong,
+      region: examples.region.some,
+      login: examples.login.tooShort,
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
@@ -53,7 +59,8 @@ describe("testing query validators...", () => {
   }, {
     tag: 7,
     args: {
-      login: examples.login.wrongSymbols,
+      region: examples.region.some,
+      login: examples.login.tooLong,
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
@@ -61,38 +68,52 @@ describe("testing query validators...", () => {
   }, {
     tag: 8,
     args: {
+      region: examples.region.some,
+      login: examples.login.wrongSymbols,
+      password: examples.password.regLen,
+      name: examples.name.regLen,
+    },
+    expres: "wrongValues.users.login",
+  }, {
+    tag: 9,
+    args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.tooShort,
       name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
-    tag: 9,
+    tag: 10,
     args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.tooLong,
       name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
-    tag: 10,
+    tag: 11,
     args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.wrongSymbols,
       name: examples.name.regLen,
     },
     expres: "wrongValues.users.password",
   }, {
-    tag: 11,
+    tag: 12,
     args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.tooShort,
     },
     expres: "wrongValues.users.name",
   }, {
-    tag: 12,
+    tag: 13,
     args: {
+      region: examples.region.some,
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.tooLong,

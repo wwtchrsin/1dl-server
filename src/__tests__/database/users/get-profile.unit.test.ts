@@ -11,6 +11,7 @@ let wrongUserid = examples.uuid[2]
 
 let userlist = new Map([[correctUserids[0], {
   userid: correctUserids[0],
+  region: examples.region.first,
   login: examples.login.correct[0],
   name: examples.name.correct[0],
   state: "inactive",
@@ -18,6 +19,7 @@ let userlist = new Map([[correctUserids[0], {
   timestamp: "123456789",
 }], [correctUserids[1], {
   userid: correctUserids[1],
+  region: examples.region.last,
   login: examples.login.correct[1],
   name: examples.name.correct[1],
   state: "inactive",
@@ -84,6 +86,7 @@ describe("testing database queries...", () => {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.userid).toBe(args)
+        expect(result.data.region).toBe(user.region)
         expect(result.data.login).toBe(user.login)
         expect(result.data.name).toBe(user.name)
         expect(result.data.state).toBe(user.state)

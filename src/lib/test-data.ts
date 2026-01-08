@@ -91,6 +91,36 @@ export const examples = {
   },
 }
 
+export const regionByUser = [
+  /*[0]*/ 0,
+  /*[1]*/ 0,
+  /*[2]*/ 0,
+  /*[3]*/ 0,
+  /*[4]*/ 0,
+  /*[5]*/ 0,
+  /*[6]*/ 0,
+  /*[7]*/ 0,
+  /*[8]*/ 1,
+  /*[9]*/ 1,
+  /*[10]*/ 1,
+  /*[11]*/ 1,
+  /*[12]*/ 1,
+  /*[13]*/ 1,
+  /*[14]*/ 1,
+  /*[15]*/ 1,
+]
+
+export const usersByRegion = (() => {
+  let result = []
+  for ( let i=0; i < regionByUser.length; i++ ) {
+    if ( result[regionByUser[i]] === undefined ) {
+      result[regionByUser[i]] = []
+    }
+    result[regionByUser[i]].push(i)
+  }
+  return result
+})()
+
 export const databaseActiveUsers = [
   /*[0]*/ 0,
   /*[1]*/ 1,
@@ -98,25 +128,46 @@ export const databaseActiveUsers = [
   /*[3]*/ 3,
   /*[4]*/ 4,
   /*[5]*/ 5,
-  /*[6]*/ 6,
-  /*[7]*/ 7,
-  /*[8]*/ 8,
-  /*[9]*/ 9,
-  /*[10]*/ 10,
-  /*[11]*/ 11,
+  /*[6]*/ 8,
+  /*[7]*/ 9,
+  /*[8]*/ 10,
+  /*[9]*/ 11,
+  /*[10]*/ 12,
+  /*[11]*/ 13,
 ]
 
+export const activeUsersByRegion = (() => {
+  let result = []
+  for ( let i=0; i < usersByRegion.length; i++ ) {
+    result[i] = usersByRegion[i].filter(user => {
+      return databaseActiveUsers.includes(user)
+    })
+  }
+  return result
+})()
+
 export const databaseInactiveUsers = [
-  /*[0]*/ 12,
-  /*[1]*/ 13,
+  /*[0]*/ 6,
+  /*[1]*/ 7,
   /*[2]*/ 14,
   /*[3]*/ 15,
 ]
 
+export const inactiveUsersByRegion = (() => {
+  let result = []
+  for ( let i=0; i < usersByRegion.length; i++ ) {
+    result[i] = usersByRegion[i].filter(user => {
+      return databaseInactiveUsers.includes(user)
+    })
+  }
+  return result
+})()
+
 export const databaseUsers = (() => {
   let result = []
-  for ( let i=0; i < 16; i++ ) {
+  for ( let i=0; i < regionByUser.length; i++ ) {
     let postfix = String.fromCharCode(97 + i % 26)
+    let region = limits.messages.regions[regionByUser[i]]
     let login = examples.login.correct[i % examples.login.correct.length] + postfix
     let password = examples.password.correct[i % examples.password.correct.length] + postfix
     let name = examples.name.correct[i % examples.name.correct.length] + postfix
@@ -126,6 +177,7 @@ export const databaseUsers = (() => {
     let timestamp = "12345670" + ("0" + i).slice(-2)
     result.push({
       userid: randomUUID(),
+      region: region,
       login: login,
       password: password,
       passwordHash: passwordHash,
@@ -144,11 +196,13 @@ export const userBySession = [
   /*[2]*/ 2,
   /*[3]*/ 3,
   /*[4]*/ 4,
-  /*[5]*/ 5,
-  /*[6]*/ 6,
-  /*[7]*/ 7,
-  /*[8]*/ 12,
-  /*[9]*/ 13,
+  /*[5]*/ 6,
+  /*[6]*/ 8,
+  /*[7]*/ 9,
+  /*[8]*/ 10,
+  /*[9]*/ 11,
+  /*[10]*/ 12,
+  /*[11]*/ 14,
 ]
 
 export const sessionByUser = (() => {
@@ -176,38 +230,38 @@ export const databaseSessions = (() => {
   return result
 })()
 
-
 export const userByMessage = [
-  /*[0]*/ 0,
-  /*[1]*/ 1,
-  /*[2]*/ 2,
-  /*[3]*/ 3,
-  /*[4]*/ 4,
-  /*[5]*/ 5,
-  /*[6]*/ 6,
-  /*[7]*/ 7,
-  /*[8]*/ 0,
-  /*[9]*/ 1,
-  /*[10]*/ 2,
-  /*[11]*/ 3,
-  /*[12]*/ 4,
-  /*[13]*/ 5,
-  /*[14]*/ 6,
-  /*[15]*/ 13,
-  /*[16]*/ 12,
-  /*[17]*/ 11,
-  /*[18]*/ 10,
-  /*[19]*/ 9,
-  /*[20]*/ 13,
-  /*[21]*/ 12,
-  /*[22]*/ 11,
-  /*[23]*/ 10,
-  /*[24]*/ 13,
-  /*[25]*/ 12,
-  /*[26]*/ 11,
-  /*[27]*/ 13,
-  /*[28]*/ 12,
-  /*[29]*/ 13,
+  /*[0]*/ activeUsersByRegion[0][0],
+  /*[1]*/ activeUsersByRegion[0][1],
+  /*[2]*/ activeUsersByRegion[0][2],
+  /*[3]*/ activeUsersByRegion[0][3],
+  /*[4]*/ activeUsersByRegion[0][4],
+  /*[5]*/ inactiveUsersByRegion[0][0],
+  /*[6]*/ inactiveUsersByRegion[0][1],
+  /*[7]*/ activeUsersByRegion[0][0],
+  /*[8]*/ activeUsersByRegion[0][1],
+  /*[9]*/ activeUsersByRegion[0][2],
+  /*[10]*/ activeUsersByRegion[0][3],
+  /*[11]*/ activeUsersByRegion[0][0],
+  /*[12]*/ activeUsersByRegion[0][1],
+  /*[13]*/ activeUsersByRegion[0][2],
+  /*[14]*/ activeUsersByRegion[0][0],
+
+  /*[15]*/ activeUsersByRegion[1][1],
+  /*[16]*/ activeUsersByRegion[1][0],
+  /*[17]*/ inactiveUsersByRegion[1][0],
+  /*[18]*/ inactiveUsersByRegion[1][1],
+  /*[19]*/ inactiveUsersByRegion[1][0], 
+  /*[20]*/ activeUsersByRegion[1][0],
+  /*[21]*/ activeUsersByRegion[1][1],
+  /*[22]*/ activeUsersByRegion[1][2],
+  /*[18]*/ activeUsersByRegion[1][3],
+  /*[24]*/ activeUsersByRegion[1][0],
+  /*[25]*/ activeUsersByRegion[1][1],
+  /*[26]*/ activeUsersByRegion[1][2],
+  /*[27]*/ activeUsersByRegion[1][0],
+  /*[28]*/ activeUsersByRegion[1][1],
+  /*[29]*/ activeUsersByRegion[1][0],
 ]
 
 export const messagesByUser = (() => {
@@ -234,6 +288,20 @@ export const databaseCompleteUsers = (() => {
       continue
     }
     result.push(i)
+  }
+  return result
+})()
+
+export const completeUsersByRegion = (() => {
+  let result = []
+  for ( let i=0; i < databaseCompleteUsers.length; i++ ) {
+    let index = databaseCompleteUsers[i]
+    let region = databaseUsers[index].region
+    let regionIndex = limits.messages.regions.indexOf(region)
+    if ( result[regionIndex] === undefined ) {
+      result[regionIndex] = []
+    }
+    result[regionIndex].push(index)
   }
   return result
 })()
@@ -266,27 +334,17 @@ export const databaseRooms = [
   },
   /*[2]*/ {
     region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 4,
+    district: limits.messages.districtMin + 8,
     room: limits.messages.roomMax - 4,
   },
   /*[3]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 8,
-    room: limits.messages.roomMin + 4,
-  },
-  /*[4]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 8,
-    room: limits.messages.roomMin + 8,
-  },
-  /*[5]*/ {
     region: limits.messages.regions[1],
     district: limits.messages.districtMax - 4,
     room: limits.messages.roomMin + 4,
   },
-  /*[6]*/ {
+  /*[4]*/ {
     region: limits.messages.regions[1],
-    district: limits.messages.districtMax - 4 ,
+    district: limits.messages.districtMax - 4,
     room: limits.messages.roomMax - 4,
   },
 ]
@@ -307,22 +365,6 @@ export const databaseEmptyDistricts = [
   /*[3]*/ {
     region: limits.messages.regions[0],
     district: limits.messages.districtMax - 1,
-  },
-  /*[4]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 2,
-  },
-  /*[5]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 2,
-  },
-  /*[6]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 3,
-  },
-  /*[7]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 3,
   },
 ]
 
@@ -347,29 +389,10 @@ export const databaseEmptyRooms = [
     district: limits.messages.districtMax - 1,
     room: limits.messages.roomMax - 1,
   },
-  /*[4]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 2,
-    room: limits.messages.roomMin + 2,
-  },
-  /*[5]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 2,
-    room: limits.messages.roomMax - 2,
-  },
-  /*[6]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 3,
-    room: limits.messages.roomMin + 3,
-  },
-  /*[7]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 3,
-    room: limits.messages.roomMax - 3,
-  },
 ]
 
 export const roomByMessage = [
+  /**(REG#0)**/
   /*[0]*/ 0,
   /*[1]*/ 0,
   /*[2]*/ 0,
@@ -382,27 +405,30 @@ export const roomByMessage = [
   /*[9]*/ 1,
   /*[10]*/ 2,
   /*[11]*/ 2,
-  /*[12]*/ 3,
-  /*[13]*/ 3,
-  /*[14]*/ 3,
+  /*[12]*/ 2,
+  /*[13]*/ 2,
+  /*[14]*/ 2,
+
+  /**(REG#1)**/
   /*[15]*/ 3,
   /*[16]*/ 3,
-  /*[17]*/ 4,
-  /*[18]*/ 4,
-  /*[19]*/ 4,
-  /*[20]*/ 5,
-  /*[21]*/ 5,
-  /*[22]*/ 5,
-  /*[23]*/ 5,
-  /*[24]*/ 5,
-  /*[25]*/ 5,
-  /*[26]*/ 6,
-  /*[27]*/ 6,
-  /*[28]*/ 6,
-  /*[29]*/ 6,
+  /*[17]*/ 3,
+  /*[18]*/ 3,
+  /*[19]*/ 3,
+  /*[20]*/ 3,
+  /*[21]*/ 3,
+  /*[22]*/ 4,
+  /*[23]*/ 4,
+  /*[24]*/ 4,
+  /*[25]*/ 4,
+  /*[26]*/ 4,
+  /*[27]*/ 4,
+  /*[28]*/ 4,
+  /*[29]*/ 4,
 ]
 
 export const districtByMessage = [
+  /**(REG#0)**/
   /*[0]*/ 0,
   /*[1]*/ 0,
   /*[2]*/ 0,
@@ -413,16 +439,18 @@ export const districtByMessage = [
   /*[7]*/ 0,
   /*[8]*/ 0,
   /*[9]*/ 0,
-  /*[10]*/ 0,
-  /*[11]*/ 0,
+  /*[10]*/ 1,
+  /*[11]*/ 1,
   /*[12]*/ 1,
   /*[13]*/ 1,
   /*[14]*/ 1,
-  /*[15]*/ 1,
-  /*[16]*/ 1,
-  /*[17]*/ 1,
-  /*[18]*/ 1,
-  /*[19]*/ 1,
+
+  /**(REG#0)**/
+  /*[15]*/ 2,
+  /*[16]*/ 2,
+  /*[17]*/ 2,
+  /*[18]*/ 2,
+  /*[19]*/ 2,
   /*[20]*/ 2,
   /*[21]*/ 2,
   /*[22]*/ 2,
@@ -435,7 +463,7 @@ export const districtByMessage = [
   /*[29]*/ 2,
 ]
 
-let regionByMessage = [
+export const regionByMessage = [
   /*[0]*/ 0,
   /*[1]*/ 0,
   /*[2]*/ 0,
@@ -451,11 +479,11 @@ let regionByMessage = [
   /*[12]*/ 0,
   /*[13]*/ 0,
   /*[14]*/ 0,
-  /*[15]*/ 0,
-  /*[16]*/ 0,
-  /*[17]*/ 0,
-  /*[18]*/ 0,
-  /*[19]*/ 0,
+  /*[15]*/ 1,
+  /*[16]*/ 1,
+  /*[17]*/ 1,
+  /*[18]*/ 1,
+  /*[19]*/ 1,
   /*[20]*/ 1,
   /*[21]*/ 1,
   /*[22]*/ 1,
@@ -530,7 +558,7 @@ export const populateDatabase = (() => {
   for ( let user of databaseUsers ) {
     let entry = `
       INSERT INTO users VALUES
-        ('${user.userid}', '${user.login}', '${user.passwordHash}',
+        ('${user.userid}', '${user.region}', '${user.login}', '${user.passwordHash}',
         '${user.name}', '${user.state}', '${user.puid}', ${user.timestamp});
     `
     addUsers += entry

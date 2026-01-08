@@ -3,6 +3,7 @@ const passwordSymbols = "!@#$%^&*+=_-"
 export const limits = {
   messages: {
     regions: ["en", "ru"],
+    regionPattern: "^(en|ru)$",
     districtMin: 0,
     districtMax: 299,
     roomMin: 0,
@@ -54,6 +55,7 @@ export const patterns = {
   sessionid: /^[0-9A-Fa-f]{128}$/,
   login: new RegExp(limits.users.loginPattern),
   password: new RegExp(limits.users.passwordPattern),
+  region: new RegExp(limits.messages.regionPattern),
 }
        
 

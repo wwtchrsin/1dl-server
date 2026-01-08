@@ -53,19 +53,6 @@ describe("testing endpoints...", () => {
     tag: 3,
     actions: [{
       args: {
-        login: databaseUsers[0].login,
-        password: databaseUsers[1].password,
-      },
-      expres: {
-        error: "databaseConflicts.profileNotFound",
-        status: 404,
-      },
-    }],
-    rowCount: 0,
-  }, {
-    tag: 4,
-    actions: [{
-      args: {
         login: databaseUsers[1].login,
         password: databaseUsers[0].password,
       },
@@ -76,7 +63,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 5,
+    tag: 4,
     actions: [{
       args: {
         login: examples.login.minLen + "abcd",
@@ -89,9 +76,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 6,
+    tag: 5,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         password: databaseUsers[0].password,
       },
       expres: {
@@ -101,7 +89,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 7,
+    tag: 6,
     actions: [{
       args: {
         login: {},
@@ -114,7 +102,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 8,
+    tag: 7,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -126,7 +114,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 9,
+    tag: 8,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -139,7 +127,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 10,
+    tag: 9,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -161,7 +149,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 11,
+    tag: 10,
     actions: [{
       args: {
         login: databaseUsers[1].login,

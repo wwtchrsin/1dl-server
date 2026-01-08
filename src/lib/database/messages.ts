@@ -58,11 +58,11 @@ export const getMessages = async (roomid: Roomid):
     let TAG = "db/messages/getMessages"
     let { region, district, room } = roomid
     let query = `
-      SELECT region, district, room, index, text, color, 
+      SELECT users.region as region, district, room, index, text, color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 
-        region = $1 AND district = $2 AND room = $3
+        messages.region = $1 AND district = $2 AND room = $3
     `
     let result = await queryDatabase(query, [region, district, room])
     if ( !result?.rows ) {
@@ -84,11 +84,11 @@ export const getMessage = async (messageid: Messageid):
     let TAG = "db/messages/getMessage"
     let { region, district, room, index } = messageid
     let query = `
-      SELECT region, district, room, index, text, color, 
+      SELECT messages.region as region, district, room, index, text, color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 
-        region = $1 AND district = $2 AND room = $3 AND index = $4
+        messages.region = $1 AND district = $2 AND room = $3 AND index = $4
     `
     let result = await queryDatabase(query, [region, district, room, index])
     if ( result === undefined || result?.rows?.length > 1 ) {

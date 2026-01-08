@@ -27,6 +27,7 @@ describe("testing endpoints...", () => {
     tag: 1,
     calls: [{   
       args: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -40,6 +41,7 @@ describe("testing endpoints...", () => {
     tag: 2,
     calls: [{    
       args: {
+        region: examples.region.last,
         login: examples.login.maxLen,
         password: examples.password.maxLen,
         name: examples.name.maxLen,
@@ -53,6 +55,7 @@ describe("testing endpoints...", () => {
     tag: 3,
     calls: [{    
       args: {
+        region: examples.region.some,
         login: examples.login.regLen,
         password: examples.password.regLen,
         name: examples.name.regLen,
@@ -66,6 +69,7 @@ describe("testing endpoints...", () => {
     tag: 4,
     calls: [{    
       args: {
+        region: examples.region.first,
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
@@ -79,6 +83,7 @@ describe("testing endpoints...", () => {
     tag: 5,
     calls: [{    
       args: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.tooLong,
         name: examples.name.minLen,
@@ -92,6 +97,7 @@ describe("testing endpoints...", () => {
     tag: 6,
     calls: [{    
       args: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.tooShort,
@@ -105,6 +111,7 @@ describe("testing endpoints...", () => {
     tag: 7,
     calls: [{   
       args: {
+        region: examples.region.first,
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
@@ -115,6 +122,7 @@ describe("testing endpoints...", () => {
       },
     }, {   
       args: {
+        region: examples.region.first,
         login: examples.login.correct[0],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
@@ -128,6 +136,7 @@ describe("testing endpoints...", () => {
     tag: 8,
     calls: [{   
       args: {
+        region: examples.region.first,
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
@@ -138,6 +147,7 @@ describe("testing endpoints...", () => {
       },
     }, {   
       args: {
+        region: examples.region.first,
         login: examples.login.correct[1],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
@@ -151,16 +161,18 @@ describe("testing endpoints...", () => {
     tag: 9,
     calls: [{   
       args: {
+        region: "abcd",
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
       },
       expres: {
-        error: "wrongValues.users.login",
+        error: "wrongValues.users.region",
         status: 400,
       },
     }, {   
       args: {
+        region: examples.region.first,
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
