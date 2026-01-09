@@ -7,6 +7,7 @@ import { examples, populateDatabase, databaseSessions,
   databaseMessages, messagesByUser } from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
+import { getReports } from "../../../lib/redis/tests"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -70,6 +71,10 @@ let rowCount = {
 }
 
 describe("testing endpoints...", () => {
+  afterEach(async () => {
+    let subscriber = await redisConn.getSubscriber()
+    await subscriber.unsubscribe()
+  })
   let testcases = [{
     tag: 1,
     args: "Bearer " + sessionid(1),
@@ -119,6 +124,9 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`DELETE /profiles. Test #${tag}`, async () => {
+      let userCount = expres.profile === undefined ? 0 : 1
+      let msgCount = expres.messages?.length ?? 0
+      let reportsPromise = getReports("messages:deleted", userCount)
       let result = await testServer.delete("/api/v1/profiles")
         .set("Authorization", args)
       expect(result.statusCode).toBe(expres.status)
@@ -148,6 +156,19 @@ describe("testing endpoints...", () => {
       expect(userTable.rows).toHaveLength(rowCount.users)
       expect(sessionTable.rows).toHaveLength(rowCount.sessions)
       expect(messageTable.rows).toHaveLength(rowCount.messages)
+      let reports = await reportsPromise
+      expect(reports).toHaveLength(userCount)
+      for ( let i=0; i < reports.length; i++ ) {
+        expect(reports[i].messageids).toBeDefined()
+        expect(reports[i].messageids).toHaveLength(msgCount)
+        for ( let j=0; j < msgCount; j++ ) {
+          expect(reports[i].messageids[j].region).toBeDefined()
+          expect(reports[i].messageids[j].district).toBeDefined()
+          expect(reports[i].messageids[j].room).toBeDefined()
+          expect(reports[i].messageids[j].index).toBeDefined()
+          expect(reports[i].messageids[j].text).toBeUndefined()
+        }
+      }
     })
   }
 })

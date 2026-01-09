@@ -15,4 +15,3 @@ export const decodeMsgcounts = (msgcounts: Record<string, string>) => {
   }
   return result
 }
-

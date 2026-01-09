@@ -8,9 +8,9 @@ import { examples, populateDatabase, completeUsersByRegion,
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
+import { getReports } from "../../../lib/redis/tests"
 
 beforeAll(async () => {
-  console.log("%%%%", completeUsersByRegion)
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
@@ -30,12 +30,15 @@ let testServer = supertest(httpServer)
 
 let sessionid = (userIndex: number) => {
   return databaseSessions[sessionByUser[userIndex]].sessionid
-} 
-
+}
 
 describe("testing endpoints...", () => {
   beforeEach(async () => {
     await pool.query("DELETE FROM messages")
+  })
+  afterEach(async () => {
+    let subscriber = await redisConn.getSubscriber()
+    await subscriber.unsubscribe()
   })
   let testcases = [{
     tag: 1,
@@ -211,7 +214,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 10,
     actions: [{
-      auth: () => "Bearer " + sessionid(inactiveUsersByRegion[1][0]),
+      auth: () => "Bearer " + sessionid(inactiveUsersByRegion[0][0]),
       args: [{
         region: limits.messages.regions[0],
         district: `${limits.messages.districtMin}`,
@@ -386,6 +389,7 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { actions, rowCount, tag } = testcase
     test(`POST /messages/r/d/room/index. Test #${tag}`, async () => {
+      let reportsPromise = getReports(`message:created`, rowCount)
       for ( let action of actions ) {
         let { auth, args, expres } = action
         let [ msgid, content ] = args
@@ -413,6 +417,20 @@ describe("testing endpoints...", () => {
       let result = await queryDatabase("SELECT * FROM messages")
       expect(result).toBeDefined()
       expect(result.rows).toHaveLength(rowCount)
+      let reports = await reportsPromise
+      expect(reports).toHaveLength(rowCount)
+      for ( let i=0; i < reports.length; i++ ) {
+        expect(reports[i].message).toBeDefined()
+        expect(reports[i].message.region).toBeDefined()
+        expect(reports[i].message.district).toBeDefined()
+        expect(reports[i].message.room).toBeDefined()
+        expect(reports[i].message.index).toBeDefined()
+        expect(reports[i].message.text).toBeDefined()
+        expect(reports[i].message.color).toBeDefined()
+        expect(reports[i].message.puid).toBeDefined()
+        expect(reports[i].message.username).toBeDefined()
+        expect(reports[i].message.timestamp).toBeDefined()
+      }
     })
   }
 })

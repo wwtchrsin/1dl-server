@@ -11,14 +11,16 @@ export const changeRoomMsgcount = async (roomid: Roomid, delta: number):
     try {
       let client = await redisConn.getClient()
       await client.hIncrBy(key, `${room}`, delta)
-      logger.debug({ roomid }, `${TAG}#DONE`)
+      logger.debug({ roomid, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         region: region,
         district: district,
         room: room,
+        delta: delta,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -37,12 +39,14 @@ export const changeRoomMsgcounts = async (roomids: Roomid[], delta: number):
         promises.push(client.hIncrBy(key, `${room}`, delta))
       }
       await Promise.all(promises)
-      logger.debug({ roomids: roomids.length }, `${TAG}#DONE`)
+      logger.debug({ roomids: roomids.length, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         roomids: roomids.length,
+        delta: delta,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -57,13 +61,15 @@ export const changeDistrictMsgcount = async (districtid: Districtid, delta: numb
     try {
       let client = await redisConn.getClient()
       await client.hIncrBy(key, `${district}`, delta)
-      logger.debug({ districtid }, `${TAG}#DONE`)
+      logger.debug({ districtid, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         region: region,
         district: district,
+        delta: delta,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -82,12 +88,14 @@ export const changeDistrictMsgcounts = async (districtids: Districtid[], delta: 
         promises.push(client.hIncrBy(key, `${district}`, delta))
       }
       await Promise.all(promises)
-      logger.debug({ districtids: districtids.length }, `${TAG}#DONE`)
+      logger.debug({ districtids: districtids.length, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         districtids: districtids.length,
+        delta: delta,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -102,13 +110,15 @@ export const updateRoomMsgcounts = async (districtid: Districtid, msgcounts:
     try {
       let client = await redisConn.getClient()
       await client.hSet(key, encodeMsgcounts(msgcounts))
-      logger.debug({ districtid }, `${TAG}#DONE`)
+      logger.debug({ districtid, msgcounts: !!msgcounts }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         region: region,
         district: district,
+        msgcounts: !!msgcounts,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -122,12 +132,14 @@ export const updateDistrictMsgcounts = async (region: string, msgcounts:
     try {
       let client = await redisConn.getClient()
       await client.hSet(key, encodeMsgcounts(msgcounts))
-      logger.debug({ region }, `${TAG}#DONE`)
+      logger.debug({ region, msgcounts: !!msgcounts }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         region: region,
+        msgcounts: !!msgcounts,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return false
@@ -159,6 +171,7 @@ export const getRoomMsgcounts = async (districtid: Districtid):
         region: region,
         district: district,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return {
@@ -191,6 +204,7 @@ export const getDistrictMsgcounts = async (region: string):
       let errmsg = {
         region: region,
         stack: err.stack,
+        message: err.message,
       }
       logger.error(errmsg, `${TAG}#RUNTIME_ERROR`)
       return {

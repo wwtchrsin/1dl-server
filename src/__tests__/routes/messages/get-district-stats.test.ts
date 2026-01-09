@@ -9,6 +9,7 @@ import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
+import { getReports } from "../../../lib/redis/tests"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -35,8 +36,10 @@ let msgcounts = (districtid: any) => {
 let cacheEmpty = () => Promise.resolve({ error: false, data: undefined })
 
 describe("testing endpoints...", () => {
-  afterEach(() => {
+  afterEach(async () => {
     jest.restoreAllMocks()
+    let subscriber = await redisConn.getSubscriber()
+    await subscriber.unsubscribe()
   })
   let testcases = [{
     tag: 1,
@@ -118,6 +121,7 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { args, mocks, calls, expres, tag } = testcase
     test(`GET /messages/region/district. Test #${tag}`, async () => {
+      let reportsPromise = getReports("msgcounts:rooms", calls.updateRoomMsgcounts)
       if ( mocks.getRoomMsgcounts ) {
         jest.spyOn(redisCache, "getRoomMsgcounts")
           .mockImplementation(mocks.getRoomMsgcounts)
@@ -139,6 +143,15 @@ describe("testing endpoints...", () => {
       }
       expect(countDistrictMessages).toHaveBeenCalledTimes(calls.countDistrictMessages)
       expect(updateRoomMsgcounts).toHaveBeenCalledTimes(calls.updateRoomMsgcounts)
+      let reports = await reportsPromise
+      expect(reports).toHaveLength(calls.updateRoomMsgcounts)
+      if ( calls.updateRoomMsgcounts === 1 ) {
+        expect(reports[0].districtid).toBeDefined()
+        expect(reports[0].districtid.region).toBe(region)
+        expect(`${reports[0].districtid.district}`).toBe(`${district}`)
+        expect(reports[0].msgcounts).toBeDefined()
+        expect(reports[0].msgcounts).toStrictEqual(expres.msgcounts)
+      }
     })
   }
 })

@@ -1,6 +1,7 @@
 import { getUserid, getProfile } from "../lib/database/users"
 import { checkUserid, checkSessionid } from "../lib/database/checkers"
-import type { Profile } from "../lib/database/interfaces"
+import type { Profile, UserMessage, Message, Messageid } 
+  from "../lib/database/interfaces"
 
 export const getToken = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
@@ -77,3 +78,16 @@ export const redactProfile = (profile: Profile | undefined) => {
   }
 }
 
+export const completeMessage = (userMessage: UserMessage, { puid, name }:
+  { puid: string, name: string }): Message => {
+    return { ...userMessage, puid, username: name }
+  }
+
+export const extractMessageids = (messageids: Messageid[]): Messageid[] => {
+  return messageids.map(messageid => ({
+    region: messageid.region,
+    district: messageid.district,
+    room: messageid.room,
+    index: messageid.index,
+  }))
+}

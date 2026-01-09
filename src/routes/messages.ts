@@ -4,8 +4,10 @@ import { createMessage, deleteMessage, getMessage, getMessages,
 import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
   checkMessageData } from "../lib/database/checkers"
 import * as redisCache from "../lib/redis/cache"
+import { report } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
-import { readProfile, readUserid } from "./miscs"
+import { readProfile, readUserid, completeMessage,
+  extractMessageids } from "./miscs"
 import logger from "../lib/logger"
 import type { Request, Response } from "express"
 import type { Messageid, Roomid, Districtid } from "../lib/database/interfaces"
@@ -52,8 +54,10 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     })
     return
   }
+  let msg = completeMessage(message.data, profile.data)
   await redisCache.changeRoomMsgcount(req.params, 1)
   await redisCache.changeDistrictMsgcount(req.params, 1)
+  await report("message:created", { message: msg })
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
@@ -151,7 +155,12 @@ const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) =
     })
     return
   }
+  let reportData = {
+    districtid: req.params as Districtid,
+    msgcounts: msgcounts.data,
+  }
   await redisCache.updateRoomMsgcounts({ region, district }, msgcounts.data)
+  await report("msgcounts:rooms", reportData)
   logger.debug({ districtid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
@@ -191,7 +200,9 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     })
     return
   }
+  let reportData = { region: region, msgcounts: msgcounts.data }
   await redisCache.updateDistrictMsgcounts(region, msgcounts.data)
+  await report("msgcounts:districts", reportData)
   logger.debug({ region }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
@@ -231,8 +242,10 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     })
     return
   }
+  let messageids = extractMessageids([req.params as Messageid])
   await redisCache.changeRoomMsgcount(req.params as Messageid, -1)
   await redisCache.changeDistrictMsgcount(req.params as Messageid, -1)
+  await report("messages:deleted", { messageids })
   logger.debug({ messageid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,

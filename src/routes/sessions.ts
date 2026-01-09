@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createSession, deleteSession, getProfile } from "../lib/database/users"
+import { createSession, deleteSession } from "../lib/database/users"
 import { checkUserCredentials } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
@@ -8,7 +8,7 @@ import type { Request, Response } from "express"
 import type { Credentials } from "../lib/database/interfaces"
 import logger from "../lib/logger"
 
-const createSessionAction = async (req: Request<Credentials>, res: Response) => {
+const createSessionAction = async (req: Request, res: Response) => {
   let TAG = "routes/sessions/createSession"
   let args = { credentials: redactPassword(req.body) }
   let checkError = checkUserCredentials(req.body)
@@ -21,7 +21,7 @@ const createSessionAction = async (req: Request<Credentials>, res: Response) => 
     })
     return
   }
-  let result = await createSession(req.body)
+  let result = await createSession(req.body as Credentials)
   if ( result.error !== undefined ) {
     let status = getStatusCode(result.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)    

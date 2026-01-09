@@ -3,8 +3,9 @@ import { createProfile, createSession, deleteProfile } from "../lib/database/use
 import { checkUserData } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import * as redisCache from "../lib/redis/cache"
+import { report } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
-import { readUserid, redactProfile } from "./miscs"
+import { readUserid, redactProfile, extractMessageids } from "./miscs"
 import env from "../lib/env"
 import type { Request, Response } from "express"
 import type { UserData } from "../lib/database/interfaces"
@@ -70,8 +71,10 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     })
     return
   }
+  let messageids = extractMessageids(result.messages)
   await redisCache.changeRoomMsgcounts(result.messages, -1)
   await redisCache.changeDistrictMsgcounts(result.messages, -1)
+  await report("messages:deleted", { messageids })
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined,

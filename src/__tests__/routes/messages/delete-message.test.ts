@@ -8,6 +8,7 @@ import { examples, populateDatabase, databaseSessions, databaseMessages,
   from "../../../lib/test-data"
 import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
+import { getReports } from "../../../lib/redis/tests"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -58,7 +59,13 @@ let message = (uIndex: number, messageIndex: number) => {
   }
 }
 
+let rowCount = databaseMessages.length
+
 describe("testing endpoints...", () => {
+  afterEach(async () => {
+    let subscriber = await redisConn.getSubscriber()
+    await subscriber.unsubscribe()
+  })
   let testcases = [{
     tag: 1,
     actions: [{
@@ -72,7 +79,7 @@ describe("testing endpoints...", () => {
         status: 200,
       },
     }],
-    rowCount: databaseMessages.length - 1,
+    deletedRows: 1,
   }, {
     tag: 2,
     actions: [{
@@ -86,7 +93,7 @@ describe("testing endpoints...", () => {
         status: 200,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 1,
   }, {
     tag: 3,
     actions: [{
@@ -100,7 +107,7 @@ describe("testing endpoints...", () => {
         status: 404,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 4,
     actions: [{
@@ -114,7 +121,7 @@ describe("testing endpoints...", () => {
         status: 401,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 5,
     actions: [{
@@ -128,7 +135,7 @@ describe("testing endpoints...", () => {
         status: 401,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 6,
     actions: [{
@@ -147,7 +154,7 @@ describe("testing endpoints...", () => {
         status: 404,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 7,
     actions: [{
@@ -166,7 +173,7 @@ describe("testing endpoints...", () => {
         status: 400,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 8,
     actions: [{
@@ -185,7 +192,7 @@ describe("testing endpoints...", () => {
         status: 400,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 9,
     actions: [{
@@ -204,7 +211,7 @@ describe("testing endpoints...", () => {
         status: 400,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 10,
     actions: [{
@@ -223,7 +230,7 @@ describe("testing endpoints...", () => {
         status: 400,
       },
     }],
-    rowCount: databaseMessages.length - 2,
+    deletedRows: 0,
   }, {
     tag: 11,
     actions: [{
@@ -257,11 +264,12 @@ describe("testing endpoints...", () => {
         status: 200,
       },
     }],
-    rowCount: databaseMessages.length - 4,
+    deletedRows: 2,
   }]
   for ( let testcase of testcases ) {
-    let { actions, rowCount, tag } = testcase
+    let { actions, deletedRows, tag } = testcase
     test(`DELETE /messages/r/d/room/index. Test #${tag}`, async () => {
+      let reportsPromise = getReports("messages:deleted", deletedRows)
       for ( let action of actions ) {
         let { args, expres } = action
         let { auth, messageid } = args
@@ -279,9 +287,25 @@ describe("testing endpoints...", () => {
           expect(result.body.message).toBeUndefined()
         }
       }
+      rowCount -= deletedRows
       let result = await queryDatabase("SELECT * FROM messages")
       expect(result).toBeDefined()
       expect(result.rows).toHaveLength(rowCount)
+      let reports = await reportsPromise
+      expect(reports).toHaveLength(deletedRows)
+      for ( let i=0; i < reports.length; i++ ) {
+        expect(reports[i].messageids).toBeDefined()
+        expect(reports[i].messageids).toHaveLength(1)
+        expect(reports[i].messageids[0].region).toBeDefined()
+        expect(reports[i].messageids[0].district).toBeDefined()
+        expect(reports[i].messageids[0].room).toBeDefined()
+        expect(reports[i].messageids[0].index).toBeDefined()
+        expect(reports[i].messageids[0].text).toBeUndefined()
+        expect(reports[i].messageids[0].color).toBeUndefined()
+        expect(reports[i].messageids[0].puid).toBeUndefined()
+        expect(reports[i].messageids[0].username).toBeUndefined()
+        expect(reports[i].messageids[0].timestamp).toBeUndefined()
+      }
     })
   }
 })
