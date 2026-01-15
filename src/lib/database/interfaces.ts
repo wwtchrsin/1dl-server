@@ -63,3 +63,5 @@ export type DistrictMsgcount = {
   msgcount: number,
 }
 
+export type Msgcounts = Record<string | number, number>
+

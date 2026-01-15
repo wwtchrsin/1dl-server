@@ -8,6 +8,8 @@ export const redisns = (() => {
   return "_" + randomBytes(12).toString("hex")
 })()
 
+type ChannelListener = (message: string, channel: string) => unknown
+
 let client: ReturnType<typeof createClient> | undefined = undefined
 
 let publisher: ReturnType<typeof createClient> | undefined = undefined
@@ -119,7 +121,7 @@ export const closeConns = async () => {
   subscriber = undefined
 }
 
-export const report = async (channel: string, message: Object): Promise<boolean> => {
+export const publish = async (channel: string, message: Object): Promise<boolean> => {
   try {
     let publisher = await getPublisher()
     let messageString = JSON.stringify(message)
@@ -131,9 +133,19 @@ export const report = async (channel: string, message: Object): Promise<boolean>
       stack: err.stack,
       message: err.message,
     }
-    logger.error(errmsg, "redis/report#Error")
+    logger.error(errmsg, "redis/publish#Error")
     return false
   }
+}
+
+export const subscribe = async (channel: string, listener: ChannelListener) => {
+  let subscriber = await getSubscriber()
+  await subscriber.subscribe(`${redisns}:${channel}`, listener)
+}
+
+export const unsubscribe = async (channel: string) => {
+  let subscriber = await getSubscriber()
+  await subscriber.unsubscribe(`${redisns}:${channel}`)
 }
 
 

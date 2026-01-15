@@ -2,10 +2,10 @@ import { queryDatabase } from "./conn"
 import { getTimestamp, processRoomMsgcounts, processDistrictMsgcounts } from "./miscs"
 import logger from "../logger"
 import type { Districtid, Roomid, Messageid, MessageContent, UserMessage,
-  Message, RoomMsgcount, DistrictMsgcount } from "./interfaces"
+  Message, RoomMsgcount, DistrictMsgcount, Msgcounts } from "./interfaces"
 
 export const countRegionMessages = async (region: string | undefined):
-  Promise<{ error: string | undefined, data: Record<string | number, number> | undefined }> => {
+  Promise<{ error: string | undefined, data: Msgcounts | undefined }> => {
     let TAG = "db/messages/countRegionMessages"
     let query = `
       SELECT district, COUNT(*)::INTEGER as msgcount FROM messages
@@ -29,7 +29,7 @@ export const countRegionMessages = async (region: string | undefined):
   }
 
 export const countDistrictMessages = async (districtid: Districtid):
-  Promise<{ error: string | undefined, data: Record<string | number, number> | undefined }> => {
+  Promise<{ error: string | undefined, data: Msgcounts | undefined }> => {
     let TAG = "db/messages/countDistrictMessages"
     let { region, district } = districtid as Districtid
     let query = `

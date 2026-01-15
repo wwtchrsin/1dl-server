@@ -389,7 +389,7 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { actions, rowCount, tag } = testcase
     test(`POST /messages/r/d/room/index. Test #${tag}`, async () => {
-      let reportsPromise = getReports(`message:created`, rowCount)
+      let reportsPromise = getReports(`messages:created`, rowCount)
       for ( let action of actions ) {
         let { auth, args, expres } = action
         let [ msgid, content ] = args
@@ -420,16 +420,17 @@ describe("testing endpoints...", () => {
       let reports = await reportsPromise
       expect(reports).toHaveLength(rowCount)
       for ( let i=0; i < reports.length; i++ ) {
-        expect(reports[i].message).toBeDefined()
-        expect(reports[i].message.region).toBeDefined()
-        expect(reports[i].message.district).toBeDefined()
-        expect(reports[i].message.room).toBeDefined()
-        expect(reports[i].message.index).toBeDefined()
-        expect(reports[i].message.text).toBeDefined()
-        expect(reports[i].message.color).toBeDefined()
-        expect(reports[i].message.puid).toBeDefined()
-        expect(reports[i].message.username).toBeDefined()
-        expect(reports[i].message.timestamp).toBeDefined()
+        expect(reports[i].messages).toBeDefined()
+        expect(reports[i].messages).toHaveLength(1)
+        expect(reports[i].messages[0].region).toBeDefined()
+        expect(reports[i].messages[0].district).toBeDefined()
+        expect(reports[i].messages[0].room).toBeDefined()
+        expect(reports[i].messages[0].index).toBeDefined()
+        expect(reports[i].messages[0].text).toBeDefined()
+        expect(reports[i].messages[0].color).toBeDefined()
+        expect(reports[i].messages[0].puid).toBeDefined()
+        expect(reports[i].messages[0].username).toBeDefined()
+        expect(reports[i].messages[0].timestamp).toBeDefined()
       }
     })
   }

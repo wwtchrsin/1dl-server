@@ -2,6 +2,7 @@ const env = {
   mode: process.env.NODE_ENV ?? "dev",
   httpPort: Number(process.env.HTTP_PORT ?? "3000"),
   wsPort: Number(process.env.WS_PORT ?? "8080"),
+  wsPingInterval: Number(process.env.WS_PING_INTERVAL ?? "30000"),
   pg: {
     user: process.env.PG_USER ?? "admin",
     password: process.env.PG_PASSWORD,
