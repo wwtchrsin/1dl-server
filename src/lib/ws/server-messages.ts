@@ -16,21 +16,23 @@ export const reportError = (userid: string, error: string) => {
   }
 }
 
-export const pingClients = (interval: number) => {
-  return setInterval(() => {
-    let TAG = "ws/server-messages/pingClients"
-    for ( let [userid, client] of wsState.getClients() ) {
-      if ( !wsState.getPingState(userid) ) {
-        logger.info(`${TAG}#CONN_LOST`)
-        wsState.deleteClient(userid)
-        client.terminate()
-        continue
-      }
-      wsState.setPingState(userid, false)
-      client?.ping()
+export const pingClients = () => {
+  let TAG = "ws/server-messages/pingClients"
+  for ( let [userid, client] of wsState.getClients() ) {
+    if ( !wsState.getPingState(userid) ) {
+      logger.info(`${TAG}#CONN_LOST`)
+      wsState.deleteClient(userid)
+      client.terminate()
+      continue
     }
-    logger.debug(`${TAG}#MESSAGES_SENT`)
-  }, interval)
+    wsState.setPingState(userid, false)
+    client?.ping()
+  }
+  logger.debug(`${TAG}#MESSAGES_SENT`)
+}
+
+export const enableConnCheck = (interval: number) => {
+  return setInterval(pingClients, interval)
 }
 
 export const insertMessages = (messages: DatabaseTypes.Message[]) => {

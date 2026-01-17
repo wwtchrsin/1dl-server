@@ -4,7 +4,7 @@ import { parseJSON } from "../miscs"
 import logger from "../logger"
 import type * as RedisTypes from "../redis/interfaces"
 
-let listeners = new Map([
+export const listeners = new Map([
   ["messages:created", (messageJSON: string) => {
     let TAG = "ws/channels/messages:created"
     let message = parseJSON(messageJSON)

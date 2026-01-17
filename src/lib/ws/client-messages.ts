@@ -24,6 +24,7 @@ export const onMessage = (userid: string) =>
           return
         }
         wsState.setUserLocation(userid, location)
+        return
       }
       default: {
         reportError(userid, "wrongValues.wsMessage.type")

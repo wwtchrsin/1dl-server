@@ -81,5 +81,3 @@ export const setPingState = (userid: string, state: boolean): boolean => {
   storage.pingState.set(userid, state)
   return true
 }
-
-export const getUsers = (): string[] => Array.from(storage.clients.keys())

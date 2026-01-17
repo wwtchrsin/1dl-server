@@ -1,6 +1,6 @@
 import { clients, usersByLocation, locationByUser } 
   from "../../../lib/ws/state-storage"
-import { addClient, deleteClient } from "../../../lib/ws/state"
+import { addClient, deleteClient, getClients } from "../../../lib/ws/state"
 import { examples } from "../../../lib/test-data"
 import type { WebSocket } from "ws"
 
@@ -127,5 +127,12 @@ describe("testing ws state handlers...", () => {
     expect(closeFunction[0]).not.toHaveBeenCalled()
     expect(closeFunction[1]).not.toHaveBeenCalled()
     expect(closeFunction[2]).not.toHaveBeenCalled()
+  })
+  test("Function getClients. Test #1", () => {
+    let result = getClients()
+    expect(result.size).toBe(users.length)
+    for ( let [userid, _] of clients ) {
+      expect(result.get(userid)).toBeDefined()
+    }
   })
 })
