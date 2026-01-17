@@ -1,8 +1,14 @@
 const env = {
   mode: process.env.NODE_ENV ?? "dev",
-  httpPort: Number(process.env.HTTP_PORT ?? "3000"),
-  wsPort: Number(process.env.WS_PORT ?? "8080"),
-  wsPingInterval: Number(process.env.WS_PING_INTERVAL ?? "30000"),
+  http: {
+    port: Number(process.env.HTTP_PORT ?? "3000"),
+    instance: Number(process.env.HTTP_INSTANCE ?? "0"),
+  },
+  ws: {
+    port: Number(process.env.WS_PORT ?? "8080"),
+    pingInterval: Number(process.env.WS_PING_INTERVAL ?? "30000"),
+    instance: Number(process.env.WS_INSTANCE ?? "0"),
+  },
   pg: {
     user: process.env.PG_USER ?? "admin",
     password: process.env.PG_PASSWORD,
@@ -26,8 +32,8 @@ const env = {
   }
 }
 
-if ( isNaN(env.httpPort) || isNaN(env.wsPort) || isNaN(env.pg.port) ||
-  isNaN(env.redis.port) ) {
+if ( isNaN(env.http.port) || isNaN(env.http.instance) || isNaN(env.ws.port) ||
+  isNaN(env.ws.instance) || isNaN(env.pg.port) || isNaN(env.redis.port) ) {
     console.error("Error: Incorrect environment variables. Exit.")
     process.exit(1)
   }
