@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "composite": true,
     "rootDir": "./src",
     "outDir": "./dist",
     "module": "commonjs",
@@ -15,5 +16,5 @@
     "skipLibCheck": true,
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "src/__tests__/**/*"],
+  "exclude": ["node_modules"],
 }

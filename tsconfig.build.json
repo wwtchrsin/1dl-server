@@ -1,0 +1,7 @@
+{
+  "references": [
+    { "path": "./tsconfig.json" }
+  ],
+  "include": ["src/bin/*.ts"],
+  "exclude": ["node_modules"],
+}

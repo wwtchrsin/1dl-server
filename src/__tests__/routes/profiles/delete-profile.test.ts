@@ -104,7 +104,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
-    args: () => "Bearer abcd",
+    args: "Bearer abcd",
     expres: {
       status: 401,
       error: "wrongValues.auth.sessionid",

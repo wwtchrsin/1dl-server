@@ -1,8 +1,8 @@
-import { chmod } from "node:fs/promises"
+import { rmSync, chmodSync } from "node:fs"
 import { join } from "node:path"
 
 const __dirname = import.meta.dirname
-const distpath = join(__dirname, "..", "..", "dist", "bin")
+const distpath = join(__dirname, "..", "..", "dist")
 
-await chmod(join(distpath, "www.js"), 0o755)
-await chmod(join(distpath, "ws.js"), 0o755)
+chmodSync(join(distpath, "bin", "www.js"), 0o755)
+chmodSync(join(distpath, "bin", "ws.js"), 0o755)

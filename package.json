@@ -8,7 +8,7 @@
     "dev:ws": "dotenvx run -f .env -- npx 'ts-node' './src/bin/ws.ts'",
     "preview:http": "dotenvx run -f .env -- node ./dist/bin/www.js",
     "preview:ws": "dotenvx run -f .env -- node ./dist/bin/ws.js",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "postbuild": "node ./src/scripts/post-build.mjs",
     "init": "dotenvx run -f .env -- npx 'ts-node' 'src/scripts/init-database.ts'",
     "test": "dotenvx run -f .env.test -f .env -- npx jest"
