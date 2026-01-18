@@ -1,4 +1,4 @@
-import { rmSync, chmodSync } from "node:fs"
+import { chmodSync } from "node:fs"
 import { join } from "node:path"
 
 const __dirname = import.meta.dirname
