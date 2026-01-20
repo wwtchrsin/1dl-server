@@ -4,7 +4,6 @@ import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -188,11 +187,10 @@ describe("testing endpoints...", () => {
     test(`POST /profiles. Test #${tag}`, async () => {
       for ( let call of calls ) {
         let { args, expres } = call
-        let errorMessage = getErrorMessage(expres.error)
         let result = await testServer.post("/api/v1/profiles").send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
-        expect(result.body.error).toStrictEqual(errorMessage)
+        expect(result.body.error).toBe(expres.error)
         if ( expres.error === undefined ) {
           expect(result.body.session).toMatch(patterns.sessionid)
           expect(result.body.profile).toBeDefined()

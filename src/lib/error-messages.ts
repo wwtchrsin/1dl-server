@@ -216,45 +216,35 @@ export const databaseConflicts: Record<string, TextResource> = {
     ru: "Профиль не найден",
   },
 }
-  
-export const getErrorMessage = (error: string | undefined): TextResource | undefined => {
-  if ( error === undefined ) {
-    return undefined
-  }
-  let err = error.split(".")
-  switch ( err[0] ) {
-    case "wrongValues": {
-      switch ( err[1] ) {
-        case "messages":
-          return wrongValues.messages[err[2]]
-        case "users":
-          return wrongValues.users[err[2]]
-        case "auth":
-          return wrongValues.auth[err[2]]
-        default:
-          return undefined
-      }
-    }
-    case "appErrors": {
-       return appErrors[err[1]]
-    }
-    case "databaseErrors": {
-      return databaseErrors[err[1]]
-    }
-    case "databaseConflicts": {
-      return databaseConflicts[err[1]]
-    }
-    default: {
-      return undefined
+
+export const errorMessages = (() => {
+  let errmsgs: Record<string, TextResource> = {}
+  for ( let group of ["messages", "users", "auth"] ) { 
+    for ( let item in wrongValues[group] ) {
+      let tag = `wrongValues.${group}.${item}`
+      errmsgs[tag] = wrongValues[group][item]
     }
   }
-}
+  for ( let item in appErrors ) {
+    let tag = `appErrors.${item}`
+    errmsgs[tag] = appErrors[item]
+  }
+  for ( let item in databaseErrors ) {
+    let tag = `databaseErrors.${item}`
+    errmsgs[tag] = databaseErrors[item]
+  }
+  for ( let item in databaseConflicts ) {
+    let tag = `databaseConflicts.${item}`
+    errmsgs[tag] = databaseConflicts[item]
+  }
+  return errmsgs
+})()
 
 export const getStatusCode = (error: string | undefined, successCode: number = 200): number => {
   if ( error === undefined ) {
     return successCode
   }
-  if ( getErrorMessage(error) === undefined ) {
+  if ( errorMessages[error] === undefined ) {
     return 500
   }
   let err = error.split(".")

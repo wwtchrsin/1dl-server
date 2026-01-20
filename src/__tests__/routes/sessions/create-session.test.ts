@@ -4,7 +4,6 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseUsers } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -183,8 +182,7 @@ describe("testing endpoints...", () => {
           expect(result.body.error).toBeUndefined()
           expect(result.body.session).toMatch(patterns.sessionid)
         } else {
-          let errorMessage = getErrorMessage(expres.error)
-          expect(result.body.error).toStrictEqual(errorMessage)
+          expect(result.body.error).toBe(expres.error)
           expect(result.body.session).toBeUndefined()
         }
       }

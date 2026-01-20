@@ -5,7 +5,7 @@ import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
   checkMessageData } from "../lib/database/checkers"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
-import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
+import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readProfile, readUserid, completeMessage,
   extractMessageids } from "./miscs"
 import logger from "../lib/logger"
@@ -20,7 +20,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getAuthStatus(getStatusCode(profile.error))
     logger.info(args, `${TAG}#ERROR_AUTHORIZATION`)
     res.status(status).json({
-      error: getErrorMessage(profile.error),
+      error: profile.error,
       message: undefined,
     })
     return
@@ -30,7 +30,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       message: undefined,
     })
     return
@@ -39,7 +39,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   if ( profile.data.state !== "active" || profile.data.region !== region ) {
     logger.info(args, `${TAG}#ERROR_PERMISSIONS`)
     res.status(403).json({
-      error: getErrorMessage("appErrors.actionNotAllowed"),
+      error: "appErrors.actionNotAllowed",
       message: undefined,
     })
     return
@@ -49,7 +49,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(message.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(message.error),
+      error: message.error,
       message: undefined,
     })
     return
@@ -72,7 +72,7 @@ const getMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info({ messageid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       message: undefined,
     })
     return
@@ -82,7 +82,7 @@ const getMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(message.error)
     logger.info({ messageid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(message.error),
+      error: message.error,
       message: undefined,
     })
     return
@@ -101,7 +101,7 @@ const getMessagesAction = async (req: Request<Roomid>, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info({ roomid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       message: undefined,
     })
     return
@@ -111,7 +111,7 @@ const getMessagesAction = async (req: Request<Roomid>, res: Response) => {
     let status = getStatusCode(messages.error)
     logger.info({ roomid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(messages.error),
+      error: messages.error,
       message: undefined,
     })
     return
@@ -130,7 +130,7 @@ const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) =
     let status = getStatusCode(checkError)
     logger.info({ districtid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       msgcounts: undefined,
     })
     return
@@ -150,7 +150,7 @@ const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) =
     let status = getStatusCode(msgcounts.error)
     logger.info({ districtid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(msgcounts.error),
+      error: msgcounts.error,
       msgcounts: undefined,
     })
     return
@@ -176,7 +176,7 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info({ region }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       districts: undefined,
     })
     return
@@ -195,7 +195,7 @@ const getRegionStatsAction = async (req: Request, res: Response) => {
     let status = getStatusCode(msgcounts.error)
     logger.info({ region }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(msgcounts.error),
+      error: msgcounts.error,
       districts: undefined,
     })
     return
@@ -217,7 +217,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info({ messageid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(checkError),
+      error: checkError,
       message: undefined,
     })
     return
@@ -227,7 +227,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info({ messageid: req.params }, `${TAG}#ERROR_AUTHORIZATION`)
     res.status(status).json({
-      error: getErrorMessage(userid.error),
+      error: userid.error,
       message: undefined,
     })
     return
@@ -237,7 +237,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     let status = getStatusCode(message.error)
     logger.info({ messageid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(message.error),
+      error: message.error,
       message: undefined,
     })
     return

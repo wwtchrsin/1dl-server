@@ -3,7 +3,6 @@ import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -67,12 +66,11 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`DELETE /sessions. Test #${tag}`, async () => {
-      let errorMessage = getErrorMessage(expres.error)
       let result = await testServer.delete("/api/v1/sessions")
         .set("Authorization", args)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
-      expect(result.body.error).toStrictEqual(errorMessage)
+      expect(result.body.error).toBe(expres.error)
       rowCount -= (expres.error === undefined) ? 1 : 0
       let table = await queryDatabase("SELECT * FROM sessions")
       expect(table).toBeDefined()

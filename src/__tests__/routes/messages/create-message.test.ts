@@ -6,7 +6,6 @@ import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, completeUsersByRegion,
   inactiveUsersByRegion, sessionByUser, databaseSessions } 
   from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
 
@@ -409,8 +408,7 @@ describe("testing endpoints...", () => {
           expect(result.body.message.color).toBe(content.color)
           expect(result.body.message.timestamp).toMatch(patterns.timestamp)
         } else {
-          let errorMessage = getErrorMessage(expres.error)
-          expect(result.body.error).toStrictEqual(errorMessage)
+          expect(result.body.error).toBe(expres.error)
           expect(result.body.message).toBeUndefined()
         }
       }

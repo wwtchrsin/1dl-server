@@ -5,7 +5,6 @@ import * as messages from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { populateDatabase, districtMsgcounts } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
@@ -114,8 +113,7 @@ describe("testing endpoints...", () => {
         expect(result.body.error).toBeUndefined()
         expect(result.body.msgcounts).toStrictEqual(expres.msgcounts)
       } else {
-        let errorMessage = getErrorMessage(expres.error)
-        expect(result.body.error).toStrictEqual(errorMessage)
+        expect(result.body.error).toStrictEqual(expres.error)
         expect(result.body.msgcounts).toBeUndefined()
       }
       expect(countRegionMessages).toHaveBeenCalledTimes(calls.countRegionMessages)

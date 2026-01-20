@@ -4,7 +4,7 @@ import { checkUserData } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
-import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
+import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readUserid, redactProfile, extractMessageids } from "./miscs"
 import env from "../lib/env"
 import type { Request, Response } from "express"
@@ -19,7 +19,7 @@ const createProfileAction = async (req: Request, res: Response) => {
     let status = getStatusCode(checkError)    
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({ 
-      error: getErrorMessage(checkError),
+      error: checkError,
       session: undefined,
       profile: undefined,
     })
@@ -30,7 +30,7 @@ const createProfileAction = async (req: Request, res: Response) => {
     let status = getStatusCode(result.error)    
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({ 
-      error: getErrorMessage(result.error),
+      error: result.error,
       session: undefined,
       profile: undefined,
     })
@@ -54,7 +54,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info(`${TAG}#ERROR_AUTHORIZATION`)
     res.status(status).json({
-      error: getErrorMessage(userid.error),
+      error: userid.error,
       user: undefined,
       messages: undefined,
     })
@@ -65,7 +65,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     let status = getStatusCode(result.error)
     logger.info(`${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
-      error: getErrorMessage(result.error),
+      error: result.error,
       profile: undefined,
       messages: undefined,
     })

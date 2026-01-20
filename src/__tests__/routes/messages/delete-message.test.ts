@@ -6,7 +6,6 @@ import { limits } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions, databaseMessages,
   messagesByUser, sessionByUser, databaseEmptyRooms, databaseCompleteUsers } 
   from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
 
@@ -282,8 +281,7 @@ describe("testing endpoints...", () => {
           expect(result.body.error).toBeUndefined()
           expect(result.body.message).toStrictEqual(expres.message)
         } else {
-          let errorMessage = getErrorMessage(expres.error)
-          expect(result.body.error).toStrictEqual(errorMessage)
+          expect(result.body.error).toBe(expres.error)
           expect(result.body.message).toBeUndefined()
         }
       }

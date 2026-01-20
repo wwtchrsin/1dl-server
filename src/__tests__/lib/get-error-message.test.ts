@@ -1,4 +1,4 @@
-import { getErrorMessage, wrongValues, appErrors, databaseErrors, databaseConflicts } 
+import { errorMessages, wrongValues, appErrors, databaseErrors, databaseConflicts } 
   from "../../lib/error-messages"
 
 describe("testing auxilliary functions...", () => {
@@ -50,7 +50,7 @@ describe("testing auxilliary functions...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`Function getErrorMessage. Test #${tag}`, () => {
-      let result = getErrorMessage(args)
+      let result = errorMessages[args]
       expect(result).toStrictEqual(expres)
     })
   }

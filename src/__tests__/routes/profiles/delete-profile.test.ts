@@ -5,7 +5,6 @@ import { sql } from "../../../lib/database/schema"
 import { examples, populateDatabase, databaseSessions,
   sessionByUser, databaseCompleteUsers, databaseUsers,
   databaseMessages, messagesByUser } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
 
@@ -142,8 +141,7 @@ describe("testing endpoints...", () => {
         rowCount.sessions--
         rowCount.messages -= expres.messages.length
       } else {
-        let errorMessage = getErrorMessage(expres.error)
-        expect(result.body.error).toStrictEqual(errorMessage)
+        expect(result.body.error).toStrictEqual(expres.error)
         expect(result.body.profile).toBeUndefined()
         expect(result.body.messages).toBeUndefined()
       }

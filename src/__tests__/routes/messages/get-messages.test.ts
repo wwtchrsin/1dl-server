@@ -5,7 +5,6 @@ import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { populateDatabase, databaseRooms,
   databaseMessages, messagesByRoom, databaseEmptyRooms } from "../../../lib/test-data"
-import { getErrorMessage } from "../../../lib/error-messages"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -113,8 +112,7 @@ describe("testing endpoints...", () => {
         expect(result.body.error).toBeUndefined()
         expect(result.body.messages).toStrictEqual(expres.messages)
       } else {
-        let errorMessage = getErrorMessage(expres.error)
-        expect(result.body.error).toStrictEqual(errorMessage)
+        expect(result.body.error).toBe(expres.error)
         expect(result.body.messages).toBeUndefined()
       }
     })

@@ -2,7 +2,7 @@ import { Router } from "express"
 import { createSession, deleteSession } from "../lib/database/users"
 import { checkUserCredentials } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
-import { getStatusCode, getAuthStatus, getErrorMessage } from "../lib/error-messages"
+import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readUserid } from "./miscs"
 import type { Request, Response } from "express"
 import type { Credentials } from "../lib/database/interfaces"
@@ -16,7 +16,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     let status = getStatusCode(checkError)
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({ 
-      error: getErrorMessage(checkError),
+      error: checkError,
       session: undefined,
     })
     return
@@ -26,7 +26,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     let status = getStatusCode(result.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)    
     res.status(status).json({
-      error: getErrorMessage(result.error),
+      error: result.error,
       session: undefined,
     })
     return
@@ -46,7 +46,7 @@ const deleteSessionAction = async (req: Request, res: Response) => {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info(`${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
-      error: getErrorMessage(userid.error)
+      error: userid.error
     })
     return
   }
@@ -54,9 +54,7 @@ const deleteSessionAction = async (req: Request, res: Response) => {
   if ( error !== undefined ) {
     let status = getStatusCode(error)
     logger.info(`${TAG}#ERROR_DB_QUERY`)
-    res.status(status).json({
-      error: getErrorMessage(error)
-    })
+    res.status(status).json({ error })
     return
   }
   logger.debug(`${TAG}#DONE`)
