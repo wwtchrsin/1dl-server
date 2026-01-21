@@ -12,7 +12,6 @@ describe("testing endpoints...", () => {
     expect(result.body).toBeDefined()
     expect(result.body.error).toBeUndefined()
     expect(result.body.messages).toBeDefined()
-    let messages = JSON.parse(result.body.messages)
-    expect(messages).toStrictEqual(errorMessages)
+    expect(result.body.messages).toStrictEqual(errorMessages)
   })
 })
