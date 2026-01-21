@@ -5,7 +5,7 @@ import { redactPassword } from "../lib/database/miscs"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
-import { readUserid, redactProfile, extractMessageids } from "./miscs"
+import { readProfile, readUserid, redactProfile, extractMessageids } from "./miscs"
 import env from "../lib/env"
 import type { Request, Response } from "express"
 import type { UserData } from "../lib/database/interfaces"
@@ -43,6 +43,25 @@ const createProfileAction = async (req: Request, res: Response) => {
     error: undefined,
     session: session.data,
     profile: redactProfile(result.data),
+  })
+}
+
+const getProfileAction = async (req: Request, res: Response) => {
+  let TAG = "routes/profiles/getProfile"
+  let profile = await readProfile(req.header("Authorization"))
+  if ( profile.error !== undefined ) {
+    let status = getAuthStatus(getStatusCode(profile.error))
+    logger.info(`${TAG}#ERROR_ARGS_CHECK`)
+    res.status(status).json({
+      error: profile.error,
+      profile: undefined,
+    })
+    return
+  }
+  logger.debug(`${TAG}#DONE`)
+  res.status(200).json({
+    error: undefined,
+    profile: redactProfile(profile.data),
   })
 }
 
@@ -85,6 +104,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
 
 const router = Router()
 
+router.get("/", getProfileAction)
 router.post("/", createProfileAction)
 router.delete("/", deleteProfileAction)
 
