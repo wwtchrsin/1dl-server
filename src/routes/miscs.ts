@@ -3,6 +3,15 @@ import { checkUserid, checkSessionid } from "../lib/database/checkers"
 import type { Profile, UserMessage, Message, Messageid } 
   from "../lib/database/interfaces"
 
+export type RedactedProfile = {
+  region: string,
+  login: string | number,
+  name: string | number,
+  state: string,
+  puid: string,
+  timestamp: string | number,
+}
+
 export const getToken = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
     if ( typeof header !== "string" ) {
@@ -64,7 +73,7 @@ export const readProfile = async (header: string | undefined):
     return result
   }
 
-export const redactProfile = (profile: Profile | undefined) => {
+export const redactProfile = (profile: Profile | undefined): RedactedProfile | undefined => {
   if ( profile === undefined ) {
     return undefined
   }

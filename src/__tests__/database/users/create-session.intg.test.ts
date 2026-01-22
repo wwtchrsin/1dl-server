@@ -26,55 +26,75 @@ describe("testing database queries...", () => {
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
     },
-    expres: "success",
+    expres: {
+      error: undefined,
+      userid: databaseUsers[0].userid,
+    },
   }, {
     tag: 2,
     args: {
       login: databaseUsers[2].login,
       password: databaseUsers[2].password,
     },
-    expres: "success",
+    expres: {
+      error: undefined,
+      userid: databaseUsers[2].userid,
+    },
   }, {
     tag: 3,
     args: {
       login: databaseUsers[0].login,
       password: databaseUsers[1].password,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
   }, {
     tag: 4,
     args: {
       login: examples.login.minLen,
       password: examples.password.minLen,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
   }, {
     tag: 5,
     args: {
       login: undefined,
       password: databaseUsers[0].password,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
   }, {
     tag: 6,
     args: {
       login: databaseUsers[0].login,
       password: undefined,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`Function createSession. Intg Test #${tag}`, async () => {
       let result = await createSession(args)
       let rowCount = 0      
-      if ( expres === "success" ) {     
+      if ( expres.error === undefined ) {     
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(patterns.sessionid)
+        expect(result.sessionid).toMatch(patterns.sessionid)
+        expect(result.userid).toBe(expres.userid)
         rowCount++
       } else {
-        expect(result.error).toBe(expres)
-        expect(result.data).toBeUndefined()
+        expect(result.error).toBe(expres.error)
+        expect(result.sessionid).toBeUndefined()
+        expect(result.userid).toBeUndefined()
       }
       let table = await queryDatabase("SELECT * FROM sessions")
       expect(table).toBeDefined()
@@ -83,12 +103,10 @@ describe("testing database queries...", () => {
   }
   test("Function createSession. Intg Test #8", async () => {
     let args1 = {
-      region: databaseUsers[0].login,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
     }
     let args2 = {
-      region: databaseUsers[1].login,
       login: databaseUsers[1].login,
       password: databaseUsers[1].password,
     }
@@ -96,13 +114,17 @@ describe("testing database queries...", () => {
     let resultB = await createSession(args1)
     let resultC = await createSession(args2)
     expect(resultA.error).toBeUndefined()
-    expect(resultA.data).toMatch(patterns.sessionid)
+    expect(resultA.sessionid).toMatch(patterns.sessionid)
+    expect(resultA.userid).toBe(databaseUsers[0].userid)
     expect(resultB.error).toBeUndefined()
-    expect(resultB.data).toMatch(patterns.sessionid)
+    expect(resultB.sessionid).toMatch(patterns.sessionid)
+    expect(resultB.userid).toBe(databaseUsers[0].userid)
     expect(resultC.error).toBeUndefined()
-    expect(resultC.data).toMatch(patterns.sessionid)
-    expect(resultA.data).not.toBe(resultB.data)
-    expect(resultA.data).not.toBe(resultC.data)
+    expect(resultC.sessionid).toMatch(patterns.sessionid)
+    expect(resultC.userid).toBe(databaseUsers[1].userid)
+    expect(resultA.sessionid).not.toBe(resultB.sessionid)
+    expect(resultA.sessionid).not.toBe(resultC.sessionid)
+    expect(resultB.sessionid).not.toBe(resultC.sessionid)
   })
 })
 

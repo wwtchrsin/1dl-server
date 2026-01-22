@@ -41,7 +41,7 @@ const createProfileAction = async (req: Request, res: Response) => {
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
-    session: session.data,
+    session: session.sessionid,
     profile: redactProfile(result.data),
   })
 }

@@ -87,7 +87,8 @@ export const deleteSession = async (userid: string): Promise<string | undefined>
 }
 
 export const createSession = async (credentials: Credentials):
-  Promise<{ error: string | undefined, data: string | undefined }> => {
+  Promise<{ error: string | undefined, sessionid: string | undefined, 
+  userid: string | undefined }> => {
     let TAG = "db/users/createSession"
     let args = { credentials: redactPassword(credentials) }
     let { login, password } = credentials
@@ -102,14 +103,16 @@ export const createSession = async (credentials: Credentials):
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.checkCredentials",
-        data: undefined,
+        sessionid: undefined,
+        userid: undefined,
       }
     }
     if ( checkResult.rows.length === 0 ) {
       logger.info(args, `${TAG}#ERROR_NOT_FOUND`)
       return {
         error: "databaseConflicts.profileNotFound",
-        data: undefined,
+        sessionid: undefined,
+        userid: undefined,
       }
     }
     let { userid } = checkResult.rows[0]
@@ -119,7 +122,8 @@ export const createSession = async (credentials: Credentials):
       logger.error(args, `${TAG}#ERROR_SESSION_REMOVE`)
       return {
         error: "databaseErrors.deleteSession",
-        data: undefined,
+        sessionid: undefined,
+        userid: undefined,
       }
     }
     let sessionid = await generateToken()
@@ -131,13 +135,15 @@ export const createSession = async (credentials: Credentials):
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseErrors.createSession",
-        data: undefined,
+        sessionid: undefined,
+        userid: undefined,
       }
     }
     logger.debug(args, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: sessionid,
+      sessionid: sessionid,
+      userid: userid,
     }
   }
      
@@ -171,7 +177,8 @@ export const getProfile = async (userid: string):
   }
 
 export const deleteProfile = async (userid: string):
-  Promise<{ error: string | undefined, messages: UserMessage[] | undefined, profile: Profile | undefined }> => {
+  Promise<{ error: string | undefined, messages: UserMessage[] | undefined, 
+  profile: Profile | undefined }> => {
     let TAG = "db/users/deleteProfile"
     let profile = await getProfile(userid)
     if ( profile.error !== undefined ) {

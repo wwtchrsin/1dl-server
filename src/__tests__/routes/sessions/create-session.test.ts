@@ -53,6 +53,20 @@ describe("testing endpoints...", () => {
     actions: [{
       args: {
         login: databaseUsers[1].login,
+        password: databaseUsers[1].password,
+        profile: true,
+      },
+      expres: {
+        error: undefined,
+        status: 201,
+      },
+    }],
+    rowCount: 1,
+  }, {
+    tag: 4,
+    actions: [{
+      args: {
+        login: databaseUsers[1].login,
         password: databaseUsers[0].password,
       },
       expres: {
@@ -62,7 +76,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 4,
+    tag: 5,
     actions: [{
       args: {
         login: examples.login.minLen + "abcd",
@@ -75,7 +89,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 5,
+    tag: 6,
     actions: [{
       args: {
         region: databaseUsers[0].region,
@@ -88,7 +102,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 6,
+    tag: 7,
     actions: [{
       args: {
         login: {},
@@ -101,7 +115,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 7,
+    tag: 8,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -113,7 +127,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 8,
+    tag: 9,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -126,7 +140,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 9,
+    tag: 10,
     actions: [{
       args: {
         login: databaseUsers[0].login,
@@ -148,7 +162,7 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 10,
+    tag: 11,
     actions: [{
       args: {
         login: databaseUsers[1].login,
@@ -184,6 +198,17 @@ describe("testing endpoints...", () => {
         } else {
           expect(result.body.error).toBe(expres.error)
           expect(result.body.session).toBeUndefined()
+          expect(result.body.profile).toBeUndefined()
+        }
+        if ( expres.error === undefined && (args as any).profile === true ) {
+          expect(result.body.profile).toBeDefined()
+          expect(result.body.profile.userid).toBeUndefined()
+          expect(result.body.profile.login).toBe((args as any).login)
+          expect(result.body.profile.password).toBeUndefined()
+          expect(result.body.profile.name).toBeDefined()
+          expect(result.body.profile.state).toBeDefined()
+          expect(result.body.profile.puid).toMatch(patterns.uuid)
+          expect(result.body.profile.timestamp).toBeDefined()
         }
       }
       let result = await queryDatabase("SELECT * FROM sessions")

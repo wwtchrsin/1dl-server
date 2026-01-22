@@ -1,16 +1,16 @@
 import { Router } from "express"
-import { createSession, deleteSession } from "../lib/database/users"
+import { createSession, deleteSession, getProfile } from "../lib/database/users"
 import { checkUserCredentials } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
-import { readUserid } from "./miscs"
+import { readUserid, redactProfile } from "./miscs"
 import type { Request, Response } from "express"
 import type { Credentials } from "../lib/database/interfaces"
 import logger from "../lib/logger"
 
 const createSessionAction = async (req: Request, res: Response) => {
   let TAG = "routes/sessions/createSession"
-  let args = { credentials: redactPassword(req.body) }
+  let args = { args: redactPassword(req.body) }
   let checkError = checkUserCredentials(req.body)
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
@@ -18,23 +18,46 @@ const createSessionAction = async (req: Request, res: Response) => {
     res.status(status).json({ 
       error: checkError,
       session: undefined,
+      prfile: undefined,
     })
     return
   }
-  let result = await createSession(req.body as Credentials)
-  if ( result.error !== undefined ) {
-    let status = getStatusCode(result.error)
+  let session = await createSession(req.body as Credentials)
+  if ( session.error !== undefined ) {
+    let status = getStatusCode(session.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)    
     res.status(status).json({
-      error: result.error,
+      error: session.error,
       session: undefined,
+      profile: undefined,
     })
     return
   }
-  logger.debug(args, `${TAG}#DONE`)
+  if ( req.body?.profile !== true ) {
+    logger.debug(args, `${TAG}#DONE`)
+    res.status(201).json({
+      error: undefined,
+      session: session.sessionid,
+      profile: undefined,
+    })
+    return
+  }
+  let profile = await getProfile(session.userid)
+  if ( profile.error ) {
+    let status = getStatusCode(profile.error)
+    logger.info(args, `${TAG}#ERROR_PROFILE_QUERY`)
+    res.status(status).json({
+      error: profile.error,
+      session: undefined,
+      profile: undefined,
+    })
+    return
+  }
+  logger.debug(args, `${TAG}#PROFILE_SENT`)
   res.status(201).json({
     error: undefined,
-    session: result.data,
+    session: session.sessionid,
+    profile: redactProfile(profile.data),
   })
 }
 

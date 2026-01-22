@@ -161,10 +161,12 @@ describe("testing database queries...", () => {
       let result = await users.createSession(args)
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
-        expect(result.data).toMatch(patterns.sessionid)
+        expect(result.sessionid).toMatch(patterns.sessionid)
+        expect(result.userid).toBe(correctData.userid)
       } else {
         expect(result.error).toBe(expres)
-        expect(result.data).toBeUndefined()
+        expect(result.sessionid).toBeUndefined()
+        expect(result.userid).toBeUndefined()
       }
     })
   }
