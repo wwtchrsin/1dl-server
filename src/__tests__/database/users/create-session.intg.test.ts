@@ -23,6 +23,7 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
+      region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
     },
@@ -33,6 +34,7 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
+      region: databaseUsers[2].region,
       login: databaseUsers[2].login,
       password: databaseUsers[2].password,
     },
@@ -43,8 +45,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      login: databaseUsers[0].login,
-      password: databaseUsers[1].password,
+      region: "a",
+      login: databaseUsers[2].login,
+      password: databaseUsers[2].password,
     },
     expres: {
       error: "databaseConflicts.profileNotFound",
@@ -53,8 +56,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      login: examples.login.minLen,
-      password: examples.password.minLen,
+      region: databaseUsers[0].region,
+      login: databaseUsers[0].login,
+      password: databaseUsers[1].password,
     },
     expres: {
       error: "databaseConflicts.profileNotFound",
@@ -63,8 +67,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: {
-      login: undefined,
-      password: databaseUsers[0].password,
+      region: examples.region.first,
+      login: examples.login.minLen,
+      password: examples.password.minLen,
     },
     expres: {
       error: "databaseConflicts.profileNotFound",
@@ -73,6 +78,29 @@ describe("testing database queries...", () => {
   }, {
     tag: 6,
     args: {
+      region: undefined,
+      login: databaseUsers[0].login,
+      password: databaseUsers[0].password,
+    },
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
+  }, {
+    tag: 7,
+    args: {
+      region: databaseUsers[0].region,
+      login: undefined,
+      password: databaseUsers[0].password,
+    },
+    expres: {
+      error: "databaseConflicts.profileNotFound",
+      userid: undefined,
+    },
+  }, {
+    tag: 8,
+    args: {
+      region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: undefined,
     },
@@ -103,10 +131,12 @@ describe("testing database queries...", () => {
   }
   test("Function createSession. Intg Test #8", async () => {
     let args1 = {
+      region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
     }
     let args2 = {
+      region: databaseUsers[1].region,
       login: databaseUsers[1].login,
       password: databaseUsers[1].password,
     }

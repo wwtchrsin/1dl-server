@@ -91,13 +91,13 @@ export const createSession = async (credentials: Credentials):
   userid: string | undefined }> => {
     let TAG = "db/users/createSession"
     let args = { credentials: redactPassword(credentials) }
-    let { login, password } = credentials
+    let { region, login, password } = credentials
     let passwordHash = hashPassword(login, password)
     let checkQuery = `
       SELECT userid FROM users 
-        WHERE login = $1 AND password = $2
+        WHERE region = $1 AND login = $2 AND password = $3
     `
-    let queryParameters = [login, passwordHash]
+    let queryParameters = [region, login, passwordHash]
     let checkResult = await queryDatabase(checkQuery, queryParameters)
     if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)

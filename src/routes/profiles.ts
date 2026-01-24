@@ -36,8 +36,8 @@ const createProfileAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let { login, password } = req.body as UserData
-  let session = await createSession({ login, password })
+  let { region, login, password } = req.body as UserData
+  let session = await createSession({ region, login, password })
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,

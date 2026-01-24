@@ -16,6 +16,7 @@ export type Profile = {
 }
 
 export type Credentials = {
+  region: string,
   login: string,
   password: string,
 }

@@ -5,6 +5,7 @@ describe("testing query validators...", () => {
   let testcases = [{
     tag: 1,
     args: {
+      region: examples.region.first,
       login: examples.login.regLen,
       password: examples.password.regLen,
     },
@@ -12,25 +13,44 @@ describe("testing query validators...", () => {
   }, {
     tag: 2,
     args: {
+      region: "#",
       login: "#",
       password: "#",
     },
     expres: undefined,
   }, {
+    tag: 1,
+    args: {
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+    },
+    expres: "wrongValues.auth.region",
+  }, {
     tag: 3,
     args: {
+      region: examples.region.first,
       password: examples.password.regLen,
     },
     expres: "wrongValues.auth.login",
   }, {
     tag: 4,
     args: {
+      region: examples.region.first,
       login: examples.login.regLen,
     },
     expres: "wrongValues.auth.password",
   }, {
+    tag: 1,
+    args: {
+      region: {},
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+    },
+    expres: "wrongValues.auth.region",
+  }, {
     tag: 5,
     args: {
+      region: examples.region.first,
       login: {},
       password: examples.password.regLen,
     },
@@ -38,6 +58,7 @@ describe("testing query validators...", () => {
   }, {
     tag: 6,
     args: {
+      region: examples.region.first,
       login: examples.login.regLen,
       password: {},
     },

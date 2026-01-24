@@ -2,8 +2,9 @@ import supertest from "supertest"
 import httpServer from "../../../http-server"
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
-import { patterns } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseUsers } from "../../../lib/test-data"
+import { limits, patterns } from "../../../lib/database/limits"
+import { examples, populateDatabase, databaseUsers, activeUsersByRegion } 
+  from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -26,6 +27,7 @@ describe("testing endpoints...", () => {
     tag: 1,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
       },
@@ -39,6 +41,7 @@ describe("testing endpoints...", () => {
     tag: 2,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
       },
@@ -52,6 +55,7 @@ describe("testing endpoints...", () => {
     tag: 3,
     actions: [{
       args: {
+        region: databaseUsers[1].region,
         login: databaseUsers[1].login,
         password: databaseUsers[1].password,
         profile: true,
@@ -66,8 +70,9 @@ describe("testing endpoints...", () => {
     tag: 4,
     actions: [{
       args: {
-        login: databaseUsers[1].login,
-        password: databaseUsers[0].password,
+        region: limits.messages.regions[1],
+        login: databaseUsers[activeUsersByRegion[0][0]].login,
+        password: databaseUsers[activeUsersByRegion[0][0]].password,
       },
       expres: {
         error: "databaseConflicts.profileNotFound",
@@ -79,8 +84,9 @@ describe("testing endpoints...", () => {
     tag: 5,
     actions: [{
       args: {
-        login: examples.login.minLen + "abcd",
-        password: examples.password.minLen + "abcd",
+        region: databaseUsers[0].region,
+        login: databaseUsers[1].login,
+        password: databaseUsers[0].password,
       },
       expres: {
         error: "databaseConflicts.profileNotFound",
@@ -93,6 +99,61 @@ describe("testing endpoints...", () => {
     actions: [{
       args: {
         region: databaseUsers[0].region,
+        login: databaseUsers[0].login,
+        password: databaseUsers[1].password,
+      },
+      expres: {
+        error: "databaseConflicts.profileNotFound",
+        status: 404,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 7,
+    actions: [{
+      args: {
+        region: examples.region.first + "abcd",
+        login: examples.login.minLen + "abcd",
+        password: examples.password.minLen + "abcd",
+      },
+      expres: {
+        error: "databaseConflicts.profileNotFound",
+        status: 404,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 8,
+    actions: [{
+      args: {
+        login: databaseUsers[0].login,
+        password: databaseUsers[0].password,
+      },
+      expres: {
+        error: "wrongValues.auth.region",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 9,
+    actions: [{
+      args: {
+        region: {},
+        login: databaseUsers[0].login,
+        password: databaseUsers[0].password,
+      },
+      expres: {
+        error: "wrongValues.auth.region",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 10,
+    actions: [{
+      args: {
+        region: databaseUsers[0].region,
         password: databaseUsers[0].password,
       },
       expres: {
@@ -102,9 +163,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 7,
+    tag: 11,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: {},
         password: databaseUsers[0].password,
       },
@@ -115,9 +177,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 8,
+    tag: 12,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
       },
       expres: {
@@ -127,9 +190,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 9,
+    tag: 13,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: {},
       },
@@ -140,9 +204,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 0,
   }, {
-    tag: 10,
+    tag: 14,
     actions: [{
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
       },
@@ -152,6 +217,7 @@ describe("testing endpoints...", () => {
       },
     }, {
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
       },
@@ -162,9 +228,10 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 11,
+    tag: 15,
     actions: [{
       args: {
+        region: databaseUsers[1].region,
         login: databaseUsers[1].login,
         password: databaseUsers[1].password,
       },
@@ -174,6 +241,7 @@ describe("testing endpoints...", () => {
       },
     }, {
       args: {
+        region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
       },

@@ -101,6 +101,10 @@ export const wrongValues: WrongValues = {
     },
   },
   auth: {
+    region: {
+      en: "Region is not set or incorrect",
+      ru: "Регион не задан или имеет недопустимое значение",
+    },
     login: {
       en: "Login is not set or incorrect",
       ru: "Логин не задан или имеет недопустимое значение",

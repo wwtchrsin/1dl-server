@@ -106,7 +106,10 @@ export const checkUserData = (req: any): string | undefined => {
 }
 
 export const checkUserCredentials = (req: any): string | undefined => {
-  let { login, password } = req ?? {}
+  let { region, login, password } = req ?? {}
+  if ( typeof region !== "string" ) {
+    return "wrongValues.auth.region"
+  }
   if ( typeof login !== "string" ) {
     return "wrongValues.auth.login"
   }

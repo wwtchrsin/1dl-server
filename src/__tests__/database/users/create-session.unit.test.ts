@@ -8,20 +8,24 @@ let correctData = {
   userid: examples.uuid[2],
   login: examples.login.correct[2],
   password: examples.password.correct[2],
+  region: examples.region.first,
 }
 
 let wrongData = {
   login: examples.login.correct[3],
   password: examples.password.correct[3],
+  region: examples.region.last,
 }
 
 let checkRequestSucceeds = (query: string, queryParams: string[]) => {
-  let [login, passwordHash] = queryParams
+  let [region, login, passwordHash] = queryParams
   let correctPassword = hashPassword(correctData.login, correctData.password)
-  if ( login === correctData.login && passwordHash === correctPassword ) {
-    return Promise.resolve({ 
-      rows: [{ userid: correctData.userid }]
-    })
+  if ( region === correctData.region &&
+    login === correctData.login && 
+    passwordHash === correctPassword ) {
+      return Promise.resolve({ 
+        rows: [{ userid: correctData.userid }]
+      })
   }
   return Promise.resolve({ rows: [] })
 }
@@ -58,6 +62,7 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
+      region: correctData.region,
       login: correctData.login,
       password: correctData.password,
     },
@@ -72,8 +77,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 2,
     args: {
-      login: wrongData.login,
-      password: wrongData.password,
+      region: wrongData.region,
+      login: correctData.login,
+      password: correctData.password,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -86,8 +92,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      login: "a",
-      password: correctData.password,
+      region: wrongData.region,
+      login: wrongData.login,
+      password: wrongData.password,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -100,8 +107,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
+      region: "a",
       login: correctData.login,
-      password: "a",
+      password: correctData.password,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -114,6 +122,37 @@ describe("testing database queries...", () => {
   }, {
     tag: 5,
     args: {
+      region: correctData.region,
+      login: "a",
+      password: correctData.password,
+    },
+    mocks: {
+      queryDatabase: mockDatabaseQuery({
+        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
+        mainRequest: mainRequestSucceeds,
+      })
+    },
+    expres: "databaseConflicts.profileNotFound",
+  }, {
+    tag: 6,
+    args: {
+      region: correctData.region,
+      login: correctData.login,
+      password: "a",
+    },
+    mocks: {
+      queryDatabase: mockDatabaseQuery({
+        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
+        mainRequest: mainRequestSucceeds,
+      })
+    },
+    expres: "databaseConflicts.profileNotFound",
+  }, {
+    tag: 7,
+    args: {
+      region: correctData.region,
       login: correctData.login,
       password: correctData.password,
     },
@@ -126,8 +165,9 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.checkCredentials",
   }, {
-    tag: 6,
+    tag: 8,
     args: {
+      region: correctData.region,
       login: correctData.login,
       password: correctData.password,
     },
@@ -140,8 +180,9 @@ describe("testing database queries...", () => {
     },
     expres: "databaseErrors.deleteSession",
   }, {
-    tag: 7,
+    tag: 9,
     args: {
+      region: correctData.region,
       login: correctData.login,
       password: correctData.password,
     },
