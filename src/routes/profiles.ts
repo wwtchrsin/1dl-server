@@ -94,6 +94,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
   await redisCache.changeRoomMsgcounts(result.messages, -1)
   await redisCache.changeDistrictMsgcounts(result.messages, -1)
   await publish("messages:deleted", { messageids })
+  await publish("sessions:deleted", { userids: [userid.data] })
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined,

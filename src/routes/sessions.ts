@@ -2,6 +2,7 @@ import { Router } from "express"
 import { createSession, deleteSession, getProfile } from "../lib/database/users"
 import { checkUserCredentials } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
+import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readUserid, redactProfile } from "./miscs"
 import type { Request, Response } from "express"
@@ -80,6 +81,7 @@ const deleteSessionAction = async (req: Request, res: Response) => {
     res.status(status).json({ error })
     return
   }
+  await publish("sessions:deleted", { userids: [userid.data] })
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined

@@ -1,3 +1,4 @@
+import * as wsState from "./state"
 import * as serverMessages from "./server-messages"
 import { subscribe } from "../redis/conn"
 import { parseJSON } from "../miscs"
@@ -64,6 +65,22 @@ export const listeners = new Map([
     let report  = message.data as RedisTypes.DistrictMsgcountsUpdate
     serverMessages.updateDistrictMsgcounts(report)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
+  }],
+  ["sessions:deleted", (messageJSON: string) => {
+    let TAG = "ws/channels/sessions:deleted"
+    let message = parseJSON(messageJSON)
+    if ( message.error ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
+      return
+    }
+    if ( isNaN(message.data?.userids?.length) ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
+      return
+    }
+    let { userids } = message.data
+    for ( let i=0; i < userids.length; i++ ) {
+      wsState.deleteClient(userids[i] as string)
+    }
   }]
 ])
 

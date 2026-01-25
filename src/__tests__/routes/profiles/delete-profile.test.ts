@@ -45,6 +45,11 @@ let profile = (uIndex: number) => {
   }
 }
 
+let userid = (uIndex: number) => {
+  let userIndex = databaseCompleteUsers[uIndex]
+  return databaseUsers[userIndex].userid
+}
+
 let sortMessages = (messages: any[]) => {
   return messages.sort((a, b) => +a.timestamp < +b.timestamp ? -1 : 1)
 }
@@ -82,6 +87,7 @@ describe("testing endpoints...", () => {
       error: undefined,
       profile: profile(1),
       messages: messages(1),
+      userid: userid(1),
     },
   }, {
     tag: 2,
@@ -91,6 +97,7 @@ describe("testing endpoints...", () => {
       error: undefined,
       profile: profile(3),
       messages: messages(3),
+      userid: userid(3),
     },
   }, {
     tag: 3,
@@ -100,6 +107,7 @@ describe("testing endpoints...", () => {
       error: "databaseConflicts.sessionNotFound",
       profile: undefined,
       messages: undefined,
+      userid: undefined,
     },
   }, {
     tag: 4,
@@ -109,6 +117,7 @@ describe("testing endpoints...", () => {
       error: "wrongValues.auth.sessionid",
       profile: undefined,
       messages: undefined,
+      userid: undefined,
     },
   }, {
     tag: 5,
@@ -118,6 +127,7 @@ describe("testing endpoints...", () => {
       error: "wrongValues.auth.header",
       profile: undefined,
       messages: undefined,
+      userid: undefined,
     },
   }]
   for ( let testcase of testcases ) {
@@ -125,7 +135,8 @@ describe("testing endpoints...", () => {
     test(`DELETE /profiles. Test #${tag}`, async () => {
       let userCount = expres.profile === undefined ? 0 : 1
       let msgCount = expres.messages?.length ?? 0
-      let reportsPromise = getReports("messages:deleted", userCount)
+      let mReportsPromise = getReports("messages:deleted", userCount)
+      let sReportsPromise = getReports("sessions:deleted", userCount)
       let result = await testServer.delete("/api/v1/profiles")
         .set("Authorization", args)
       expect(result.statusCode).toBe(expres.status)
@@ -154,18 +165,25 @@ describe("testing endpoints...", () => {
       expect(userTable.rows).toHaveLength(rowCount.users)
       expect(sessionTable.rows).toHaveLength(rowCount.sessions)
       expect(messageTable.rows).toHaveLength(rowCount.messages)
-      let reports = await reportsPromise
-      expect(reports).toHaveLength(userCount)
-      for ( let i=0; i < reports.length; i++ ) {
-        expect(reports[i].messageids).toBeDefined()
-        expect(reports[i].messageids).toHaveLength(msgCount)
+      let mReports = await mReportsPromise
+      expect(mReports).toHaveLength(userCount)
+      for ( let i=0; i < mReports.length; i++ ) {
+        expect(mReports[i].messageids).toBeDefined()
+        expect(mReports[i].messageids).toHaveLength(msgCount)
         for ( let j=0; j < msgCount; j++ ) {
-          expect(reports[i].messageids[j].region).toBeDefined()
-          expect(reports[i].messageids[j].district).toBeDefined()
-          expect(reports[i].messageids[j].room).toBeDefined()
-          expect(reports[i].messageids[j].index).toBeDefined()
-          expect(reports[i].messageids[j].text).toBeUndefined()
+          expect(mReports[i].messageids[j].region).toBeDefined()
+          expect(mReports[i].messageids[j].district).toBeDefined()
+          expect(mReports[i].messageids[j].room).toBeDefined()
+          expect(mReports[i].messageids[j].index).toBeDefined()
+          expect(mReports[i].messageids[j].text).toBeUndefined()
         }
+      }
+      let sReports = await sReportsPromise
+      expect(sReports).toHaveLength(userCount)
+      for ( let i=0; i < sReports.length; i++ ) {
+        expect(sReports[i].userids).toBeDefined()
+        expect(sReports[i].userids).toHaveLength(1)
+        expect(sReports[i].userids[0]).toBe(expres.userid)
       }
     })
   }
