@@ -37,10 +37,6 @@ export const limits = {
     }
   },
   user: {
-    region: {
-      values: ["en", "ru"],
-      pattern: "^(en|ru)$",
-    },
     login: {
       minLen: 8,
       maxLen: 16,
