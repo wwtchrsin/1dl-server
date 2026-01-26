@@ -71,7 +71,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestFailure,
     },
     expres: {
-      error: "databaseErrors.countDistrictMessages",
+      error: "databaseError.countDistrictMessages",
       data: undefined,
     },
   }]

@@ -33,7 +33,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min - 1}`,
       room: `${limits.message.room.min}`,
     },
-    expres: "wrongValues.messages.district",
+    expres: "wrongValue.message.district",
   }, {
     tag: 5,
     args: {
@@ -41,7 +41,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min - 1}`,
       room: `${limits.message.room.min}`,
     },
-    expres: "wrongValues.messages.district",
+    expres: "wrongValue.message.district",
   }, {
     tag: 6,
     args: {
@@ -49,7 +49,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min}`,
       room: `${limits.message.room.min - 1}`,
     },
-    expres: "wrongValues.messages.room",
+    expres: "wrongValue.message.room",
   }, {
     tag: 7,
     args: {
@@ -57,7 +57,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min + 0.5}`,
       room: `${limits.message.room.min}`,
     },
-    expres: "wrongValues.messages.district",
+    expres: "wrongValue.message.district",
   }, {
     tag: 8,
     args: {
@@ -65,7 +65,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min}`,
       room: `${limits.message.room.min + 0.5}`,
     },
-    expres: "wrongValues.messages.room",
+    expres: "wrongValue.message.room",
   }, {
     tag: 9,
     args: {
@@ -73,7 +73,7 @@ describe("testing query validators...", () => {
       district: `${limits.message.district.min + 1}`,
       room: `${limits.message.room.min + 1}`,
     },
-    expres: "wrongValues.messages.region",
+    expres: "wrongValue.message.region",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

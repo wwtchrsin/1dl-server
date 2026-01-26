@@ -50,7 +50,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.users.userid",
+    expres: "wrongValue.user.userid",
   }, {
     tag: 4,
     args: {
@@ -66,7 +66,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.region",
+    expres: "wrongValue.message.region",
   }, {
     tag: 5,
     args: {
@@ -82,7 +82,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.district",
+    expres: "wrongValue.message.district",
   }, {
     tag: 6,
     args: {
@@ -98,7 +98,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.district",
+    expres: "wrongValue.message.district",
   }, {
     tag: 7,
     args: {
@@ -114,7 +114,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.room",
+    expres: "wrongValue.message.room",
   }, {
     tag: 8,
     args: {
@@ -130,7 +130,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.room",
+    expres: "wrongValue.message.room",
   }, {
     tag: 9,
     args: {
@@ -146,7 +146,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.index",
+    expres: "wrongValue.message.index",
   }, {
     tag: 10,
     args: {
@@ -162,7 +162,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.index",
+    expres: "wrongValue.message.index",
   }, {
     tag: 11,
     args: {
@@ -178,7 +178,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.text",
+    expres: "wrongValue.message.text",
   }, {
     tag: 12,
     args: {
@@ -194,7 +194,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValues.messages.text",
+    expres: "wrongValue.message.text",
   }, {
     tag: 13,
     args: {
@@ -210,7 +210,7 @@ describe("testing query validators...", () => {
         color: "Abcd",
       }
     },
-    expres: "wrongValues.messages.color",
+    expres: "wrongValue.message.color",
   }, {
     tag: 14,
     args: {

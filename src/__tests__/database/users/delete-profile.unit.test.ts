@@ -59,7 +59,7 @@ let getProfile = (userid: string) => {
   let index = correctUserids.indexOf(userid)
   if ( index < 0 ) {
     return Promise.resolve({ 
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       data: undefined,
     })
   }
@@ -84,7 +84,7 @@ let getUserMessagesSucceeds = (userid: string) => {
 }
 
 let getUserMessagesFails = () => Promise.resolve({ 
-  error: "databaseErrors.getUserMessages",
+  error: "databaseError.getUserMessages",
   data: undefined,
 })
 
@@ -128,7 +128,7 @@ describe("testing database queries...", () => {
       executeTransaction: transactionSucceeds,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       messages: undefined,
       profile: undefined,
     }
@@ -141,7 +141,7 @@ describe("testing database queries...", () => {
       executeTransaction: transactionSucceeds,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       messages: undefined,
       profile: undefined,
     }
@@ -154,7 +154,7 @@ describe("testing database queries...", () => {
       executeTransaction: transactionSucceeds,
     },
     expres: {
-      error: "databaseErrors.getUserMessages",
+      error: "databaseError.getUserMessages",
       messages: undefined,
       profile: undefined,
     }
@@ -167,7 +167,7 @@ describe("testing database queries...", () => {
       executeTransaction: transactionFails,
     },
     expres: {
-      error: "databaseErrors.deleteProfile",
+      error: "databaseError.deleteProfile",
       messages: undefined,
       profile: undefined,
     }

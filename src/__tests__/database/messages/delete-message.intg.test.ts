@@ -72,7 +72,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
@@ -88,7 +88,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
@@ -104,7 +104,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
@@ -120,7 +120,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,
@@ -136,7 +136,7 @@ describe("testing database queries...", () => {
       },
     },
     expres: {
-      error: "databaseErrors.deleteMessage",
+      error: "databaseError.deleteMessage",
       data: undefined,
     },
     rowCount: databaseMessages.length - 2,

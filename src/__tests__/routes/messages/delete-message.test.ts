@@ -101,7 +101,7 @@ describe("testing endpoints...", () => {
         messageid: messageid(2, 0),
       },
       expres: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         message: undefined,
         status: 404,
       },
@@ -115,7 +115,7 @@ describe("testing endpoints...", () => {
         messageid: messageid(2, 0),
       },
       expres: {
-        error: "databaseConflicts.sessionNotFound",
+        error: "databaseConflict.sessionNotFound",
         message: undefined,
         status: 401,
       },
@@ -129,7 +129,7 @@ describe("testing endpoints...", () => {
         messageid: messageid(2, 0),
       },
       expres: {
-        error: "wrongValues.auth.sessionid",
+        error: "wrongValue.auth.sessionid",
         message: undefined,
         status: 401,
       },
@@ -148,7 +148,7 @@ describe("testing endpoints...", () => {
         },
       },
       expres: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         message: undefined,
         status: 404,
       },
@@ -167,7 +167,7 @@ describe("testing endpoints...", () => {
         },
       },
       expres: {
-        error: "wrongValues.messages.region",
+        error: "wrongValue.message.region",
         message: undefined,
         status: 400,
       },
@@ -186,7 +186,7 @@ describe("testing endpoints...", () => {
         },
       },
       expres: {
-        error: "wrongValues.messages.district",
+        error: "wrongValue.message.district",
         message: undefined,
         status: 400,
       },
@@ -205,7 +205,7 @@ describe("testing endpoints...", () => {
         },
       },
       expres: {
-        error: "wrongValues.messages.room",
+        error: "wrongValue.message.room",
         message: undefined,
         status: 400,
       },
@@ -224,7 +224,7 @@ describe("testing endpoints...", () => {
         },
       },
       expres: {
-        error: "wrongValues.messages.index",
+        error: "wrongValue.message.index",
         message: undefined,
         status: 400,
       },
@@ -248,7 +248,7 @@ describe("testing endpoints...", () => {
         messageid: messageid(2, 0),
       },
       expres: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         message: undefined,
         status: 404,
       },

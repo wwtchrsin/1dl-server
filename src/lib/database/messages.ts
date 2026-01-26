@@ -16,7 +16,7 @@ export const countRegionMessages = async (region: string | undefined):
     if ( !result ) {
       logger.error({ region }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.countRegionMessages",
+        error: "databaseError.countRegionMessages",
         data: undefined,
       }
     }
@@ -41,7 +41,7 @@ export const countDistrictMessages = async (districtid: Districtid):
     if ( !result ) {
       logger.error({ districtid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.countDistrictMessages",
+        error: "databaseError.countDistrictMessages",
         data: undefined
       }
     }
@@ -68,7 +68,7 @@ export const getMessages = async (roomid: Roomid):
     if ( !result?.rows ) {
       logger.error({ roomid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getMessages",
+        error: "databaseError.getMessages",
         data: undefined
       }
     }
@@ -94,14 +94,14 @@ export const getMessage = async (messageid: Messageid):
     if ( result === undefined || result?.rows?.length > 1 ) {
       logger.error({ messageid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getMessage",
+        error: "databaseError.getMessage",
         data: undefined,
       }
     }
     if ( result?.rows?.length === 0 ) {
       logger.info({ messageid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       }
     }
@@ -123,7 +123,7 @@ export const getUserMessages = async (userid: string):
     if ( result === undefined ) {
       logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getUserMessages",
+        error: "databaseError.getUserMessages",
         data: undefined,
       }
     }
@@ -140,17 +140,17 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
     let { region, district, room, index } = messageid
     let { text, color } = content
     let message = await getMessage({ region, district, room, index })
-    if ( message.error === "databaseErrors.getMessage" ) {
+    if ( message.error === "databaseError.getMessage" ) {
       logger.error({ userid, messageid, content }, `${TAG}#ERROR_GET_MESSAGE`)
       return {
-        error: "databaseErrors.checkMessage",
+        error: "databaseError.checkMessage",
         data: undefined,
       }
     }
     if ( message.data !== undefined ) {
       logger.info({ userid, messageid, content }, `${TAG}#ERROR_MESSAGE_EXISTS`)
       return {
-        error: "databaseConflicts.messageAlreadyExists",
+        error: "databaseConflict.messageAlreadyExists",
         data: undefined,
       }
     }
@@ -164,7 +164,7 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
     if ( result?.rows?.length !== 1 ) {
       logger.error({ userid, messageid, content }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.createMessage",
+        error: "databaseError.createMessage",
         data: undefined,
       }
     }
@@ -190,14 +190,14 @@ export const deleteMessage = async (userid: string, messageid: Messageid):
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ userid, messageid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.deleteMessage",
+        error: "databaseError.deleteMessage",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
       logger.info({ userid, messageid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       }
     }

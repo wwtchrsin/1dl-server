@@ -3,71 +3,71 @@ import { getStatusCode } from "../../lib/error-messages"
 describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
-    args: ["wrongValues.messages.region"],
+    args: ["wrongValue.message.region"],
     expres: 400,
   }, {
     tag: 2,
-    args: ["wrongValues.messages.index", 200],
+    args: ["wrongValue.message.index", 200],
     expres: 400,
   }, {
     tag: 3,
-    args: ["wrongValues.users.login"],
+    args: ["wrongValue.user.login"],
     expres: 400,
   }, {
     tag: 4,
-    args: ["wrongValues.users.password"],
+    args: ["wrongValue.user.password"],
     expres: 400,
   }, {
     tag: 5,
-    args: ["wrongValues.auth.login"],
+    args: ["wrongValue.auth.login"],
     expres: 400,
   }, {
     tag: 6,
-    args: ["wrongValues.auth.header"],
+    args: ["wrongValue.auth.header"],
     expres: 401,
   }, {
     tag: 7,
-    args: ["appErrors.actionNotAllowed"],
+    args: ["appError.actionNotAllowed"],
     expres: 403,
   }, {
     tag: 8,
-    args: ["databaseErrors.getMessages"],
+    args: ["databaseError.getMessages"],
     expres: 500,
   }, {
     tag: 9,
-    args: ["databaseErrors.deleteSession", 200],
+    args: ["databaseError.deleteSession", 200],
     expres: 500,
   }, {
     tag: 10,
-    args: ["databaseConflicts.messageNotFound", 200],
+    args: ["databaseConflict.messageNotFound", 200],
     expres: 404,
   }, {
     tag: 11,
-    args: ["databaseConflicts.messageAlreadyExists", 200],
+    args: ["databaseConflict.messageAlreadyExists", 200],
     expres: 409,
   }, {
     tag: 12,
-    args: ["wrongValues.messages.regionabcd"],
+    args: ["wrongValue.message.regionabcd"],
     expres: 500,
   }, {
     tag: 13,
-    args: ["wrongValues.abcd"],
+    args: ["wrongValue.abcd"],
     expres: 500,
   }, {
     tag: 14,
-    args: ["appErrors.abcd"],
+    args: ["appError.abcd"],
     expres: 500,
   }, {
     tag: 15,
-    args: ["databaseErrors.abcd"],
+    args: ["databaseError.abcd"],
     expres: 500,
   }, {
     tag: 16,
-    args: ["databaseConflicts.abcd", 200],
+    args: ["databaseConflict.abcd", 200],
     expres: 500,
   }, {
     tag: 17,
-    args: ["databaseConflicts.abcd"],
+    args: ["databaseConflict.abcd"],
     expres: 500,
   }, {
     tag: 18,

@@ -45,7 +45,7 @@ describe("testing database queries...", () => {
     },
     mocks: {
       getMessage: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
@@ -68,12 +68,12 @@ describe("testing database queries...", () => {
     },
     mocks: {
       getMessage: {
-        error: "databaseErrors.getMessage",
+        error: "databaseError.getMessage",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
     },
-    expres: "databaseErrors.checkMessage",
+    expres: "databaseError.checkMessage",
   }, {
     tag: 3,
     args: {
@@ -91,7 +91,7 @@ describe("testing database queries...", () => {
     },
     mocks: {
       getMessage: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnOneMessage,
@@ -129,7 +129,7 @@ describe("testing database queries...", () => {
       },
       queryDatabase: returnOneMessage,
     },
-    expres: "databaseConflicts.messageAlreadyExists",
+    expres: "databaseConflict.messageAlreadyExists",
   }, {
     tag: 5,
     args: {
@@ -147,12 +147,12 @@ describe("testing database queries...", () => {
     },
     mocks: {
       getMessage: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnZeroMessages,
     },
-    expres: "databaseErrors.createMessage",
+    expres: "databaseError.createMessage",
   }, {
     tag: 6,
     args: {
@@ -170,12 +170,12 @@ describe("testing database queries...", () => {
     },
     mocks: {
       getMessage: {
-        error: "databaseConflicts.messageNotFound",
+        error: "databaseConflict.messageNotFound",
         data: undefined,
       },
       queryDatabase: returnError,
     },
-    expres: "databaseErrors.createMessage",
+    expres: "databaseError.createMessage",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase

@@ -42,7 +42,7 @@ describe("testing endpoints...", () => {
     args: "Bearer " + databaseSessions[0].sessionid,
     expres: {
       status: 401,
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       userid: undefined,
     },
   }, {
@@ -50,7 +50,7 @@ describe("testing endpoints...", () => {
     args: "Bearer " + examples.sessionid[0],
     expres: {
       status: 401,
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       userid: undefined,
     },
   }, {
@@ -58,7 +58,7 @@ describe("testing endpoints...", () => {
     args: "Bearer abcd",
     expres: {
       status: 401,
-      error: "wrongValues.auth.sessionid",
+      error: "wrongValue.auth.sessionid",
       userid: undefined,
     },
   }, {
@@ -66,7 +66,7 @@ describe("testing endpoints...", () => {
     args: "",
     expres: {
       status: 401,
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       userid: undefined,
     },
   }]

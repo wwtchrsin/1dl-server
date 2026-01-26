@@ -33,7 +33,7 @@ describe("testing database queries...", () => {
         rowCount: 0,
       },
     },
-    expres: "databaseConflicts.sessionNotFound",
+    expres: "databaseConflict.sessionNotFound",
   }, {
     tag: 4,
     args: correctData.userid,
@@ -42,14 +42,14 @@ describe("testing database queries...", () => {
         rowCount: 2,
       },
     },
-    expres: "databaseErrors.deleteSession",
+    expres: "databaseError.deleteSession",
   }, {
     tag: 5,
     args: correctData.userid,
     mocks: {
       queryDatabase: undefined,
     },
-    expres: "databaseErrors.deleteSession",
+    expres: "databaseError.deleteSession",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

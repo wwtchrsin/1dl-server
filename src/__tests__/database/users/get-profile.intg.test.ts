@@ -48,14 +48,14 @@ describe("testing database queries...", () => {
     tag: 3,
     args: examples.uuid[0],
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       data: undefined,
     },
   }, {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "databaseErrors.getProfile",
+      error: "databaseError.getProfile",
       data: undefined,
     },
   }]

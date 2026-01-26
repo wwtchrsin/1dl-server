@@ -29,21 +29,21 @@ describe("testing query validators...", () => {
       text: examples.text.tooShort,
       color: examples.color.first,
     },
-    expres: "wrongValues.messages.text",
+    expres: "wrongValue.message.text",
   }, {
     tag: 5,
     args: {
       text: examples.text.tooLong,
       color: examples.color.first,
     },
-    expres: "wrongValues.messages.text",
+    expres: "wrongValue.message.text",
   }, {
     tag: 6,
     args: {
       text: examples.text.minLen,
       color: "12345678",
     },
-    expres: "wrongValues.messages.color",
+    expres: "wrongValue.message.color",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

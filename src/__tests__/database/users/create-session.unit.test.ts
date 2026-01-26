@@ -88,7 +88,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 3,
     args: {
@@ -103,7 +103,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 4,
     args: {
@@ -118,7 +118,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 5,
     args: {
@@ -133,7 +133,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 6,
     args: {
@@ -148,7 +148,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 7,
     args: {
@@ -163,7 +163,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseErrors.checkCredentials",
+    expres: "databaseError.checkCredentials",
   }, {
     tag: 8,
     args: {
@@ -178,7 +178,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestSucceeds,
       })
     },
-    expres: "databaseErrors.deleteSession",
+    expres: "databaseError.deleteSession",
   }, {
     tag: 9,
     args: {
@@ -193,7 +193,7 @@ describe("testing database queries...", () => {
         mainRequest: mainRequestFails,
       })
     },
-    expres: "databaseErrors.createSession",
+    expres: "databaseError.createSession",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

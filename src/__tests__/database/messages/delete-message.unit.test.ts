@@ -64,7 +64,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: messageNotFound,
     },
-    expres: "databaseConflicts.messageNotFound",
+    expres: "databaseConflict.messageNotFound",
   }, {
     tag: 4,
     args: {
@@ -74,7 +74,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: "databaseErrors.deleteMessage",
+    expres: "databaseError.deleteMessage",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

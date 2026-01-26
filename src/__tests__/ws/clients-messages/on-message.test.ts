@@ -59,7 +59,7 @@ describe("testing ws message handlers...", () => {
         [examples.uuid[0]]
       ],
       reportError: [
-        [examples.uuid[0], "wrongValues.wsMessage.location"]
+        [examples.uuid[0], "wrongValue.wsMessage.location"]
       ],
     },
   }, {
@@ -78,7 +78,7 @@ describe("testing ws message handlers...", () => {
       setUserLocation: [],
       deleteUserLocation: [],
       reportError: [
-        [examples.uuid[1], "wrongValues.wsMessage.type"]
+        [examples.uuid[1], "wrongValue.wsMessage.type"]
       ],
     },
   }, {
@@ -91,7 +91,7 @@ describe("testing ws message handlers...", () => {
       setUserLocation: [],
       deleteUserLocation: [],
       reportError: [
-        [examples.uuid[0], "wrongValues.wsMessage.json"]
+        [examples.uuid[0], "wrongValue.wsMessage.json"]
       ],
     },
   }]

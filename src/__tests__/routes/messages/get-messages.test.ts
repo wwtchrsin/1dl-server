@@ -72,7 +72,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.region",
+      error: "wrongValue.message.region",
       messages: undefined,
     },
   }, {
@@ -84,7 +84,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.district",
+      error: "wrongValue.message.district",
       messages: undefined,
     },
   }, {
@@ -96,7 +96,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.room",
+      error: "wrongValue.message.room",
       messages: undefined,
     },
   }]

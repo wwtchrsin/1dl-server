@@ -35,14 +35,14 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: sessionNotFound,
     },
-    expres: "databaseConflicts.sessionNotFound",
+    expres: "databaseConflict.sessionNotFound",
   }, {
     tag: 4,
     args: sessionid,
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: "databaseErrors.getUserid",
+    expres: "databaseError.getUserid",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

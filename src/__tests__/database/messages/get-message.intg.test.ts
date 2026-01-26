@@ -63,7 +63,7 @@ describe("testing database queries...", () => {
       index: limits.message.index.min,
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
   }, {
@@ -75,7 +75,7 @@ describe("testing database queries...", () => {
       index: limits.message.index.min,
     },
     expres: {
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       data: undefined,
     },
   }]

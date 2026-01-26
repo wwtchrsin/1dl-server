@@ -27,7 +27,7 @@ describe("testing auxilliary functions...", () => {
     args: "Bearer " + examples.sessionid[0],
     mocks: {
       getUserid: {
-        error: "databaseConflicts.sessionNotFound",
+        error: "databaseConflict.sessionNotFound",
         data: undefined,
       },
     },
@@ -35,7 +35,7 @@ describe("testing auxilliary functions...", () => {
       getUserid: examples.sessionid[0],
     },
     expres: {
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       data: undefined,
     },
   }, {
@@ -43,7 +43,7 @@ describe("testing auxilliary functions...", () => {
     args: "Bearer " + examples.sessionid[0],
     mocks: {
       getUserid: {
-        error: "databaseConflicts.sessionNotFound",
+        error: "databaseConflict.sessionNotFound",
         data: undefined,
       },
     },
@@ -51,7 +51,7 @@ describe("testing auxilliary functions...", () => {
       getUserid: examples.sessionid[0],
     },
     expres: {
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       data: undefined,
     },
   }, {
@@ -65,7 +65,7 @@ describe("testing auxilliary functions...", () => {
     },
     mocksCalledWith: {},
     expres: {
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       data: undefined,
     },
   }]

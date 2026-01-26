@@ -86,7 +86,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnEmptyList,
     },
-    expres: "databaseConflicts.messageNotFound",
+    expres: "databaseConflict.messageNotFound",
   }, {
     tag: 3,
     args: {
@@ -98,7 +98,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnTwoMessages,
     },
-    expres: "databaseErrors.getMessage",
+    expres: "databaseError.getMessage",
   }, {
     tag: 4,
     args: {
@@ -110,7 +110,7 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: returnError,
     },
-    expres: "databaseErrors.getMessage",
+    expres: "databaseError.getMessage",
   }, {
     tag: 5,
     args: {

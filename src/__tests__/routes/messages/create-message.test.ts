@@ -91,7 +91,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.messages.region",
+        error: "wrongValue.message.region",
         status: 400,
       },
     }],
@@ -110,7 +110,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.messages.district",
+        error: "wrongValue.message.district",
         status: 400,
       },
     }],
@@ -129,7 +129,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.messages.room",
+        error: "wrongValue.message.room",
         status: 400,
       },
     }],
@@ -148,7 +148,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.messages.index",
+        error: "wrongValue.message.index",
         status: 400,
       },
     }],
@@ -167,7 +167,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.messages.text",
+        error: "wrongValue.message.text",
         status: 400,
       },
     }],
@@ -186,7 +186,7 @@ describe("testing endpoints...", () => {
         color: "abcd",
       }],
       expres: {
-        error: "wrongValues.messages.color",
+        error: "wrongValue.message.color",
         status: 400,
       },
     }],
@@ -205,7 +205,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "appErrors.actionNotAllowed",
+        error: "appError.actionNotAllowed",
         status: 403,
       },
     }],
@@ -224,7 +224,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "appErrors.actionNotAllowed",
+        error: "appError.actionNotAllowed",
         status: 403,
       },
     }],
@@ -243,7 +243,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "databaseConflicts.sessionNotFound",
+        error: "databaseConflict.sessionNotFound",
         status: 401,
       },
     }],
@@ -262,7 +262,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValues.auth.header",
+        error: "wrongValue.auth.header",
         status: 401,
       },
     }],
@@ -330,7 +330,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "databaseConflicts.messageAlreadyExists",
+        error: "databaseConflict.messageAlreadyExists",
         status: 409,
       },
     }],
@@ -364,7 +364,7 @@ describe("testing endpoints...", () => {
         color: examples.color.first,
       }],
       expres: {
-        error: "databaseConflicts.messageAlreadyExists",
+        error: "databaseConflict.messageAlreadyExists",
         status: 409,
       },
     }, {

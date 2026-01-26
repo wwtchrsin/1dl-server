@@ -24,21 +24,21 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
     },
-    expres: "wrongValues.auth.region",
+    expres: "wrongValue.auth.region",
   }, {
     tag: 3,
     args: {
       region: examples.region.first,
       password: examples.password.regLen,
     },
-    expres: "wrongValues.auth.login",
+    expres: "wrongValue.auth.login",
   }, {
     tag: 4,
     args: {
       region: examples.region.first,
       login: examples.login.regLen,
     },
-    expres: "wrongValues.auth.password",
+    expres: "wrongValue.auth.password",
   }, {
     tag: 1,
     args: {
@@ -46,7 +46,7 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
     },
-    expres: "wrongValues.auth.region",
+    expres: "wrongValue.auth.region",
   }, {
     tag: 5,
     args: {
@@ -54,7 +54,7 @@ describe("testing query validators...", () => {
       login: {},
       password: examples.password.regLen,
     },
-    expres: "wrongValues.auth.login",
+    expres: "wrongValue.auth.login",
   }, {
     tag: 6,
     args: {
@@ -62,7 +62,7 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: {},
     },
-    expres: "wrongValues.auth.password",
+    expres: "wrongValue.auth.password",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

@@ -12,7 +12,7 @@ let loginExists = () => {
 }
 
 let loginCheckError = () => {
-  return Promise.resolve({ error: "databaseErrors.checkUserExists", data: undefined })
+  return Promise.resolve({ error: "databaseError.checkUserExists", data: undefined })
 }
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
@@ -64,7 +64,7 @@ describe("testing database queries...", () => {
       loginExists: loginExists,
       queryDatabase: requestReturnsUser,
     },
-    expres: "databaseConflicts.loginTaken",
+    expres: "databaseConflict.loginTaken",
   }, {
     tag: 3,
     args: {
@@ -80,7 +80,7 @@ describe("testing database queries...", () => {
       loginExists: loginCheckError,
       queryDatabase: requestReturnsUser,
     },
-    expres: "databaseErrors.checkUserExists",
+    expres: "databaseError.checkUserExists",
   }, {
     tag: 4,
     args: {
@@ -96,7 +96,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsError,
     },
-    expres: "databaseErrors.createProfile",
+    expres: "databaseError.createProfile",
   }, {
     tag: 5,
     args: {
@@ -112,7 +112,7 @@ describe("testing database queries...", () => {
       loginExists: loginDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
     },
-    expres: "databaseErrors.createProfile",
+    expres: "databaseError.createProfile",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase

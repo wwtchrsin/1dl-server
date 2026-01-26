@@ -72,7 +72,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 404,
-      error: "databaseConflicts.messageNotFound",
+      error: "databaseConflict.messageNotFound",
       message: undefined,
     },
   }, {
@@ -85,7 +85,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.region",
+      error: "wrongValue.message.region",
       message: undefined,
     },
   }, {
@@ -98,7 +98,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.district",
+      error: "wrongValue.message.district",
       message: undefined,
     },
   }, {
@@ -111,7 +111,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.room",
+      error: "wrongValue.message.room",
       message: undefined,
     },
   }, {
@@ -124,7 +124,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.index",
+      error: "wrongValue.message.index",
       message: undefined,
     },
   }]

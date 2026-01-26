@@ -72,7 +72,7 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "databaseErrors.createMessage",
+      error: "databaseError.createMessage",
     }]
   }, {
     tag: 4,
@@ -90,7 +90,7 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "databaseErrors.createMessage",
+      error: "databaseError.createMessage",
     }]
   }, {
     tag: 5,
@@ -108,7 +108,7 @@ describe("testing database queries...", () => {
           color: "abcd",
         },
       },
-      error: "databaseErrors.createMessage",
+      error: "databaseError.createMessage",
     }]
   }, {
     tag: 6,
@@ -174,7 +174,7 @@ describe("testing database queries...", () => {
           color: examples.color.first,
         },
       },
-      error: "databaseConflicts.messageAlreadyExists",
+      error: "databaseConflict.messageAlreadyExists",
     }, {
       args: {
         userid: databaseSessions[0].userid,

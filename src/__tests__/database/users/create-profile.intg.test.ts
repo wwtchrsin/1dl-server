@@ -97,7 +97,7 @@ describe("testing database queries...", () => {
         },
         state: "active"
       },
-      expres: "databaseErrors.createProfile",
+      expres: "databaseError.createProfile",
     }],
   }, {
     tag: 6,
@@ -125,7 +125,7 @@ describe("testing database queries...", () => {
         },
         state: "active",
       },
-      expres: "databaseErrors.createProfile",
+      expres: "databaseError.createProfile",
     }],
   }, {
     tag: 8,
@@ -175,7 +175,7 @@ describe("testing database queries...", () => {
         },
         state: "active",
       },
-      expres: "databaseConflicts.loginTaken",
+      expres: "databaseConflict.loginTaken",
     }],
   }, {
     tag: 10,
@@ -200,7 +200,7 @@ describe("testing database queries...", () => {
         },
         state: "active",
       },
-      expres: "databaseConflicts.loginTaken",
+      expres: "databaseConflict.loginTaken",
     }, {
       args: {
         data: {

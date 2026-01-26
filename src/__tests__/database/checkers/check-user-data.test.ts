@@ -46,7 +46,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.region",
+    expres: "wrongValue.user.region",
   }, {
     tag: 6,
     args: {
@@ -55,7 +55,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.login",
+    expres: "wrongValue.user.login",
   }, {
     tag: 7,
     args: {
@@ -64,7 +64,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.login",
+    expres: "wrongValue.user.login",
   }, {
     tag: 8,
     args: {
@@ -73,7 +73,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.login",
+    expres: "wrongValue.user.login",
   }, {
     tag: 9,
     args: {
@@ -82,7 +82,7 @@ describe("testing query validators...", () => {
       password: examples.password.tooShort,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.password",
+    expres: "wrongValue.user.password",
   }, {
     tag: 10,
     args: {
@@ -91,7 +91,7 @@ describe("testing query validators...", () => {
       password: examples.password.tooLong,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.password",
+    expres: "wrongValue.user.password",
   }, {
     tag: 11,
     args: {
@@ -100,7 +100,7 @@ describe("testing query validators...", () => {
       password: examples.password.wrongSymbols,
       name: examples.name.regLen,
     },
-    expres: "wrongValues.users.password",
+    expres: "wrongValue.user.password",
   }, {
     tag: 12,
     args: {
@@ -109,7 +109,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.tooShort,
     },
-    expres: "wrongValues.users.name",
+    expres: "wrongValue.user.name",
   }, {
     tag: 13,
     args: {
@@ -118,7 +118,7 @@ describe("testing query validators...", () => {
       password: examples.password.regLen,
       name: examples.name.tooLong,
     },
-    expres: "wrongValues.users.name",
+    expres: "wrongValue.user.name",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

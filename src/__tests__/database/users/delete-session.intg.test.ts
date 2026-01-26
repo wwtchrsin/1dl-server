@@ -28,17 +28,17 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: databaseSessions[0].userid,
-    expres: "databaseConflicts.sessionNotFound",
+    expres: "databaseConflict.sessionNotFound",
     rowCount: databaseSessions.length - 2,
   }, {
     tag: 4,
     args: examples.uuid[0],
-    expres: "databaseConflicts.sessionNotFound",
+    expres: "databaseConflict.sessionNotFound",
     rowCount: databaseSessions.length - 2,
   }, {
     tag: 5,
     args: "abcd",
-    expres: "databaseErrors.deleteSession",
+    expres: "databaseError.deleteSession",
     rowCount: databaseSessions.length - 2,
   }]
   for ( let testcase of testcases ) {

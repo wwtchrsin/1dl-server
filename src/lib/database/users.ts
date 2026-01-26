@@ -14,7 +14,7 @@ export const loginExists = async (login: string):
     if ( result === undefined || result?.rows?.length > 1 ) {
       logger.error({ login }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.checkUserExists",
+        error: "databaseError.checkUserExists",
         data: undefined,
       }
     }
@@ -41,7 +41,7 @@ export const createProfile = async(userData: UserData, defaultState: string):
     if ( checkResult.data !== false ) {
       logger.info(args, `${TAG}#ERROR_LOGIN_TAKEN`)
       return {
-        error: "databaseConflicts.loginTaken",
+        error: "databaseConflict.loginTaken",
         data: undefined,
       }
     }
@@ -59,7 +59,7 @@ export const createProfile = async(userData: UserData, defaultState: string):
     if ( result?.rows?.length !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.createProfile",
+        error: "databaseError.createProfile",
         data: undefined,
       }
     }
@@ -76,11 +76,11 @@ export const deleteSession = async (userid: string): Promise<string | undefined>
   let result = await queryDatabase(query, [userid])
   if ( !result || result.rowCount > 1 ) {
     logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
-    return "databaseErrors.deleteSession"
+    return "databaseError.deleteSession"
   }
   if ( result.rowCount === 0 ) {
     logger.info({ userid }, `${TAG}#ERROR_NOT_FOUND`)
-    return "databaseConflicts.sessionNotFound"
+    return "databaseConflict.sessionNotFound"
   }
   logger.debug({ userid }, `${TAG}#DONE`)
   return undefined
@@ -102,7 +102,7 @@ export const createSession = async (credentials: Credentials):
     if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.checkCredentials",
+        error: "databaseError.checkCredentials",
         sessionid: undefined,
         userid: undefined,
       }
@@ -110,7 +110,7 @@ export const createSession = async (credentials: Credentials):
     if ( checkResult.rows.length === 0 ) {
       logger.info(args, `${TAG}#ERROR_NOT_FOUND`)
       return {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         sessionid: undefined,
         userid: undefined,
       }
@@ -121,7 +121,7 @@ export const createSession = async (credentials: Credentials):
     if ( deleteResult === undefined ) {
       logger.error(args, `${TAG}#ERROR_SESSION_REMOVE`)
       return {
-        error: "databaseErrors.deleteSession",
+        error: "databaseError.deleteSession",
         sessionid: undefined,
         userid: undefined,
       }
@@ -134,7 +134,7 @@ export const createSession = async (credentials: Credentials):
     if ( result === undefined || result.rowCount !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.createSession",
+        error: "databaseError.createSession",
         sessionid: undefined,
         userid: undefined,
       }
@@ -158,14 +158,14 @@ export const getProfile = async (userid: string):
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getProfile",
+        error: "databaseError.getProfile",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
       logger.info({ userid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         data: undefined,
       }
     }
@@ -207,7 +207,7 @@ export const deleteProfile = async (userid: string):
     if ( !result ) {
       logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.deleteProfile",
+        error: "databaseError.deleteProfile",
         messages: undefined,
         profile: undefined,
       }
@@ -229,14 +229,14 @@ export const getUserid = async (sessionid: string):
     if ( !result?.rows || result.rows.length > 1 ) {
       logger.error({ sessionid: !!sessionid }, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseErrors.getUserid",
+        error: "databaseError.getUserid",
         data: undefined,
       }
     }
     if ( result.rows.length === 0 ) {
       logger.info({ sessionid: !!sessionid }, `${TAG}#ERROR_NOT_FOUND`)
       return {
-        error: "databaseConflicts.sessionNotFound",
+        error: "databaseConflict.sessionNotFound",
         data: undefined,
       }
     }

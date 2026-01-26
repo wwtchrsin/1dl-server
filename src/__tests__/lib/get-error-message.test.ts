@@ -1,46 +1,46 @@
-import { errorMessages, wrongValues, appErrors, databaseErrors, databaseConflicts } 
-  from "../../lib/error-messages"
+import { errorMessages, wrongValues, appErrors, databaseErrors, 
+  databaseConflicts } from "../../lib/error-messages"
 
 describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
-    args: "wrongValues.messages.region",
-    expres: wrongValues.messages.region,
+    args: "wrongValue.message.region",
+    expres: wrongValues.message.region,
   }, {
     tag: 2,
-    args: "wrongValues.messages.text",
-    expres: wrongValues.messages.text,
+    args: "wrongValue.message.text",
+    expres: wrongValues.message.text,
   }, {
     tag: 3,
-    args: "wrongValues.users.password",
-    expres: wrongValues.users.password,
+    args: "wrongValue.user.password",
+    expres: wrongValues.user.password,
   }, {
     tag: 4,
-    args: "wrongValues.auth.login",
+    args: "wrongValue.auth.login",
     expres: wrongValues.auth.login,
   }, {
     tag: 5,
-    args: "wrongValues.auth.sessionid",
+    args: "wrongValue.auth.sessionid",
     expres: wrongValues.auth.sessionid,
   }, {
     tag: 6,
-    args: "appErrors.actionNotAllowed",
+    args: "appError.actionNotAllowed",
     expres: appErrors.actionNotAllowed,
   }, {
     tag: 7,
-    args: "databaseErrors.checkUserExists",
+    args: "databaseError.checkUserExists",
     expres: databaseErrors.checkUserExists,
   }, {
     tag: 8,
-    args: "databaseConflicts.messageAlreadyExists",
+    args: "databaseConflict.messageAlreadyExists",
     expres: databaseConflicts.messageAlreadyExists,
   }, {
     tag: 9,
-    args: "wrongValues.messages.abcd",
+    args: "wrongValue.message.abcd",
     expres: undefined,
   }, {
     tag: 10,
-    args: "wrongValues.abcd",
+    args: "wrongValue.abcd",
     expres: undefined,
   }, {
     tag: 11,

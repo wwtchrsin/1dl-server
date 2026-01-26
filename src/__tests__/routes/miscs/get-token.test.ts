@@ -13,35 +13,35 @@ describe("testing auxilliary functions...", () => {
     tag: 2,
     args: "Bearer abcd",
     expres: {
-      error: "wrongValues.auth.sessionid",
+      error: "wrongValue.auth.sessionid",
       data: undefined,
     },
   }, {
     tag: 3,
     args: "Bearer ",
     expres: {
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       data: undefined,
     },
   }, {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       data: undefined,
     },
   }, {
     tag: 5,
     args: "",
     expres: {
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       data: undefined,
     },
   }, {
     tag: 6,
     args: undefined,
     expres: {
-      error: "wrongValues.auth.header",
+      error: "wrongValue.auth.header",
       data: undefined,
     },
   }]

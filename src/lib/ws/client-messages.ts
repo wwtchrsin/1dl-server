@@ -10,7 +10,7 @@ export const onMessage = (userid: string) =>
     let TAG = "ws/client-messages"
     let message = parseJSON(messageJSON)
     if ( message.error ) {
-      reportError(userid, "wrongValues.wsMessage.json")
+      reportError(userid, "wrongValue.wsMessage.json")
       logger.info({ message: messageJSON }, `${TAG}#WRONG_JSON`)
       return
     }
@@ -19,7 +19,7 @@ export const onMessage = (userid: string) =>
         let location = getLocation(message.data?.location)
         if ( !location ) {
           wsState.deleteUserLocation(userid)
-          reportError(userid, "wrongValues.wsMessage.location")
+          reportError(userid, "wrongValue.wsMessage.location")
           logger.info({ message: messageJSON }, `#${TAG}#WRONG_LOCATION`)
           return
         }
@@ -27,7 +27,7 @@ export const onMessage = (userid: string) =>
         return
       }
       default: {
-        reportError(userid, "wrongValues.wsMessage.type")
+        reportError(userid, "wrongValue.wsMessage.type")
         logger.info({ message: messageJSON }, `#${TAG}#WRONG_MSG_TYPE`)
       }
     }

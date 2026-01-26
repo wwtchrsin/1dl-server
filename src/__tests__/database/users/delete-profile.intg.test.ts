@@ -91,7 +91,7 @@ describe("testing database queries...", () => {
     tag: 3,
     args: databaseUsers[0].userid,
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       profile: undefined,
       messages: undefined,
     },
@@ -104,7 +104,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: examples.uuid[0],
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       profile: undefined,
       messages: undefined,
     },
@@ -117,7 +117,7 @@ describe("testing database queries...", () => {
     tag: 5,
     args: "abcd",
     expres: {
-      error: "databaseErrors.getProfile",
+      error: "databaseError.getProfile",
       profile: undefined,
       messages: undefined,
     },

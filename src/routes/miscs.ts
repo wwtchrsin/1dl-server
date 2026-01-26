@@ -16,14 +16,14 @@ export const getToken = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
     if ( typeof header !== "string" ) {
       return {
-        error: "wrongValues.auth.header",
+        error: "wrongValue.auth.header",
         data: undefined,
       }
     }
     let session = header.split(" ")[1]
     if ( !session ) {
       return {
-        error: "wrongValues.auth.header",
+        error: "wrongValue.auth.header",
         data: undefined,
       }
     }

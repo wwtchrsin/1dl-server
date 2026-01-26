@@ -37,14 +37,14 @@ describe("testing database queries...", () => {
     tag: 3,
     args: examples.sessionid[0],
     expres: {
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       data: undefined,
     },
   }, {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "databaseConflicts.sessionNotFound",
+      error: "databaseConflict.sessionNotFound",
       data: undefined,
     },
   }]

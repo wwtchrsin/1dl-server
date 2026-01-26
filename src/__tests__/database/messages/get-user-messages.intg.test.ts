@@ -61,7 +61,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: "abcd",
     expres: {
-      error: "databaseErrors.getUserMessages",
+      error: "databaseError.getUserMessages",
       data: undefined,
     },
   }]

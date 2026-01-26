@@ -42,7 +42,7 @@ describe("testing auxilliary functions...", () => {
     args: "Bearer abcd",
     mocks: {
       readUserid: {
-        error: "wrongValues.auth.sessionid",
+        error: "wrongValue.auth.sessionid",
         data: undefined,
       },
       getProfile: {
@@ -54,7 +54,7 @@ describe("testing auxilliary functions...", () => {
       readUserid: "Bearer abcd",
     },
     expres: {
-      error: "wrongValues.auth.sessionid",
+      error: "wrongValue.auth.sessionid",
       data: undefined,
     },
   }, {
@@ -66,7 +66,7 @@ describe("testing auxilliary functions...", () => {
         data: examples.uuid[1],
       },
       getProfile: {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         data: undefined,
       },
     },
@@ -75,7 +75,7 @@ describe("testing auxilliary functions...", () => {
       readProfile: examples.uuid[1],
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       data: undefined,
     },
   }]

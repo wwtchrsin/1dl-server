@@ -74,7 +74,7 @@ describe("testing endpoints...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: "wrongValues.users.login",
+        error: "wrongValue.user.login",
         status: 400,
       },
     }],
@@ -88,7 +88,7 @@ describe("testing endpoints...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: "wrongValues.users.password",
+        error: "wrongValue.user.password",
         status: 400,
       },
     }],
@@ -102,7 +102,7 @@ describe("testing endpoints...", () => {
         name: examples.name.tooShort,
       },
       expres: {
-        error: "wrongValues.users.name",
+        error: "wrongValue.user.name",
         status: 400,
       },
     }],
@@ -127,7 +127,7 @@ describe("testing endpoints...", () => {
         name: examples.name.correct[1],
       },
       expres: {
-        error: "databaseConflicts.loginTaken",
+        error: "databaseConflict.loginTaken",
         status: 409,
       },
     }],
@@ -166,7 +166,7 @@ describe("testing endpoints...", () => {
         name: examples.name.minLen,
       },
       expres: {
-        error: "wrongValues.users.region",
+        error: "wrongValue.user.region",
         status: 400,
       },
     }, {   

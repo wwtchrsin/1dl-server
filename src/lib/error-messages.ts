@@ -18,13 +18,13 @@ const getCorrectRange = (lang: string, min: number, max: number) => {
 }
 
 type WrongValues = {
-  messages: Record<string, TextResource>,
-  users: Record<string, TextResource>,
+  message: Record<string, TextResource>,
+  user: Record<string, TextResource>,
   auth: Record<string, TextResource>,
 }
 
 export const wrongValues: WrongValues = {
-  messages: {
+  message: {
     region: {
       en: getErrorCause("en", "region") + " Valid values: " + 
         limits.message.region.values.join(", ") + ".",
@@ -62,7 +62,7 @@ export const wrongValues: WrongValues = {
         limits.message.color.values.join(", ") + ".",
     },
   },
-  users: {
+  user: {
     region: {
       en: getErrorCause("en", "region") + " Valid values: " + 
         limits.message.region.values.join(", ") + ".",
@@ -223,22 +223,22 @@ export const databaseConflicts: Record<string, TextResource> = {
 
 export const errorMessages = (() => {
   let errmsgs: Record<string, TextResource> = {}
-  for ( let group of ["messages", "users", "auth"] ) { 
+  for ( let group of ["message", "user", "auth"] ) { 
     for ( let item in wrongValues[group] ) {
-      let tag = `wrongValues.${group}.${item}`
+      let tag = `wrongValue.${group}.${item}`
       errmsgs[tag] = wrongValues[group][item]
     }
   }
   for ( let item in appErrors ) {
-    let tag = `appErrors.${item}`
+    let tag = `appError.${item}`
     errmsgs[tag] = appErrors[item]
   }
   for ( let item in databaseErrors ) {
-    let tag = `databaseErrors.${item}`
+    let tag = `databaseError.${item}`
     errmsgs[tag] = databaseErrors[item]
   }
   for ( let item in databaseConflicts ) {
-    let tag = `databaseConflicts.${item}`
+    let tag = `databaseConflict.${item}`
     errmsgs[tag] = databaseConflicts[item]
   }
   return errmsgs
@@ -253,10 +253,10 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
   }
   let err = error.split(".")
   switch ( err[0] ) {
-    case "wrongValues": {
+    case "wrongValue": {
       switch ( error ) {
-        case "wrongValues.auth.header":
-        case "wrongValues.auth.sessionid": {
+        case "wrongValue.auth.header":
+        case "wrongValue.auth.sessionid": {
           return 401
         }
         default: {
@@ -264,17 +264,17 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
         }
       }
     }
-    case "appErrors": {
+    case "appError": {
       switch ( err[1] ) {
         case "actionNotAllowed": {
           return 403
         }
       }
     }
-    case "databaseErrors": {
+    case "databaseError": {
       return 500
     }
-    case "databaseConflicts": {
+    case "databaseConflict": {
       switch ( err[1] ) {
         case "messageNotFound":
         case "sessionNotFound":

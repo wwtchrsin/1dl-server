@@ -39,7 +39,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   if ( profile.data.state !== "active" || profile.data.region !== region ) {
     logger.info(args, `${TAG}#ERROR_PERMISSIONS`)
     res.status(403).json({
-      error: "appErrors.actionNotAllowed",
+      error: "appError.actionNotAllowed",
       message: undefined,
     })
     return

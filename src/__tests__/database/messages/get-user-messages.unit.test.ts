@@ -68,7 +68,7 @@ describe("testing database queries...", () => {
       queryDatabase: requestFails,
     },
     expres: {
-      error: "databaseErrors.getUserMessages",
+      error: "databaseError.getUserMessages",
       data: undefined,
     },
   }]

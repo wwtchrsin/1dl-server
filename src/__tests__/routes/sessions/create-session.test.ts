@@ -75,7 +75,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[activeUsersByRegion[0][0]].password,
       },
       expres: {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         status: 404,
       },
     }],
@@ -89,7 +89,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         status: 404,
       },
     }],
@@ -103,7 +103,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[1].password,
       },
       expres: {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         status: 404,
       },
     }],
@@ -117,7 +117,7 @@ describe("testing endpoints...", () => {
         password: examples.password.minLen + "abcd",
       },
       expres: {
-        error: "databaseConflicts.profileNotFound",
+        error: "databaseConflict.profileNotFound",
         status: 404,
       },
     }],
@@ -130,7 +130,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "wrongValues.auth.region",
+        error: "wrongValue.auth.region",
         status: 400,
       },
     }],
@@ -144,7 +144,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "wrongValues.auth.region",
+        error: "wrongValue.auth.region",
         status: 400,
       },
     }],
@@ -157,7 +157,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "wrongValues.auth.login",
+        error: "wrongValue.auth.login",
         status: 400,
       },
     }],
@@ -171,7 +171,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "wrongValues.auth.login",
+        error: "wrongValue.auth.login",
         status: 400,
       },
     }],
@@ -184,7 +184,7 @@ describe("testing endpoints...", () => {
         login: databaseUsers[0].login,
       },
       expres: {
-        error: "wrongValues.auth.password",
+        error: "wrongValue.auth.password",
         status: 400,
       },
     }],
@@ -198,7 +198,7 @@ describe("testing endpoints...", () => {
         password: {},
       },
       expres: {
-        error: "wrongValues.auth.password",
+        error: "wrongValue.auth.password",
         status: 400,
       },
     }],

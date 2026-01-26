@@ -60,21 +60,21 @@ describe("testing database queries...", () => {
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 4,
     args: wrongUserid,
     mocks: {
       queryDatabase: requestSucceeds,
     },
-    expres: "databaseConflicts.profileNotFound",
+    expres: "databaseConflict.profileNotFound",
   }, {
     tag: 5,
     args: correctUserids[0],
     mocks: {
       queryDatabase: requestFails,
     },
-    expres: "databaseErrors.getProfile",
+    expres: "databaseError.getProfile",
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase

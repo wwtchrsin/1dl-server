@@ -50,7 +50,7 @@ describe("testing database queries...", () => {
       password: databaseUsers[2].password,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }, {
@@ -61,7 +61,7 @@ describe("testing database queries...", () => {
       password: databaseUsers[1].password,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }, {
@@ -72,7 +72,7 @@ describe("testing database queries...", () => {
       password: examples.password.minLen,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }, {
@@ -83,7 +83,7 @@ describe("testing database queries...", () => {
       password: databaseUsers[0].password,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }, {
@@ -94,7 +94,7 @@ describe("testing database queries...", () => {
       password: databaseUsers[0].password,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }, {
@@ -105,7 +105,7 @@ describe("testing database queries...", () => {
       password: undefined,
     },
     expres: {
-      error: "databaseConflicts.profileNotFound",
+      error: "databaseConflict.profileNotFound",
       userid: undefined,
     },
   }]

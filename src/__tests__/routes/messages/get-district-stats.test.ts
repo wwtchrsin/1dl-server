@@ -113,7 +113,7 @@ describe("testing endpoints...", () => {
     },
     expres: {
       status: 400,
-      error: "wrongValues.messages.region",
+      error: "wrongValue.message.region",
       msgcounts: undefined,
     },
   }]
