@@ -38,14 +38,14 @@ let stats = (regionIndex: number) => {
 describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
-    args: limits.messages.regions[0],
+    args: limits.message.region.values[0],
     expres: {
       error: undefined,
       data: process(stats(0)),
     },
   }, {
     tag: 2,
-    args: limits.messages.regions[1],
+    args: limits.message.region.values[1],
     expres: {
       error: undefined,
       data: process(stats(1)),

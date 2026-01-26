@@ -10,20 +10,20 @@ afterAll(async () => {
 })
 
 let stats = [{
-  region: limits.messages.regions[0],
+  region: limits.message.region.values[0],
   msgcounts: {
-    [limits.messages.districtMin + 2]: 2,
-    [limits.messages.districtMax - 2]: 4,
+    [limits.message.district.min + 2]: 2,
+    [limits.message.district.max - 2]: 4,
   },
 }, {
-  region: limits.messages.regions[1],
+  region: limits.message.region.values[1],
   msgcounts: {
-    [limits.messages.districtMin + 2]: 2,
-    [limits.messages.districtMin + 4]: 4,
-    [limits.messages.districtMin + 8]: 6,
-    [limits.messages.districtMax - 8]: 8,
-    [limits.messages.districtMax - 4]: 6,
-    [limits.messages.districtMax - 2]: 4,
+    [limits.message.district.min + 2]: 2,
+    [limits.message.district.min + 4]: 4,
+    [limits.message.district.min + 8]: 6,
+    [limits.message.district.max - 8]: 8,
+    [limits.message.district.max - 4]: 6,
+    [limits.message.district.max - 2]: 4,
   },
 }]
 
@@ -48,7 +48,7 @@ let change = (msgcounts: Record<string | number, number>, indices: number[], del
     result[district] = `${msgcounts[district]}`
   }
   for ( let index of indices ) {
-    let key = limits.messages.districtMin + index
+    let key = limits.message.district.min + index
     let value = result[key] ?? "0"
     result[key] = (Number(value) + delta).toString()
   }
@@ -83,7 +83,7 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[0].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }],
       delta: 1,
     },
@@ -98,7 +98,7 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[0].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }],
       delta: -1,
     },
@@ -113,10 +113,10 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[1].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }, {
         region: stats[1].region,
-        district: limits.messages.districtMin + 4,
+        district: limits.message.district.min + 4,
       }],
       delta: 1,
     },
@@ -131,10 +131,10 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[1].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }, {
         region: stats[1].region,
-        district: limits.messages.districtMin + 3,
+        district: limits.message.district.min + 3,
       }],
       delta: 1,
     },
@@ -149,13 +149,13 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[0].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }, {
         region: stats[1].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }, {
         region: stats[1].region,
-        district: limits.messages.districtMin + 4,
+        district: limits.message.district.min + 4,
       }],
       delta: 2,
     },
@@ -173,7 +173,7 @@ describe("testing redis operations...", () => {
     args: {
       districtids: [{
         region: stats[0].region,
-        district: limits.messages.districtMin + 2,
+        district: limits.message.district.min + 2,
       }],
       delta: 1,
     },

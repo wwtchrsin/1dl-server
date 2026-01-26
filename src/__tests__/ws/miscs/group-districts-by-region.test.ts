@@ -18,92 +18,92 @@ describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }],
     expres: [{
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
+        [limits.message.district.min]: 1,
       },
     }],
   }, {
     tag: 2,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }],
     expres: [{
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {
-        [limits.messages.districtMin]: 2,
+        [limits.message.district.min]: 2,
       },
     }],
   }, {
     tag: 3,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
     }],
     expres: [{
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
-        [limits.messages.districtMin + 1]: 1,
+        [limits.message.district.min]: 1,
+        [limits.message.district.min + 1]: 1,
       },
     }],
   }, {
     tag: 4,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }, {
-      region: limits.messages.regions[1],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[1],
+      district: limits.message.district.min,
     }],
     expres: [{
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
+        [limits.message.district.min]: 1,
       },
     }, {
-      region: limits.messages.regions[1],
+      region: limits.message.region.values[1],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
+        [limits.message.district.min]: 1,
       },
     }],
   }, {
     tag: 5,
     args: [{
-      region: limits.messages.regions[1],
-      district: limits.messages.districtMin + 1,
+      region: limits.message.region.values[1],
+      district: limits.message.district.min + 1,
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
     }, {
-      region: limits.messages.regions[1],
-      district: limits.messages.districtMin,
+      region: limits.message.region.values[1],
+      district: limits.message.district.min,
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
     }],
     expres: [{
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
-        [limits.messages.districtMin + 1]: 1,
+        [limits.message.district.min]: 1,
+        [limits.message.district.min + 1]: 1,
       },
     }, {
-      region: limits.messages.regions[1],
+      region: limits.message.region.values[1],
       msgcounts: {
-        [limits.messages.districtMin]: 1,
-        [limits.messages.districtMin + 1]: 1,
+        [limits.message.district.min]: 1,
+        [limits.message.district.min + 1]: 1,
       },
     }],
   }]

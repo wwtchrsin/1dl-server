@@ -70,7 +70,7 @@ describe("testing endpoints...", () => {
     tag: 4,
     actions: [{
       args: {
-        region: limits.messages.regions[1],
+        region: limits.message.region.values[1],
         login: databaseUsers[activeUsersByRegion[0][0]].login,
         password: databaseUsers[activeUsersByRegion[0][0]].password,
       },

@@ -1,6 +1,82 @@
-const passwordSymbols = "!@#$%^&*+=_-"
+export const specialSymbols = "!@#$%^&*+=_-"
+/*const lcLatinLetters = "abcdefghijklmnopqrstuvwxyz"
+const ucLatinLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const numbers = "0123456789"*/
 
 export const limits = {
+  message: {
+    region: {
+      values: ["en", "ru"],
+      pattern: "^(en|ru)$",
+    },
+    district: {
+      min: 0,
+      max: 299,
+    },
+    room: {
+      min: 0,
+      max: 299,
+    },
+    index: {
+      min: 0,
+      max: 299,
+    },
+    text: {
+      minLen: 16,
+      maxLen: 128,
+    },
+    color: {
+      values: [
+        "black",
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "cyan",
+        "blue",
+        "purple",
+        "pink",
+      ]
+    }
+  },
+  user: {
+    login: {
+      minLen: 8,
+      maxLen: 16,
+      pattern: "^[A-Za-z0-9_-]{8,16}$",
+    },
+    password: {
+      minLen: 8,
+      maxLen: 24,
+      pattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${specialSymbols}])` +
+        `[A-Za-z\\d${specialSymbols}]{8,24}$`,
+    },
+    name: {
+      minLen: 8,
+      maxLen: 16,
+    },
+    state: {
+      values: [
+        "inactive",
+        "active",
+        "suspended",
+      ]
+    },
+  },
+  session: {
+    sessionid: {
+      len: 128,
+      pattern: "^[0-9A-Fa-f]{128}$",
+    }
+  }
+}
+
+export const hashSizes = {
+  password: 128,
+  sessionid: 128,
+}
+
+/*export const limits = {
   messages: {
     regions: ["en", "ru"],
     regionPattern: "^(en|ru)$",
@@ -30,9 +106,9 @@ export const limits = {
     loginPattern: "^[A-Za-z0-9_-]{8,16}$",
     passwordLenMin: 8,
     passwordLenMax: 24,
-    passwordSymbols: passwordSymbols.split(""),
-    passwordPattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${passwordSymbols}])` +
-      `[A-Za-z\\d${passwordSymbols}]{8,24}$`,
+    passwordSymbols: specialSymbols.split(""),
+    passwordPattern: `^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[${specialSymbols}])` +
+      `[A-Za-z\\d${specialSymbols}]{8,24}$`,
     passwordHashSize: 128,
     nameLenMin: 8,
     nameLenMax: 16,
@@ -47,15 +123,16 @@ export const limits = {
     sessionidHashSize: 128,
   },
 }
+*/
 
 export const patterns = {
   uuid: /^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$/,
   timestamp: /^[1-9][0-9]{8,10}$/,
   passwordHash: /^[0-9A-Fa-f]{128}$/,
-  sessionid: /^[0-9A-Fa-f]{128}$/,
-  login: new RegExp(limits.users.loginPattern),
-  password: new RegExp(limits.users.passwordPattern),
-  region: new RegExp(limits.messages.regionPattern),
+  sessionid: new RegExp(limits.session.sessionid.pattern),
+  login: new RegExp(limits.user.login.pattern),
+  password: new RegExp(limits.user.password.pattern),
+  region: new RegExp(limits.message.region.pattern),
 }
        
 

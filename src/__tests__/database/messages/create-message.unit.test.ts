@@ -34,9 +34,9 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, 
       content: {
         text: examples.text.minLen,
@@ -57,12 +57,12 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.last,
-        district: `${limits.messages.districtMax}`,
-        room: `${limits.messages.roomMax}`,
-        index: `${limits.messages.indexMax}`,
+        district: `${limits.message.district.max}`,
+        room: `${limits.message.room.max}`,
+        index: `${limits.message.index.max}`,
       },
       content: {
-        text: "1".repeat(limits.messages.textLenMax),
+        text: "1".repeat(limits.message.text.maxLen),
         color: examples.color.last,
       },
     },
@@ -80,12 +80,12 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: "12345678",
-        district: `${limits.messages.districtMax}`,
-        room: `${limits.messages.roomMax}`,
-        index: `${limits.messages.indexMax}`,
+        district: `${limits.message.district.max}`,
+        room: `${limits.message.room.max}`,
+        index: `${limits.message.index.max}`,
       },
       content: {
-        text: "1".repeat(limits.messages.textLenMax),
+        text: "1".repeat(limits.message.text.maxLen),
         color: examples.color.last,
       },
     },
@@ -103,9 +103,9 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -118,9 +118,9 @@ describe("testing database queries...", () => {
         data: {
           rows: [{
             region: examples.region.first,
-            district: limits.messages.districtMin,
-            room: limits.messages.roomMin,
-            index: limits.messages.indexMin,
+            district: limits.message.district.min,
+            room: limits.message.room.min,
+            index: limits.message.index.min,
             text: examples.text.minLen,
             color: examples.color.first,
             timestamp: 0,
@@ -136,9 +136,9 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -159,9 +159,9 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,

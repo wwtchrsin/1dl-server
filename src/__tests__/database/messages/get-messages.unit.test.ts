@@ -33,8 +33,8 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
     },
     mocks: {
       queryDatabase: returnMessage,
@@ -44,8 +44,8 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
     },
     mocks: {
       queryDatabase: returnZeroMessages,
@@ -58,8 +58,8 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
     },
     mocks: {
       queryDatabase: returnError,
@@ -72,8 +72,8 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: "abcdefg",
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
     },
     mocks: {
       queryDatabase: returnMessage,

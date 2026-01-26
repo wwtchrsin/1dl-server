@@ -72,9 +72,9 @@ describe("testing database queries...", () => {
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMax + 1,
-      room: limits.messages.roomMin,
+      region: limits.message.region.values[0],
+      district: limits.message.district.max + 1,
+      room: limits.message.room.min,
     },
     expres: {
       error: undefined,

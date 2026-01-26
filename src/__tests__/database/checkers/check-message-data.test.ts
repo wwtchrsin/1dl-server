@@ -9,9 +9,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -25,9 +25,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[1],
       messageid: {
         region: examples.region.last,
-        district: `${limits.messages.districtMax}`,
-        room: `${limits.messages.roomMax}`,
-        index: `${limits.messages.indexMax}`,
+        district: `${limits.message.district.max}`,
+        room: `${limits.message.room.max}`,
+        index: `${limits.message.index.max}`,
       },
       content: {
         text: examples.text.maxLen,
@@ -41,9 +41,9 @@ describe("testing query validators...", () => {
       uuid: "abcd",
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -57,9 +57,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: "abcd",
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -73,9 +73,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin - 1}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min - 1}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -89,9 +89,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMax + 1}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.max + 1}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -105,9 +105,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin - 1}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min - 1}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -121,9 +121,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMax + 1}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.max + 1}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -137,9 +137,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin - 1}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min - 1}`,
       },
       content: {
         text: examples.text.minLen,
@@ -153,9 +153,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMax + 1}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.max + 1}`,
       },
       content: {
         text: examples.text.minLen,
@@ -169,9 +169,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.tooShort,
@@ -185,9 +185,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.tooLong,
@@ -201,9 +201,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       },
       content: {
         text: examples.text.minLen,
@@ -217,9 +217,9 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.some,
-        district: `${limits.messages.districtMin + 1}`,
-        room: `${limits.messages.roomMin + 1}`,
-        index: `${limits.messages.indexMin + 1}`,
+        district: `${limits.message.district.min + 1}`,
+        room: `${limits.message.room.min + 1}`,
+        index: `${limits.message.index.min + 1}`,
       },
       content: {
         text: examples.text.regLen,

@@ -29,7 +29,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -47,7 +47,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[1].region,
           district: databaseEmptyRooms[1].district,
           room: databaseEmptyRooms[1].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -65,7 +65,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -83,7 +83,7 @@ describe("testing database queries...", () => {
           region: "abcd",
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -101,7 +101,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -119,7 +119,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -134,7 +134,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin + 1,
+          index: limits.message.index.min + 1,
         },
         content: {
           text: examples.text.correct[0],
@@ -152,7 +152,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -167,7 +167,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
         content: {
           text: examples.text.correct[0],
@@ -182,7 +182,7 @@ describe("testing database queries...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin + 1,
+          index: limits.message.index.min + 1,
         },
         content: {
           text: examples.text.correct[0],
@@ -220,15 +220,15 @@ describe("testing database queries...", () => {
       expect(result).toBeDefined()
       expect(result.rows).toHaveLength(msgCount)
       for ( let i=0; i < msgCount; i++ ) {
-        expect(limits.messages.regions).toContain(result.rows[i].region)
-        expect(result.rows[i].district).toBeGreaterThanOrEqual(limits.messages.districtMin)
-        expect(result.rows[i].district).toBeLessThanOrEqual(limits.messages.districtMax)
-        expect(result.rows[i].room).toBeGreaterThanOrEqual(limits.messages.roomMin)
-        expect(result.rows[i].room).toBeLessThanOrEqual(limits.messages.roomMax)
-        expect(result.rows[i].index).toBeGreaterThanOrEqual(limits.messages.indexMin)
-        expect(result.rows[i].index).toBeLessThanOrEqual(limits.messages.indexMax)
+        expect(limits.message.region.values).toContain(result.rows[i].region)
+        expect(result.rows[i].district).toBeGreaterThanOrEqual(limits.message.district.min)
+        expect(result.rows[i].district).toBeLessThanOrEqual(limits.message.district.max)
+        expect(result.rows[i].room).toBeGreaterThanOrEqual(limits.message.room.min)
+        expect(result.rows[i].room).toBeLessThanOrEqual(limits.message.room.max)
+        expect(result.rows[i].index).toBeGreaterThanOrEqual(limits.message.index.min)
+        expect(result.rows[i].index).toBeLessThanOrEqual(limits.message.index.max)
         expect(result.rows[i].text).toBeDefined()
-        expect(limits.messages.colors).toContain(result.rows[i].color)
+        expect(limits.message.color.values).toContain(result.rows[i].color)
         expect(result.rows[i].userid).toMatch(patterns.uuid)
         expect(result.rows[i].timestamp).toMatch(patterns.timestamp)
       }

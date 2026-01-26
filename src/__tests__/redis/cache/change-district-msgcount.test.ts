@@ -10,15 +10,15 @@ afterAll(async () => {
 })
 
 let msgcounts = [{
-  [limits.messages.districtMin + 2]: 2,
-  [limits.messages.districtMax - 2]: 4,
+  [limits.message.district.min + 2]: 2,
+  [limits.message.district.max - 2]: 4,
 }, {
-  [limits.messages.districtMin + 2]: 2,
-  [limits.messages.districtMin + 4]: 4,
-  [limits.messages.districtMin + 8]: 6,
-  [limits.messages.districtMax - 8]: 8,
-  [limits.messages.districtMax - 4]: 6,
-  [limits.messages.districtMax - 2]: 4,
+  [limits.message.district.min + 2]: 2,
+  [limits.message.district.min + 4]: 4,
+  [limits.message.district.min + 8]: 6,
+  [limits.message.district.max - 8]: 8,
+  [limits.message.district.max - 4]: 6,
+  [limits.message.district.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({
@@ -49,7 +49,7 @@ let change = (msgcounts: Record<string | number, number>, index: number, delta: 
   for ( let district in msgcounts ) {
     result[district] = `${msgcounts[district]}`
   }
-  let key = limits.messages.districtMin + index
+  let key = limits.message.district.min + index
   result[key] = (Number(result[key]) + delta).toString()
   result.timestamp = timestamp
   return result
@@ -60,7 +60,7 @@ describe("testing redis operations...", () => {
     jest.restoreAllMocks()
     let client = await redisConn.getClient()
     let keys = []
-    for ( let region of limits.messages.regions ) {
+    for ( let region of limits.message.region.values ) {
       keys.push(`${redisConn.redisns}:msgcounts:districts:${region}`)
     }
     await client.del(keys)
@@ -68,13 +68,13 @@ describe("testing redis operations...", () => {
   let testcases = [{
     tag: 1,
     init: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: addts(msgcounts[0]),
     },
     args: {
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin + 2,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min + 2,
       },
       delta: 1,
     },
@@ -84,13 +84,13 @@ describe("testing redis operations...", () => {
   }, {
     tag: 2,
     init: {
-      region: limits.messages.regions[1],
+      region: limits.message.region.values[1],
       msgcounts: addts(msgcounts[1]),
     },
     args: {
       districtid: {
-        region: limits.messages.regions[1],
-        district: limits.messages.districtMin + 4,
+        region: limits.message.region.values[1],
+        district: limits.message.district.min + 4,
       },
       delta: -1,
     },
@@ -100,31 +100,31 @@ describe("testing redis operations...", () => {
   }, {
     tag: 3,
     init: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: addts(msgcounts[0]),
     },
     args: {
       districtid: {
-        region: limits.messages.regions[1],
-        district: limits.messages.districtMin + 4,
+        region: limits.message.region.values[1],
+        district: limits.message.district.min + 4,
       },
       delta: 1,
     },
     mocks: {},
     expres: true,
     table: process({
-      [limits.messages.districtMin + 4]: 1,
+      [limits.message.district.min + 4]: 1,
     }),
   }, {
     tag: 4,
     init: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: addts(msgcounts[0]),
     },
     args: {
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin + 2,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min + 2,
       },
       delta: 1,
     },

@@ -17,9 +17,9 @@ afterAll(async () => {
 let databaseChecks = {
   userid: patterns.uuid,
   region: patterns.region,
-  login: new RegExp(limits.users.loginPattern),
+  login: new RegExp(limits.user.login.pattern),
   password: patterns.passwordHash,
-  name: new RegExp(`^.{${limits.users.nameLenMin},${limits.users.nameLenMax}}$`),
+  name: new RegExp(`^.{${limits.user.name.minLen},${limits.user.name.maxLen}}$`),
   state: new RegExp(`^[a-z]+$`),
   puid: patterns.uuid,
   timestamp: patterns.timestamp,

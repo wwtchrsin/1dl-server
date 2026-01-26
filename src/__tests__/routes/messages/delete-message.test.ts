@@ -144,7 +144,7 @@ describe("testing endpoints...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
       },
       expres: {
@@ -163,7 +163,7 @@ describe("testing endpoints...", () => {
           region: "abcd",
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
       },
       expres: {
@@ -180,9 +180,9 @@ describe("testing endpoints...", () => {
         auth: "Bearer " + sessionid(2), 
         messageid: {
           region: databaseEmptyRooms[0].region,
-          district: limits.messages.districtMax + 1,
+          district: limits.message.district.max + 1,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMin,
+          index: limits.message.index.min,
         },
       },
       expres: {
@@ -200,8 +200,8 @@ describe("testing endpoints...", () => {
         messageid: {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
-          room: limits.messages.roomMin - 1,
-          index: limits.messages.indexMin,
+          room: limits.message.room.min - 1,
+          index: limits.message.index.min,
         },
       },
       expres: {
@@ -220,7 +220,7 @@ describe("testing endpoints...", () => {
           region: databaseEmptyRooms[0].region,
           district: databaseEmptyRooms[0].district,
           room: databaseEmptyRooms[0].room,
-          index: limits.messages.indexMax + 1,
+          index: limits.message.index.max + 1,
         },
       },
       expres: {

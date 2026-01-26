@@ -68,7 +68,7 @@ describe("testing endpoints...", () => {
       region: databaseEmptyRooms[2].region,
       district: databaseEmptyRooms[2].district,
       room: databaseEmptyRooms[2].room,
-      index: limits.messages.indexMin,
+      index: limits.message.index.min,
     },
     expres: {
       status: 404,
@@ -92,7 +92,7 @@ describe("testing endpoints...", () => {
     tag: 5,
     args: {
       region: databaseMessages[0].region,
-      district: limits.messages.districtMax + 1,
+      district: limits.message.district.max + 1,
       room: databaseMessages[0].room,
       index: databaseMessages[0].index,
     },
@@ -106,7 +106,7 @@ describe("testing endpoints...", () => {
     args: {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
-      room: limits.messages.roomMax + 1,
+      room: limits.message.room.max + 1,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -120,7 +120,7 @@ describe("testing endpoints...", () => {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
       room: databaseMessages[0].district,
-      index: limits.messages.indexMax + 1,
+      index: limits.message.index.max + 1,
     },
     expres: {
       status: 400,

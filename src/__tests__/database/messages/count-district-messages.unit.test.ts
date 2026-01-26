@@ -26,7 +26,7 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       region: examples.region.first,
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
     },
     mocks: {
       queryDatabase: requestSuccess,
@@ -39,7 +39,7 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       region: "abcd",
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
     },
     mocks: {
       queryDatabase: requestSuccess,
@@ -52,7 +52,7 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       region: examples.region.first,
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
     },
     mocks: {
       queryDatabase: requestEmptyList,
@@ -65,7 +65,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: examples.region.first,
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
     },
     mocks: {
       queryDatabase: requestFailure,

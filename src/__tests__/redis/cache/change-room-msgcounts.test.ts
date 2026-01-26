@@ -11,25 +11,25 @@ afterAll(async () => {
 
 let stats = [{
   districtid: {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min,
   },
   msgcounts: {
-    [limits.messages.roomMin + 2]: 2,
-    [limits.messages.roomMax - 2]: 4,
+    [limits.message.room.min + 2]: 2,
+    [limits.message.room.max - 2]: 4,
   },
 }, {
   districtid: {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 1,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 1,
   },
   msgcounts: {
-    [limits.messages.roomMin + 2]: 2,
-    [limits.messages.roomMin + 4]: 4,
-    [limits.messages.roomMin + 8]: 6,
-    [limits.messages.roomMax - 8]: 8,
-    [limits.messages.roomMax - 4]: 6,
-    [limits.messages.roomMax - 2]: 4,
+    [limits.message.room.min + 2]: 2,
+    [limits.message.room.min + 4]: 4,
+    [limits.message.room.min + 8]: 6,
+    [limits.message.room.max - 8]: 8,
+    [limits.message.room.max - 4]: 6,
+    [limits.message.room.max - 2]: 4,
   },
 }]
 
@@ -54,7 +54,7 @@ let change = (msgcounts: Record<string | number, number>, indices: number[], del
     result[room] = `${msgcounts[room]}`
   }
   for ( let index of indices ) {
-    let key = limits.messages.roomMin + index
+    let key = limits.message.room.min + index
     let value = result[key] ?? "0"
     result[key] = (Number(value) + delta).toString()
   }
@@ -92,7 +92,7 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }],
       delta: 1,
     },
@@ -108,7 +108,7 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }],
       delta: -1,
     },
@@ -124,11 +124,11 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 4,
+        room: limits.message.room.min + 4,
       }],
       delta: 1,
     },
@@ -144,11 +144,11 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 3,
+        room: limits.message.room.min + 3,
       }],
       delta: 1,
     },
@@ -164,15 +164,15 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.messages.roomMin + 4,
+        room: limits.message.room.min + 4,
       }],
       delta: 2,
     },
@@ -191,7 +191,7 @@ describe("testing redis operations...", () => {
       roomids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       }],
       delta: 1,
     },

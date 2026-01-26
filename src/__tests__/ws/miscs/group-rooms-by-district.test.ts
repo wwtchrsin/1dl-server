@@ -20,176 +20,176 @@ describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
+        [limits.message.room.min]: 1,
       }
     }]
   }, {
     tag: 2,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 2,
+        [limits.message.room.min]: 2,
       }
     }]
   }, {
     tag: 3,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin + 1
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min + 1
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
-        [limits.messages.roomMin + 1]: 1,
+        [limits.message.room.min]: 1,
+        [limits.message.room.min + 1]: 1,
       }
     }]
   }, {
     tag: 4,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
+      room: limits.message.room.min
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
+        [limits.message.room.min]: 1,
       }
     }, {
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin + 1,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min + 1,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
+        [limits.message.room.min]: 1,
       }
     }]
   }, {
     tag: 5,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
-      room: limits.messages.roomMin + 1
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
+      room: limits.message.room.min + 1
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
-      room: limits.messages.roomMin
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
+      room: limits.message.room.min
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin + 1
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min + 1
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
-        [limits.messages.roomMin + 1]: 1,
+        [limits.message.room.min]: 1,
+        [limits.message.room.min + 1]: 1,
       }
     }, {
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin + 1,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min + 1,
       },
       msgcounts: {
-        [limits.messages.roomMin]: 1,
-        [limits.messages.roomMin + 1]: 1,
+        [limits.message.room.min]: 1,
+        [limits.message.room.min + 1]: 1,
       }
     },]
   }, {
     tag: 6,
     args: [{
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin + 1,
-      room: limits.messages.roomMin + 4
+      region: limits.message.region.values[0],
+      district: limits.message.district.min + 1,
+      room: limits.message.room.min + 4
     }, {
-      region: limits.messages.regions[1],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin + 4
+      region: limits.message.region.values[1],
+      district: limits.message.district.min,
+      room: limits.message.room.min + 4
     }, {
-      region: limits.messages.regions[0],
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin + 4
+      region: limits.message.region.values[0],
+      district: limits.message.district.min,
+      room: limits.message.room.min + 4
     }, {
-      region: limits.messages.regions[1],
-      district: limits.messages.districtMin + 1,
-      room: limits.messages.roomMin + 4
+      region: limits.message.region.values[1],
+      district: limits.message.district.min + 1,
+      room: limits.message.room.min + 4
     }],
     expres: [{
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin + 4]: 1,
+        [limits.message.room.min + 4]: 1,
       }
     }, {
       districtid: {
-        region: limits.messages.regions[0],
-        district: limits.messages.districtMin + 1,
+        region: limits.message.region.values[0],
+        district: limits.message.district.min + 1,
       },
       msgcounts: {
-        [limits.messages.roomMin + 4]: 1,
+        [limits.message.room.min + 4]: 1,
       }
     }, {
       districtid: {
-        region: limits.messages.regions[1],
-        district: limits.messages.districtMin,
+        region: limits.message.region.values[1],
+        district: limits.message.district.min,
       },
       msgcounts: {
-        [limits.messages.roomMin + 4]: 1,
+        [limits.message.room.min + 4]: 1,
       }
     }, {
       districtid: {
-        region: limits.messages.regions[1],
-        district: limits.messages.districtMin + 1,
+        region: limits.message.region.values[1],
+        district: limits.message.district.min + 1,
       },
       msgcounts: {
-        [limits.messages.roomMin + 4]: 1,
+        [limits.message.room.min + 4]: 1,
       }
     }]
   }]

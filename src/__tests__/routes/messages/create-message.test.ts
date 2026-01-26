@@ -44,10 +44,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -63,10 +63,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[1][0]),
       args: [{
-        region: limits.messages.regions[1],
-        district: `${limits.messages.districtMax}`,
-        room: `${limits.messages.roomMax}`,
-        index: `${limits.messages.indexMax}`,
+        region: limits.message.region.values[1],
+        district: `${limits.message.district.max}`,
+        room: `${limits.message.room.max}`,
+        index: `${limits.message.index.max}`,
       }, {
         text: examples.text.maxLen,
         color: examples.color.last,
@@ -83,9 +83,9 @@ describe("testing endpoints...", () => {
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
         region: "abcd",
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -101,10 +101,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin - 1}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min - 1}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -120,10 +120,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMax + 1}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.max + 1}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -139,10 +139,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMax + 1}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.max + 1}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -158,10 +158,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.tooShort,
         color: examples.color.first,
@@ -177,10 +177,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: "abcd",
@@ -196,10 +196,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[1][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -215,10 +215,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(inactiveUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -234,10 +234,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + examples.sessionid[0],
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -253,10 +253,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "abcd",
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -272,10 +272,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -287,10 +287,10 @@ describe("testing endpoints...", () => {
     }, {
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin + 1}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -306,10 +306,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -321,10 +321,10 @@ describe("testing endpoints...", () => {
     }, {
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -340,10 +340,10 @@ describe("testing endpoints...", () => {
     actions: [{
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -355,10 +355,10 @@ describe("testing endpoints...", () => {
     }, {
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
@@ -370,10 +370,10 @@ describe("testing endpoints...", () => {
     }, {
       auth: () => "Bearer " + sessionid(completeUsersByRegion[0][0]),
       args: [{
-        region: limits.messages.regions[0],
-        district: `${limits.messages.districtMin}`,
-        room: `${limits.messages.roomMin}`,
-        index: `${limits.messages.indexMin + 1}`,
+        region: limits.message.region.values[0],
+        district: `${limits.message.district.min}`,
+        room: `${limits.message.room.min}`,
+        index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,

@@ -5,41 +5,41 @@ describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
     args: [{
-      room: limits.messages.roomMin,
+      room: limits.message.room.min,
       msgcount: 5,
     }],
     expres: {
-      [limits.messages.roomMin]: 5,
+      [limits.message.room.min]: 5,
     },
   }, {
     tag: 2,
     args: [{
-      room: limits.messages.roomMin + 1,
+      room: limits.message.room.min + 1,
       msgcount: 5,
     }],
     expres: {
-      [limits.messages.roomMin + 1]: 5,
+      [limits.message.room.min + 1]: 5,
     },
   }, {
     tag: 3,
     args: [{
-      room: limits.messages.roomMin + 2,
+      room: limits.message.room.min + 2,
       msgcount: 2,
     }, {
-      room: limits.messages.roomMin,
+      room: limits.message.room.min,
       msgcount: 1,
     }, {
-      room: limits.messages.roomMax - 2,
+      room: limits.message.room.max - 2,
       msgcount: 3,
     }, {
-      room: limits.messages.roomMax,
+      room: limits.message.room.max,
       msgcount: 4,
     }],
     expres: {
-      [limits.messages.roomMin + 2]: 2,
-      [limits.messages.roomMin]: 1,
-      [limits.messages.roomMax - 2]: 3,
-      [limits.messages.roomMax]: 4,
+      [limits.message.room.min + 2]: 2,
+      [limits.message.room.min]: 1,
+      [limits.message.room.max - 2]: 3,
+      [limits.message.room.max]: 4,
     },
   }]
   for ( let testcase of testcases ) {

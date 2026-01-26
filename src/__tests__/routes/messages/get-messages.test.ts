@@ -79,7 +79,7 @@ describe("testing endpoints...", () => {
     tag: 5,
     args: {
       region: databaseRooms[0].region,
-      district: limits.messages.districtMax + 1,
+      district: limits.message.district.max + 1,
       room: databaseRooms[0].room,
     },
     expres: {
@@ -91,7 +91,7 @@ describe("testing endpoints...", () => {
     tag: 6,
     args: {
       region: databaseRooms[0].region,
-      district: limits.messages.districtMax,
+      district: limits.message.district.max,
       room: "abcd",
     },
     expres: {

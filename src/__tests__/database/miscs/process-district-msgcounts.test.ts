@@ -5,41 +5,41 @@ describe("testing auxilliary functions...", () => {
   let testcases = [{
     tag: 1,
     args: [{
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
       msgcount: 5,
     }],
     expres: {
-      [limits.messages.districtMin]: 5,
+      [limits.message.district.min]: 5,
     },
   }, {
     tag: 2,
     args: [{
-      district: limits.messages.districtMin + 1,
+      district: limits.message.district.min + 1,
       msgcount: 5,
     }],
     expres: {
-      [limits.messages.districtMin + 1]: 5,
+      [limits.message.district.min + 1]: 5,
     },
   }, {
     tag: 3,
     args: [{
-      district: limits.messages.districtMin + 2,
+      district: limits.message.district.min + 2,
       msgcount: 2,
     }, {
-      district: limits.messages.districtMin,
+      district: limits.message.district.min,
       msgcount: 1,
     }, {
-      district: limits.messages.districtMax - 2,
+      district: limits.message.district.max - 2,
       msgcount: 3,
     }, {
-      district: limits.messages.districtMax,
+      district: limits.message.district.max,
       msgcount: 4,
     }],
     expres: {
-      [limits.messages.districtMin + 2]: 2,
-      [limits.messages.districtMin]: 1,
-      [limits.messages.districtMax - 2]: 3,
-      [limits.messages.districtMax]: 4,
+      [limits.message.district.min + 2]: 2,
+      [limits.message.district.min]: 1,
+      [limits.message.district.max - 2]: 3,
+      [limits.message.district.max]: 4,
     },
   }]
   for ( let testcase of testcases ) {

@@ -100,7 +100,7 @@ describe("testing database queries...", () => {
         region: databaseEmptyRooms[0].region,
         district: databaseEmptyRooms[0].district,
         room: databaseEmptyRooms[0].room,
-        index: limits.messages.indexMin,
+        index: limits.message.index.min,
       },
     },
     expres: {
@@ -115,7 +115,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: databaseMessages[1].region,
         district: databaseMessages[1].district,
-        room: limits.messages.roomMax + 1,
+        room: limits.message.room.max + 1,
         index: databaseMessages[1].index,
       },
     },
@@ -131,7 +131,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: databaseMessages[1].region,
         district: databaseMessages[1].district,
-        room: limits.messages.roomMax + 1,
+        room: limits.message.room.max + 1,
         index: databaseMessages[1].index,
       },
     },

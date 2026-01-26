@@ -1,7 +1,7 @@
-import { limits } from "./database/limits"
+import { limits, specialSymbols } from "./database/limits"
 import type { TextResource } from "./langs"
 
-const passwordSymbols = limits.users.passwordSymbols.map(r => `"${r}"`).join(", ")
+const passwordSymbols = specialSymbols.split("").map(r => `"${r}"`).join(", ")
 
 const getErrorCause = (lang: string, parameter: string) => {
   if ( lang === "ru" ) {
@@ -27,73 +27,73 @@ export const wrongValues: WrongValues = {
   messages: {
     region: {
       en: getErrorCause("en", "region") + " Valid values: " + 
-        limits.messages.regions.join(", ") + ".",
+        limits.message.region.values.join(", ") + ".",
       ru: getErrorCause("ru", "region") + " Корректные значения: " +
-        limits.messages.regions.join(", ") + ".",
+        limits.message.region.values.join(", ") + ".",
     },
     district: {
       en: getErrorCause("en", "district") + " " +
-        getCorrectRange("en", limits.messages.districtMin, limits.messages.districtMax),
+        getCorrectRange("en", limits.message.district.min, limits.message.district.max),
       ru: getErrorCause("ru", "district") + " " + 
-        getCorrectRange("ru", limits.messages.districtMin, limits.messages.districtMax),
+        getCorrectRange("ru", limits.message.district.min, limits.message.district.max),
     },
     room: {
       en: getErrorCause("en", "room") + " " + 
-        getCorrectRange("en", limits.messages.roomMin, limits.messages.roomMax),
+        getCorrectRange("en", limits.message.room.min, limits.message.room.max),
       ru: getErrorCause("ru", "room") + " " + 
-        getCorrectRange("ru", limits.messages.roomMin, limits.messages.roomMax),
+        getCorrectRange("ru", limits.message.room.min, limits.message.room.max),
     },
     index: {
       en: getErrorCause("en", "index") + " " + 
-        getCorrectRange("en", limits.messages.indexMin, limits.messages.indexMax),
+        getCorrectRange("en", limits.message.index.min, limits.message.index.max),
       ru: getErrorCause("ru", "index") + " " + 
-        getCorrectRange("ru", limits.messages.indexMin, limits.messages.indexMax),
+        getCorrectRange("ru", limits.message.index.min, limits.message.index.max),
     },
     text: {
       en: "The message not sent. The message length must be within the range " +
-        `[${limits.messages.textLenMin}, ${limits.messages.textLenMax}]`,
+        `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
       ru: "Сообщение не отправлено. Длина сообщения должна находиться в интервале " +
-        `[${limits.messages.textLenMin}, ${limits.messages.textLenMax}]`,
+        `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
     },
     color: {
       en: getErrorCause("en", "color") + " Valid values: " + 
-        limits.messages.colors.join(", ") + ".",
+        limits.message.color.values.join(", ") + ".",
       ru: getErrorCause("ru", "color") + " Корректные значения: " +
-        limits.messages.colors.join(", ") + ".",
+        limits.message.color.values.join(", ") + ".",
     },
   },
   users: {
     region: {
       en: getErrorCause("en", "region") + " Valid values: " + 
-        limits.messages.regions.join(", ") + ".",
+        limits.message.region.values.join(", ") + ".",
       ru: getErrorCause("ru", "region") + " Корректные значения: " +
-        limits.messages.regions.join(", ") + ".",
+        limits.message.region.values.join(", ") + ".",
     },
     login: {
       en: "Login not accepted. The login can only contain latin letters, digits, " +
         'and symbols "-" and "_". The login length must be between ' +
-        `${limits.users.loginLenMin} and ${limits.users.loginLenMax} symbols.`,
+        `${limits.user.login.minLen} and ${limits.user.login.maxLen} symbols.`,
       ru: "Логин не принят. Логин может содержать только латинские буквы, цифры, " +
         'и символы "-" и "_". Длина логина должна находиться в интервале от ' +
-        `${limits.users.loginLenMin} до ${limits.users.loginLenMax} символов.`,
+        `${limits.user.login.minLen} до ${limits.user.login.maxLen} символов.`,
     },
     password: {
       en: "Password not accepted. The password can only contain latin letters, " +
         `digits and special symbols (${passwordSymbols}), ` +
         "and must contain at least one lowercase letter, one uppercase letter, " +
         "one digit and one special symbol. The password length must be between " +
-        `${limits.users.passwordLenMin} and ${limits.users.passwordLenMax} symbols.`,
+        `${limits.user.password.minLen} and ${limits.user.password.maxLen} symbols.`,
       ru: "Пароль не принят. Пароль может содержать только латинские буквы, цифры, " +
         `и специальные символы (${passwordSymbols}), ` +
         "и должен содержать хотя бы одну строчную букву, одну заглавную букву, " +
         "одну цифру и один специальный символ. Длина пароля должна находиться в интервале от " +
-        `${limits.users.passwordLenMin} до ${limits.users.passwordLenMax} символов.`
+        `${limits.user.password.minLen} до ${limits.user.password.maxLen} символов.`
     },
     name: {
       en: "Wrong user name. The name length must be between " +
-        `${limits.users.nameLenMin} and ${limits.users.nameLenMax} symbols.`,
+        `${limits.user.name.minLen} and ${limits.user.name.maxLen} symbols.`,
       ru: "Недопустимое имя пользователя. Длина имени должна находиться в интервале от " +
-        `${limits.users.nameLenMin} до ${limits.users.nameLenMax} символов.`,
+        `${limits.user.name.minLen} до ${limits.user.name.maxLen} символов.`,
     },
     userid: {
       en: "Wrong user identifier",

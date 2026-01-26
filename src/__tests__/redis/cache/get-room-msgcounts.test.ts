@@ -10,23 +10,23 @@ afterAll(async () => {
 })
 
 let districtids = [{
-  region: limits.messages.regions[0],
-  district: limits.messages.districtMin,
+  region: limits.message.region.values[0],
+  district: limits.message.district.min,
 }, {
-  region: limits.messages.regions[0],
-  district: limits.messages.districtMin + 1,
+  region: limits.message.region.values[0],
+  district: limits.message.district.min + 1,
 }]
 
 let msgcounts = [{
-  [limits.messages.roomMin + 2]: 2,
-  [limits.messages.roomMax - 2]: 4,
+  [limits.message.room.min + 2]: 2,
+  [limits.message.room.max - 2]: 4,
 }, {
-  [limits.messages.roomMin + 2]: 2,
-  [limits.messages.roomMin + 4]: 4,
-  [limits.messages.roomMin + 8]: 6,
-  [limits.messages.roomMax - 8]: 8,
-  [limits.messages.roomMax - 4]: 6,
-  [limits.messages.roomMax - 2]: 4,
+  [limits.message.room.min + 2]: 2,
+  [limits.message.room.min + 4]: 4,
+  [limits.message.room.min + 8]: 6,
+  [limits.message.room.max - 8]: 8,
+  [limits.message.room.max - 4]: 6,
+  [limits.message.room.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({

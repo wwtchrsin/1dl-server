@@ -39,7 +39,7 @@ describe("testing endpoints...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: limits.messages.regions[0],
+    args: limits.message.region.values[0],
     mocks: {
       getDistrictMsgcounts: cacheEmpty,
     },
@@ -50,11 +50,11 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: msgcounts(limits.messages.regions[0]),
+      msgcounts: msgcounts(limits.message.region.values[0]),
     },
   }, {
     tag: 2,
-    args: limits.messages.regions[0],
+    args: limits.message.region.values[0],
     mocks: {},
     calls: {
       countRegionMessages: 0,
@@ -63,11 +63,11 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: msgcounts(limits.messages.regions[0]),
+      msgcounts: msgcounts(limits.message.region.values[0]),
     },
   }, {
     tag: 3,
-    args: limits.messages.regions[1],
+    args: limits.message.region.values[1],
     mocks: {
       getDistrictMsgcounts: cacheEmpty,
     },
@@ -78,7 +78,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      msgcounts: msgcounts(limits.messages.regions[1]),
+      msgcounts: msgcounts(limits.message.region.values[1]),
     },
   }, {
     tag: 4,

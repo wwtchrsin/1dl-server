@@ -10,23 +10,23 @@ afterAll(async () => {
 })
 
 let districtids = [{
-  region: limits.messages.regions[0],
-  district: limits.messages.districtMin,
+  region: limits.message.region.values[0],
+  district: limits.message.district.min,
 }, {
-  region: limits.messages.regions[0],
-  district: limits.messages.districtMin + 1,
+  region: limits.message.region.values[0],
+  district: limits.message.district.min + 1,
 }]
 
 let msgcounts = [{
-  [limits.messages.roomMin + 2]: 2,
-  [limits.messages.roomMax - 2]: 4,
+  [limits.message.room.min + 2]: 2,
+  [limits.message.room.max - 2]: 4,
 }, {
-  [limits.messages.roomMin + 2]: 2,
-  [limits.messages.roomMin + 4]: 4,
-  [limits.messages.roomMin + 8]: 6,
-  [limits.messages.roomMax - 8]: 8,
-  [limits.messages.roomMax - 4]: 6,
-  [limits.messages.roomMax - 2]: 4,
+  [limits.message.room.min + 2]: 2,
+  [limits.message.room.min + 4]: 4,
+  [limits.message.room.min + 8]: 6,
+  [limits.message.room.max - 8]: 8,
+  [limits.message.room.max - 4]: 6,
+  [limits.message.room.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({
@@ -54,7 +54,7 @@ let addts = (msgcounts: Record<string, string>) => {
 
 let change = (msgcounts: Record<string | number, number>, index: number, delta: number) => {
   let result = { ...msgcounts }
-  let key = limits.messages.roomMin + index
+  let key = limits.message.room.min + index
   result[key] = Number(result[key]) + delta
   return result
 }
@@ -80,7 +80,7 @@ describe("testing redis operations...", () => {
       roomid: {
         region: districtids[0].region,
         district: districtids[0].district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       },
       delta: 1,
     },
@@ -97,7 +97,7 @@ describe("testing redis operations...", () => {
       roomid: {
         region: districtids[1].region,
         district: districtids[1].district,
-        room: limits.messages.roomMin + 4,
+        room: limits.message.room.min + 4,
       },
       delta: -1,
     },
@@ -114,14 +114,14 @@ describe("testing redis operations...", () => {
       roomid: {
         region: districtids[1].region,
         district: districtids[1].district,
-        room: limits.messages.roomMin + 4,
+        room: limits.message.room.min + 4,
       },
       delta: 1,
     },
     mocks: {},
     expres: true,
     table: process({
-      [limits.messages.roomMin + 4]: 1,
+      [limits.message.room.min + 4]: 1,
     }),
   }, {
     tag: 4,
@@ -133,7 +133,7 @@ describe("testing redis operations...", () => {
       roomid: {
         region: districtids[0].region,
         district: districtids[0].district,
-        room: limits.messages.roomMin + 2,
+        room: limits.message.room.min + 2,
       },
       delta: 1,
     },

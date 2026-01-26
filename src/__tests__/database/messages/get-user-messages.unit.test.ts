@@ -5,9 +5,9 @@ import { examples } from "../../../lib/test-data"
 
 let message = {
   region: examples.region.first,
-  district: limits.messages.districtMin,
-  room: limits.messages.roomMin,
-  index: limits.messages.indexMin,
+  district: limits.message.district.min,
+  room: limits.message.room.min,
+  index: limits.message.index.min,
   text: examples.text.correct[0],
   color: examples.color.first,
   timestamp: "123456789",

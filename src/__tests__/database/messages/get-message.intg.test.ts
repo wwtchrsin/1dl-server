@@ -58,9 +58,9 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       region: examples.region.first,
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin,
-      index: limits.messages.indexMin,
+      district: limits.message.district.min,
+      room: limits.message.room.min,
+      index: limits.message.index.min,
     },
     expres: {
       error: "databaseConflicts.messageNotFound",
@@ -70,9 +70,9 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: "abcd",
-      district: limits.messages.districtMin,
-      room: limits.messages.roomMin,
-      index: limits.messages.indexMin,
+      district: limits.message.district.min,
+      room: limits.message.room.min,
+      index: limits.message.index.min,
     },
     expres: {
       error: "databaseConflicts.messageNotFound",

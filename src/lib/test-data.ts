@@ -80,14 +80,14 @@ export const examples = {
     ]
   },
   region: {
-    first: limits.messages.regions[0],
-    last: limits.messages.regions[limits.messages.regions.length - 1],
-    some: limits.messages.regions[1],
+    first: limits.message.region.values[0],
+    last: limits.message.region.values[limits.message.region.values.length - 1],
+    some: limits.message.region.values[1],
   },
   color: {
-    first: limits.messages.colors[0],
-    last: limits.messages.colors[limits.messages.colors.length - 1],
-    some: limits.messages.colors[1],
+    first: limits.message.color.values[0],
+    last: limits.message.color.values[limits.message.color.values.length - 1],
+    some: limits.message.color.values[1],
   },
 }
 
@@ -167,7 +167,7 @@ export const databaseUsers = (() => {
   let result = []
   for ( let i=0; i < regionByUser.length; i++ ) {
     let postfix = String.fromCharCode(97 + i % 26)
-    let region = limits.messages.regions[regionByUser[i]]
+    let region = limits.message.region.values[regionByUser[i]]
     let login = examples.login.correct[i % examples.login.correct.length] + postfix
     let password = examples.password.correct[i % examples.password.correct.length] + postfix
     let name = examples.name.correct[i % examples.name.correct.length] + postfix
@@ -217,7 +217,7 @@ export const databaseSessions = (() => {
   let result = []
   for ( let i=0; i < userBySession.length; i++ ) {
     let userid = databaseUsers[userBySession[i]].userid
-    let sessionid = randomBytes(limits.sessions.sessionidSize / 2).toString("hex")
+    let sessionid = randomBytes(limits.session.sessionid.len / 2).toString("hex")
     let sessionidHash = hashSession(sessionid)
     let timestamp = "12345671" + ("0" + i).slice(-2)
     result.push({
@@ -297,7 +297,7 @@ export const completeUsersByRegion = (() => {
   for ( let i=0; i < databaseCompleteUsers.length; i++ ) {
     let index = databaseCompleteUsers[i]
     let region = databaseUsers[index].region
-    let regionIndex = limits.messages.regions.indexOf(region)
+    let regionIndex = limits.message.region.values.indexOf(region)
     if ( result[regionIndex] === undefined ) {
       result[regionIndex] = []
     }
@@ -308,86 +308,86 @@ export const completeUsersByRegion = (() => {
 
 export const databaseDistricts = [
   /*[0]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 4,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 4,
   },
   /*[1]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 8,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 8,
   },
   /*[2]*/ {
-    region: limits.messages.regions[1],
-    district: limits.messages.districtMax - 4,
+    region: limits.message.region.values[1],
+    district: limits.message.district.max - 4,
   },
 ]
 
 export const databaseRooms = [
   /*[0]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 4,
-    room: limits.messages.roomMin + 4,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 4,
+    room: limits.message.room.min + 4,
   },
   /*[1]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 4,
-    room: limits.messages.roomMin + 8,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 4,
+    room: limits.message.room.min + 8,
   },
   /*[2]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 8,
-    room: limits.messages.roomMax - 4,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 8,
+    room: limits.message.room.max - 4,
   },
   /*[3]*/ {
-    region: limits.messages.regions[1],
-    district: limits.messages.districtMax - 4,
-    room: limits.messages.roomMin + 4,
+    region: limits.message.region.values[1],
+    district: limits.message.district.max - 4,
+    room: limits.message.room.min + 4,
   },
   /*[4]*/ {
-    region: limits.messages.regions[1],
-    district: limits.messages.districtMax - 4,
-    room: limits.messages.roomMax - 4,
+    region: limits.message.region.values[1],
+    district: limits.message.district.max - 4,
+    room: limits.message.room.max - 4,
   },
 ]
 
 export const databaseEmptyDistricts = [
   /*[0]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min,
   },
   /*[1]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax,
+    region: limits.message.region.values[0],
+    district: limits.message.district.max,
   },
   /*[2]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 1,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 1,
   },
   /*[3]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 1,
+    region: limits.message.region.values[0],
+    district: limits.message.district.max - 1,
   },
 ]
 
 export const databaseEmptyRooms = [
   /*[0]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin,
-    room: limits.messages.roomMin,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min,
+    room: limits.message.room.min,
   },
   /*[1]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax,
-    room: limits.messages.roomMax,
+    region: limits.message.region.values[0],
+    district: limits.message.district.max,
+    room: limits.message.room.max,
   },
   /*[2]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMin + 1,
-    room: limits.messages.roomMin + 1,
+    region: limits.message.region.values[0],
+    district: limits.message.district.min + 1,
+    room: limits.message.room.min + 1,
   },
   /*[3]*/ {
-    region: limits.messages.regions[0],
-    district: limits.messages.districtMax - 1,
-    room: limits.messages.roomMax - 1,
+    region: limits.message.region.values[0],
+    district: limits.message.district.max - 1,
+    room: limits.message.room.max - 1,
   },
 ]
 
@@ -535,7 +535,7 @@ export const databaseMessages = (() => {
     let roomid = databaseRooms[roomByMessage[i]]
     let user = databaseUsers[userByMessage[i]]
     let text = examples.text.correct[i % examples.text.correct.length] + " " + i
-    let color = limits.messages.colors[i % limits.messages.colors.length]
+    let color = limits.message.color.values[i % limits.message.color.values.length]
     let timestamp = "12345672" + ("0" + i).slice(-2)
     result.push({
       region: roomid.region,

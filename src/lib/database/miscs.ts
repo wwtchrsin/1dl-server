@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from "node:crypto"
 import { promisify } from "node:util"
-import { limits } from "./limits"
+import { limits, hashSizes } from "./limits"
 import env from "../env"
 import logger from "../logger"
 import type { RoomMsgcount, DistrictMsgcount } from "./interfaces"
@@ -18,8 +18,8 @@ export const getHashingAlgorithm = (hashSize: number) => {
 }
 
 const hashingAlgorithms = {
-  password: getHashingAlgorithm(limits.users.passwordHashSize),
-  sessionid: getHashingAlgorithm(limits.sessions.sessionidHashSize),
+  password: getHashingAlgorithm(hashSizes.password),
+  sessionid: getHashingAlgorithm(hashSizes.sessionid),
 }
 
 const randomBytesAsync = promisify(randomBytes)
@@ -35,7 +35,7 @@ export const hashSession = (sessionid: string) => {
 }
 
 export const generateToken = async () => {
-  let bytes = await randomBytesAsync(limits.sessions.sessionidSize / 2)
+  let bytes = await randomBytesAsync(limits.session.sessionid.len / 2)
   return bytes.toString("hex")
 }
 

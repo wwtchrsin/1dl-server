@@ -13,15 +13,15 @@ afterAll(async () => {
 let timestamp = "1234567890"
 
 let msgcounts = [{
-  [limits.messages.districtMin + 2]: 2,
-  [limits.messages.districtMax - 2]: 4,
+  [limits.message.district.min + 2]: 2,
+  [limits.message.district.max - 2]: 4,
 }, {
-  [limits.messages.districtMin + 2]: 2,
-  [limits.messages.districtMin + 4]: 4,
-  [limits.messages.districtMin + 8]: 6,
-  [limits.messages.districtMax - 8]: 8,
-  [limits.messages.districtMax - 4]: 6,
-  [limits.messages.districtMax - 2]: 4,
+  [limits.message.district.min + 2]: 2,
+  [limits.message.district.min + 4]: 4,
+  [limits.message.district.min + 8]: 6,
+  [limits.message.district.max - 8]: 8,
+  [limits.message.district.max - 4]: 6,
+  [limits.message.district.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({
@@ -44,7 +44,7 @@ describe("testing redis operations...", () => {
     jest.restoreAllMocks()
     let client = await redisConn.getClient()
     let keys = []
-    for ( let region of limits.messages.regions ) {
+    for ( let region of limits.message.region.values ) {
       keys.push(`${redisConn.redisns}:msgcounts:districts:${region}`)
     }
     await client.del(keys)
@@ -52,7 +52,7 @@ describe("testing redis operations...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: msgcounts[0],
     },
     mocks: {
@@ -63,7 +63,7 @@ describe("testing redis operations...", () => {
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: {},
     },
     mocks: {
@@ -74,7 +74,7 @@ describe("testing redis operations...", () => {
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[1],
+      region: limits.message.region.values[1],
       msgcounts: msgcounts[1],
     },
     mocks: {
@@ -85,7 +85,7 @@ describe("testing redis operations...", () => {
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
+      region: limits.message.region.values[0],
       msgcounts: msgcounts[0],
     },
     mocks: {

@@ -5,73 +5,73 @@ describe("testing query validators...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
     },
     expres: undefined,
   }, {
     tag: 2,
     args: {
-      region: limits.messages.regions[limits.messages.regions.length - 1],
-      district: `${limits.messages.districtMax}`,
-      room: `${limits.messages.roomMax}`,
+      region: limits.message.region.values[limits.message.region.values.length - 1],
+      district: `${limits.message.district.max}`,
+      room: `${limits.message.room.max}`,
     },
     expres: undefined,
   }, {
     tag: 3,
     args: {
-      region: limits.messages.regions[1],
-      district: `${limits.messages.districtMin + 1}`,
-      room: `${limits.messages.districtMin + 1}`,
+      region: limits.message.region.values[1],
+      district: `${limits.message.district.min + 1}`,
+      room: `${limits.message.district.min + 1}`,
     },
     expres: undefined,
   }, {
     tag: 4,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin - 1}`,
-      room: `${limits.messages.roomMin}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min - 1}`,
+      room: `${limits.message.room.min}`,
     },
     expres: "wrongValues.messages.district",
   }, {
     tag: 5,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin - 1}`,
-      room: `${limits.messages.roomMin}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min - 1}`,
+      room: `${limits.message.room.min}`,
     },
     expres: "wrongValues.messages.district",
   }, {
     tag: 6,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin - 1}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min - 1}`,
     },
     expres: "wrongValues.messages.room",
   }, {
     tag: 7,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin + 0.5}`,
-      room: `${limits.messages.roomMin}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min + 0.5}`,
+      room: `${limits.message.room.min}`,
     },
     expres: "wrongValues.messages.district",
   }, {
     tag: 8,
     args: {
-      region: limits.messages.regions[0],
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin + 0.5}`,
+      region: limits.message.region.values[0],
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min + 0.5}`,
     },
     expres: "wrongValues.messages.room",
   }, {
     tag: 9,
     args: {
       region: "abcdefg",
-      district: `${limits.messages.districtMin + 1}`,
-      room: `${limits.messages.roomMin + 1}`,
+      district: `${limits.message.district.min + 1}`,
+      room: `${limits.message.room.min + 1}`,
     },
     expres: "wrongValues.messages.region",
   }]

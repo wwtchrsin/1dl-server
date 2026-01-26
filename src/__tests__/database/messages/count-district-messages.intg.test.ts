@@ -61,7 +61,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: databaseDistricts[0].region,
-      district: limits.messages.districtMax + 1,
+      district: limits.message.district.max + 1,
     },
     expres: {
       error: undefined,

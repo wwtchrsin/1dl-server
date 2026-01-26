@@ -1,19 +1,19 @@
 import { limits, patterns } from "./limits"
 
 export const checkRegion = (region: string | undefined): string | undefined => {
-   if ( !limits.messages.regions.includes(region) ) {
+   if ( !limits.message.region.values.includes(region) ) {
     return "wrongValues.messages.region"
   }
   return undefined
 }
 
 export const checkDistrictid = (req: any): string | undefined => {
-  if ( !limits.messages.regions.includes(req?.region) ) {
+  if ( !limits.message.region.values.includes(req?.region) ) {
     return "wrongValues.messages.region"
   }
   let district = Number(req?.district)
-  if ( isNaN(district) || district < limits.messages.districtMin ||
-    district > limits.messages.districtMax || 
+  if ( isNaN(district) || district < limits.message.district.min ||
+    district > limits.message.district.max || 
     Math.round(district) !== district ) {
       return "wrongValues.messages.district"
     }
@@ -26,8 +26,8 @@ export const checkRoomid = (req: any): string | undefined => {
     return errorMessage
   }
   let room = Number(req?.room)
-  if ( isNaN(room) || room < limits.messages.roomMin || 
-    room > limits.messages.roomMax ||
+  if ( isNaN(room) || room < limits.message.room.min || 
+    room > limits.message.room.max ||
     Math.round(room) !== room ) {
       return "wrongValues.messages.room"
     }
@@ -40,8 +40,8 @@ export const checkMessageid = (req: any): string | undefined => {
     return errorMessage
   }
   let index = Number(req?.index)
-  if ( isNaN(index) || index < limits.messages.indexMin ||
-    index > limits.messages.indexMax ||
+  if ( isNaN(index) || index < limits.message.index.min ||
+    index > limits.message.index.max ||
     Math.round(index) !== index ) {
       return "wrongValues.messages.index"
     }
@@ -50,12 +50,12 @@ export const checkMessageid = (req: any): string | undefined => {
 
 export const checkMessageContent = (req: any): string | undefined => {
   let textLen = Number(req?.text?.length)
-  if ( isNaN(textLen) || textLen < limits.messages.textLenMin ||
-    textLen > limits.messages.textLenMax ||
+  if ( isNaN(textLen) || textLen < limits.message.text.minLen ||
+    textLen > limits.message.text.maxLen ||
     typeof req?.text !== "string" ) {
       return "wrongValues.messages.text"
     }
-  if ( !limits.messages.colors.includes(req?.color) ) {
+  if ( !limits.message.color.values.includes(req?.color) ) {
     return "wrongValues.messages.color"
   }
   return undefined
@@ -79,26 +79,26 @@ export const checkMessageData = (userid: string | undefined, messageid: any, con
   }
 
 export const checkUserData = (req: any): string | undefined => {
-  if ( !limits.messages.regions.includes(req?.region) ) {
+  if ( !limits.message.region.values.includes(req?.region) ) {
     return "wrongValues.users.region"
   }
   let loginLen = Number(req?.login?.length)
-  if ( isNaN(loginLen) || loginLen < limits.users.loginLenMin ||
-    loginLen > limits.users.loginLenMax ||
+  if ( isNaN(loginLen) || loginLen < limits.user.login.minLen ||
+    loginLen > limits.user.login.maxLen ||
     typeof req?.login !== "string" ||
     !patterns.login.test(req?.login) ) {
       return "wrongValues.users.login"
     }
   let passwordLen = Number(req?.password?.length)
-  if ( isNaN(passwordLen) || passwordLen < limits.users.passwordLenMin ||
-    passwordLen > limits.users.passwordLenMax ||
+  if ( isNaN(passwordLen) || passwordLen < limits.user.password.minLen ||
+    passwordLen > limits.user.password.maxLen ||
     typeof req?.password !== "string" ||
     !patterns.password.test(req?.password) ) {
       return "wrongValues.users.password"
     }
   let nameLen = Number(req?.name?.length)
-  if ( isNaN(nameLen) || nameLen < limits.users.nameLenMin ||
-    nameLen > limits.users.nameLenMax ||
+  if ( isNaN(nameLen) || nameLen < limits.user.name.minLen ||
+    nameLen > limits.user.name.maxLen ||
     typeof req?.name !== "string" ) {
       return "wrongValues.users.name"
     }

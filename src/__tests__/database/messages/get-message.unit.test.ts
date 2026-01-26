@@ -67,9 +67,9 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
+      index: `${limits.message.index.min}`,
     },
     mocks: {
       queryDatabase: returnOneMessage,
@@ -79,9 +79,9 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
+      index: `${limits.message.index.min}`,
     },
     mocks: {
       queryDatabase: returnEmptyList,
@@ -91,9 +91,9 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
+      index: `${limits.message.index.min}`,
     },
     mocks: {
       queryDatabase: returnTwoMessages,
@@ -103,9 +103,9 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: examples.region.first,
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
+      index: `${limits.message.index.min}`,
     },
     mocks: {
       queryDatabase: returnError,
@@ -115,9 +115,9 @@ describe("testing database queries...", () => {
     tag: 5,
     args: {
       region: "abcdefg",
-      district: `${limits.messages.districtMin}`,
-      room: `${limits.messages.roomMin}`,
-      index: `${limits.messages.indexMin}`,
+      district: `${limits.message.district.min}`,
+      room: `${limits.message.room.min}`,
+      index: `${limits.message.index.min}`,
     },
     mocks: {
       queryDatabase: returnOneMessage,
