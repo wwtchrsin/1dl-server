@@ -1,7 +1,7 @@
-import { getLocation, getRoomLocation, getDistrictLocation,
+import { getLocation, getZoneLocation, getDistrictLocation,
   getRegionLocation } from "../../../lib/ws/miscs"
 import { limits } from "../../../lib/database/limits"
-import type { Districtid, Roomid } from "../../../lib/database/interfaces"
+import type { Districtid, Zoneid } from "../../../lib/database/interfaces"
 
 describe("testing auxilliary functions...", () => {
   let testcases = {
@@ -23,7 +23,7 @@ describe("testing auxilliary functions...", () => {
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
       },
       expres: "/foo/1/1",
     }, {
@@ -31,7 +31,7 @@ describe("testing auxilliary functions...", () => {
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
         index: 1,
       },
       expres: "/foo/1/1",
@@ -40,7 +40,7 @@ describe("testing auxilliary functions...", () => {
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
         bar: 1,
       },
       expres: "/foo/1/1",
@@ -48,14 +48,14 @@ describe("testing auxilliary functions...", () => {
       tag: 6,
       args: {
         region: "bar",
-        room: 1,
+        zone: 1,
       },
       expres: "/bar",
     }, {
       tag: 7,
       args: {
         district: 1,
-        room: 1,
+        zone: 1,
       },
       expres: "",
     }, {
@@ -67,12 +67,12 @@ describe("testing auxilliary functions...", () => {
       args: undefined,
       expres: "",
     }],
-    getRoomLocation: [{
+    getZoneLocation: [{
       tag: 1,
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
       },
       expres: "/foo/1/1",
     }, {
@@ -80,7 +80,7 @@ describe("testing auxilliary functions...", () => {
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
         index: 1,
       },
       expres: "/foo/1/1",
@@ -95,7 +95,7 @@ describe("testing auxilliary functions...", () => {
       tag: 4,
       args: {
         region: "bar",
-        room: 1,
+        zone: 1,
       },
       expres: "/bar/undefined/1",
     }],
@@ -111,14 +111,14 @@ describe("testing auxilliary functions...", () => {
       args: {
         region: "foo",
         district: 1,
-        room: 1,
+        zone: 1,
       },
       expres: "/foo/1",
     }, {
       tag: 3,
       args: {
         region: "bar",
-        room: 1,
+        zone: 1,
         index: 1,
       },
       expres: "/bar/undefined",
@@ -153,10 +153,10 @@ describe("testing auxilliary functions...", () => {
       expect(result).toBe(expres)
     })
   }
-  for ( let testcase of testcases.getRoomLocation ) {
+  for ( let testcase of testcases.getZoneLocation ) {
     let { tag, args, expres } = testcase
-    test(`Function getRoomLocation. Test #${tag}`, () => {
-      let result = getRoomLocation(args as Roomid)
+    test(`Function getZoneLocation. Test #${tag}`, () => {
+      let result = getZoneLocation(args as Zoneid)
       expect(result).toBe(expres)
     })
   }

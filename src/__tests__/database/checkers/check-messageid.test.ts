@@ -7,7 +7,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
       index: `${limits.message.index.min}`,
     },
     expres: undefined
@@ -16,7 +16,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[limits.message.region.values.length - 1],
       district: `${limits.message.district.max}`,
-      room: `${limits.message.room.max}`,
+      zone: `${limits.message.zone.max}`,
       index: `${limits.message.index.max}`,
     },
     expres: undefined
@@ -25,7 +25,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[1],
       district: `${limits.message.district.min + 1}`,
-      room: `${limits.message.room.min + 1}`,
+      zone: `${limits.message.zone.min + 1}`,
       index: `${limits.message.index.min + 1}`,
     },
     expres: undefined
@@ -34,7 +34,7 @@ describe("testing query validators...", () => {
     args: {
       region: "abcdefg",
       district: `${limits.message.district.max}`,
-      room: `${limits.message.room.max}`,
+      zone: `${limits.message.zone.max}`,
       index: `${limits.message.index.max}`,
     },
     expres: "wrongValue.message.region"
@@ -43,7 +43,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.max + 1}`,
-      room: `${limits.message.room.max}`,
+      zone: `${limits.message.zone.max}`,
       index: `${limits.message.index.max}`,
     },
     expres: "wrongValue.message.district"
@@ -52,16 +52,16 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min - 1}`,
+      zone: `${limits.message.zone.min - 1}`,
       index: `${limits.message.index.min}`,
     },
-    expres: "wrongValue.message.room"
+    expres: "wrongValue.message.zone"
   }, {
     tag: 7,
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
       index: `${limits.message.index.min - 1}`,
     },
     expres: "wrongValue.message.index"
@@ -70,7 +70,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
       index: `${limits.message.index.max + 1}`,
     },
     expres: "wrongValue.message.index"
@@ -79,7 +79,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
       index: `${limits.message.index.min + 1.5}`,
     },
     expres: "wrongValue.message.index"
@@ -88,7 +88,7 @@ describe("testing query validators...", () => {
     args: {
       region: limits.message.region.values[0],
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
       index: `${limits.message.index.min + 1}`,
     },
     expres: undefined

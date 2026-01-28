@@ -1,8 +1,8 @@
-import { groupMessagesByRoom } from "../../../lib/ws/miscs"
+import { groupMessagesByZone } from "../../../lib/ws/miscs"
 import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 import type { Messageid, Message } from "../../../lib/database/interfaces"
-import type { MessagesByRoom } from "../../../lib/ws/miscs"
+import type { MessagesByZone } from "../../../lib/ws/miscs"
 
 let toMessages = (messageids: Messageid[]): Message[] => {
   let messages: Message[] = []
@@ -10,7 +10,7 @@ let toMessages = (messageids: Messageid[]): Message[] => {
     messages.push({
       region: messageid.region,
       district: +messageid.district,
-      room: +messageid.room,
+      zone: +messageid.zone,
       index: +messageid.index,
       text: examples.text.correct[0],
       color: limits.message.color.values[0],
@@ -22,13 +22,13 @@ let toMessages = (messageids: Messageid[]): Message[] => {
   return messages
 }
 
-let sortGroups = (groups: MessagesByRoom): MessagesByRoom => {
+let sortGroups = (groups: MessagesByZone): MessagesByZone => {
   groups.sort((a, b) => {
-    for ( let param of ["region", "district", "room"] ) {
-      if ( a.roomid[param] > b.roomid[param] ) {
+    for ( let param of ["region", "district", "zone"] ) {
+      if ( a.zoneid[param] > b.zoneid[param] ) {
         return 1
       }
-      if ( a.roomid[param] < b.roomid[param] ) {
+      if ( a.zoneid[param] < b.zoneid[param] ) {
         return -1
       }
     }
@@ -46,19 +46,19 @@ describe("testing auxilliary functions...", () => {
     args: toMessages([{
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }]),
     expres: [{
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }]),
     }],
@@ -67,29 +67,29 @@ describe("testing auxilliary functions...", () => {
     args: toMessages([{
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min + 1,
     }]),
     expres: [{
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min + 1,
       }]),
     }],
@@ -98,36 +98,36 @@ describe("testing auxilliary functions...", () => {
     args: toMessages([{
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min + 1,
+      zone: limits.message.zone.min + 1,
       index: limits.message.index.min + 4,
     }]),
     expres: [{
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }]),
     }, {
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min + 1,
+        zone: limits.message.zone.min + 1,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min + 1,
+        zone: limits.message.zone.min + 1,
         index: limits.message.index.min + 4,
       }]),
     }],
@@ -136,56 +136,56 @@ describe("testing auxilliary functions...", () => {
     args: toMessages([{
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min + 1,
+      zone: limits.message.zone.min + 1,
       index: limits.message.index.min + 1,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min + 1,
+      zone: limits.message.zone.min + 1,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min + 1,
     }]),
     expres: [{
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min + 1,
       }]),
     }, {
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min + 1,
+        zone: limits.message.zone.min + 1,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min + 1,
+        zone: limits.message.zone.min + 1,
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min + 1,
+        zone: limits.message.zone.min + 1,
         index: limits.message.index.min + 1,
       }]),
     }],
@@ -194,78 +194,78 @@ describe("testing auxilliary functions...", () => {
     args: toMessages([{
       region: limits.message.region.values[0],
       district: limits.message.district.min + 1,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
       district: limits.message.district.min + 1,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     }]),
     expres: [{
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }]),
     }, {
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[0],
         district: limits.message.district.min + 1,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
         district: limits.message.district.min + 1,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }])
     }, {
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[1],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[1],
         district: limits.message.district.min,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }])
     }, {
-      roomid: {
+      zoneid: {
         region: limits.message.region.values[1],
         district: limits.message.district.min + 1,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
       },
       messages: toMessages([{
         region: limits.message.region.values[1],
         district: limits.message.district.min + 1,
-        room: limits.message.room.min,
+        zone: limits.message.zone.min,
         index: limits.message.index.min,
       }])
     }],
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function groupMessagesByRoom. Test #${tag}`, () => {
-      let result = groupMessagesByRoom(args)
+    test(`Function groupMessagesByZone. Test #${tag}`, () => {
+      let result = groupMessagesByZone(args)
       expect(sortGroups(result)).toStrictEqual(sortGroups(expres))
     })
   }

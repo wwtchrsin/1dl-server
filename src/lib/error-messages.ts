@@ -37,11 +37,11 @@ export const wrongValues: WrongValues = {
       ru: getErrorCause("ru", "district") + " " + 
         getCorrectRange("ru", limits.message.district.min, limits.message.district.max),
     },
-    room: {
-      en: getErrorCause("en", "room") + " " + 
-        getCorrectRange("en", limits.message.room.min, limits.message.room.max),
-      ru: getErrorCause("ru", "room") + " " + 
-        getCorrectRange("ru", limits.message.room.min, limits.message.room.max),
+    zone: {
+      en: getErrorCause("en", "zone") + " " + 
+        getCorrectRange("en", limits.message.zone.min, limits.message.zone.max),
+      ru: getErrorCause("ru", "zone") + " " + 
+        getCorrectRange("ru", limits.message.zone.min, limits.message.zone.max),
     },
     index: {
       en: getErrorCause("en", "index") + " " + 

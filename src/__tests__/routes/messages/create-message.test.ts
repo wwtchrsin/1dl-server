@@ -46,7 +46,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -65,7 +65,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[1],
         district: `${limits.message.district.max}`,
-        room: `${limits.message.room.max}`,
+        zone: `${limits.message.zone.max}`,
         index: `${limits.message.index.max}`,
       }, {
         text: examples.text.maxLen,
@@ -84,7 +84,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: "abcd",
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -103,7 +103,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min - 1}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -122,14 +122,14 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.max + 1}`,
+        zone: `${limits.message.zone.max + 1}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValue.message.room",
+        error: "wrongValue.message.zone",
         status: 400,
       },
     }],
@@ -141,7 +141,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.max + 1}`,
       }, {
         text: examples.text.minLen,
@@ -160,7 +160,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.tooShort,
@@ -179,7 +179,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -198,7 +198,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -217,7 +217,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -236,7 +236,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -255,7 +255,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -274,7 +274,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -289,7 +289,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
@@ -308,7 +308,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -323,7 +323,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -342,7 +342,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -357,7 +357,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -372,7 +372,7 @@ describe("testing endpoints...", () => {
       args: [{
         region: limits.message.region.values[0],
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
@@ -387,12 +387,12 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { actions, rowCount, tag } = testcase
-    test(`POST /messages/r/d/room/index. Test #${tag}`, async () => {
+    test(`POST /messages/r/d/zone/index. Test #${tag}`, async () => {
       let reportsPromise = getReports(`messages:created`, rowCount)
       for ( let action of actions ) {
         let { auth, args, expres } = action
         let [ msgid, content ] = args
-        let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.room}/${msgid.index}`
+        let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.zone}/${msgid.index}`
         let result = await testServer.post(url)
           .set("Authorization", auth()).send(content)
         expect(result.statusCode).toBe(expres.status)
@@ -402,7 +402,7 @@ describe("testing endpoints...", () => {
           expect(result.body.message).toBeDefined()
           expect(result.body.message.region).toBe(msgid.region)
           expect(`${result.body.message.district}`).toBe(msgid.district)
-          expect(`${result.body.message.room}`).toBe(msgid.room)
+          expect(`${result.body.message.zone}`).toBe(msgid.zone)
           expect(`${result.body.message.index}`).toBe(msgid.index)
           expect(result.body.message.text).toBe(content.text)
           expect(result.body.message.color).toBe(content.color)
@@ -422,7 +422,7 @@ describe("testing endpoints...", () => {
         expect(reports[i].messages).toHaveLength(1)
         expect(reports[i].messages[0].region).toBeDefined()
         expect(reports[i].messages[0].district).toBeDefined()
-        expect(reports[i].messages[0].room).toBeDefined()
+        expect(reports[i].messages[0].zone).toBeDefined()
         expect(reports[i].messages[0].index).toBeDefined()
         expect(reports[i].messages[0].text).toBeDefined()
         expect(reports[i].messages[0].color).toBeDefined()

@@ -2,7 +2,7 @@ import * as wsState from "./state"
 import * as wsTools from "./miscs"
 import logger from "../logger"
 import type * as DatabaseTypes from "../database/interfaces"
-import type { RoomMsgcountsUpdate, DistrictMsgcountsUpdate } 
+import type { ZoneMsgcountsUpdate, DistrictMsgcountsUpdate } 
   from "../redis/interfaces"
 
 export const reportError = (userid: string, error: string) => {
@@ -37,9 +37,9 @@ export const enableConnCheck = (interval: number) => {
 
 export const insertMessages = (messages: DatabaseTypes.Message[]) => {
   let TAG = "ws/server-messages/insertMessages"
-  let roomGroups = wsTools.groupMessagesByRoom(messages)
-  for ( let { roomid, messages } of roomGroups ) {
-    let location = wsTools.getRoomLocation(roomid)
+  let zoneGroups = wsTools.groupMessagesByZone(messages)
+  for ( let { zoneid, messages } of zoneGroups ) {
+    let location = wsTools.getZoneLocation(zoneid)
     let clients = wsState.getClientsByLocation(location)
     for ( let client of clients ) {
       client.send(JSON.stringify({
@@ -48,13 +48,13 @@ export const insertMessages = (messages: DatabaseTypes.Message[]) => {
       }))
     }
   }
-  let districtGroups = wsTools.groupRoomsByDistrict(messages)
+  let districtGroups = wsTools.groupZonesByDistrict(messages)
   for ( let { districtid, msgcounts } of districtGroups ) {
     let location = wsTools.getDistrictLocation(districtid)
     let clients = wsState.getClientsByLocation(location)
     for ( let client of clients ) {
       client.send(JSON.stringify({
-        type: "change-room-msgcounts",
+        type: "change-zone-msgcounts",
         msgcounts: msgcounts,
       }))
     }
@@ -75,9 +75,9 @@ export const insertMessages = (messages: DatabaseTypes.Message[]) => {
 
 export const deleteMessages = (messageids: DatabaseTypes.Messageid[]) => {
   let TAG = "ws/server-messages/deleteMessages"
-  let roomGroups = wsTools.groupMessageidsByRoom(messageids)
-  for ( let { roomid, indices } of roomGroups ) {
-    let location = wsTools.getRoomLocation(roomid)
+  let zoneGroups = wsTools.groupMessageidsByZone(messageids)
+  for ( let { zoneid, indices } of zoneGroups ) {
+    let location = wsTools.getZoneLocation(zoneid)
     let clients = wsState.getClientsByLocation(location)
     for ( let client of clients ) {
       client.send(JSON.stringify({
@@ -86,14 +86,14 @@ export const deleteMessages = (messageids: DatabaseTypes.Messageid[]) => {
       }))
     }
   }
-  let districtGroups = wsTools.groupRoomsByDistrict(messageids)
+  let districtGroups = wsTools.groupZonesByDistrict(messageids)
   wsTools.modifyMsgcounts(districtGroups, x => -x)
   for ( let { districtid, msgcounts } of districtGroups ) {
     let location = wsTools.getDistrictLocation(districtid)
     let clients = wsState.getClientsByLocation(location)
     for ( let client of clients ) {
       client.send(JSON.stringify({
-        type: "change-room-msgcounts",
+        type: "change-zone-msgcounts",
         msgcounts: msgcounts,
       }))
     }
@@ -113,13 +113,13 @@ export const deleteMessages = (messageids: DatabaseTypes.Messageid[]) => {
   logger.debug(`${TAG}#MESSAGES_SENT`)
 }
 
-export const updateRoomMsgcounts = ({ districtid, msgcounts }: RoomMsgcountsUpdate) => {
+export const updateZoneMsgcounts = ({ districtid, msgcounts }: ZoneMsgcountsUpdate) => {
   let TAG = "ws/server-messages/deleteMessages"
   let location = wsTools.getDistrictLocation(districtid)
   let clients = wsState.getClientsByLocation(location)
   for ( let client of clients ) {
     client.send(JSON.stringify({
-      type: "update-room-msgcounts",
+      type: "update-zone-msgcounts",
       msgcounts: msgcounts,
     }))
   }

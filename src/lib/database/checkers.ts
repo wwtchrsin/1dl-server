@@ -20,22 +20,22 @@ export const checkDistrictid = (req: any): string | undefined => {
   return undefined
 }
 
-export const checkRoomid = (req: any): string | undefined => {
+export const checkZoneid = (req: any): string | undefined => {
   let errorMessage = checkDistrictid(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
   }
-  let room = Number(req?.room)
-  if ( isNaN(room) || room < limits.message.room.min || 
-    room > limits.message.room.max ||
-    Math.round(room) !== room ) {
-      return "wrongValue.message.room"
+  let zone = Number(req?.zone)
+  if ( isNaN(zone) || zone < limits.message.zone.min || 
+    zone > limits.message.zone.max ||
+    Math.round(zone) !== zone ) {
+      return "wrongValue.message.zone"
     }
   return undefined
 }
 
 export const checkMessageid = (req: any): string | undefined => {
-  let errorMessage = checkRoomid(req)
+  let errorMessage = checkZoneid(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
   }

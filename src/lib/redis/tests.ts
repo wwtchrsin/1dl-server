@@ -1,4 +1,4 @@
-import { roomMsgcounts, districtMsgcounts } from "../test-data"
+import { zoneMsgcounts, districtMsgcounts } from "../test-data"
 import { getClient, redisns, getSubscriber } from "./conn"
 
 export const clearRedis = async () => {
@@ -9,10 +9,10 @@ export const clearRedis = async () => {
 
 export const initRedisCache = async () => {
   let client = await getClient()  
-  for ( let region in roomMsgcounts ) {
-    for ( let district in roomMsgcounts[region] ) {
-      let key = `${redisns}:msgcounts:rooms:${region}:${district}`
-      let msgcounts = roomMsgcounts[region][district]
+  for ( let region in zoneMsgcounts ) {
+    for ( let district in zoneMsgcounts[region] ) {
+      let key = `${redisns}:msgcounts:zones:${region}:${district}`
+      let msgcounts = zoneMsgcounts[region][district]
       await client.hSet(key, msgcounts)
     }
   }

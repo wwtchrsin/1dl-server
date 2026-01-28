@@ -10,7 +10,7 @@ export const limits = {
       min: 0,
       max: 299,
     },
-    room: {
+    zone: {
       min: 0,
       max: 299,
     },

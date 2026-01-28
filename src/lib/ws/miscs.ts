@@ -1,17 +1,17 @@
-import type { Message, Roomid, Districtid, Messageid } 
+import type { Message, Zoneid, Districtid, Messageid } 
   from "../database/interfaces"
 
-export type MessagesByRoom = ({
-  roomid: Roomid,
+export type MessagesByZone = ({
+  zoneid: Zoneid,
   messages: Message[]
 })[]
 
-export type MessageidsByRoom = ({
-  roomid: Roomid,
+export type MessageidsByZone = ({
+  zoneid: Zoneid,
   indices: (number | string)[]
 })[]
 
-export type RoomsByDistrict = ({
+export type ZonesByDistrict = ({
   districtid: Districtid,
   msgcounts: Record<number | string, number>,
 })[]
@@ -27,27 +27,27 @@ export type MsgcountsGroups = ({
 
 export type MsgcountsModifier = (value: number | string) => number
 
-export const groupMessagesByRoom = (messages: Message[]): MessagesByRoom => {
+export const groupMessagesByZone = (messages: Message[]): MessagesByZone => {
   let regions = new Map<string, Map<number, Map<number, Message[]>>>()
   for ( let message of messages ) {
-    let { region, district, room } = message
+    let { region, district, zone } = message
     if ( !regions.has(region) ) {
       regions.set(region, new Map())
     }
     if ( !regions.get(region).has(district) ) {
       regions.get(region).set(district, new Map())
     }
-    if ( !regions.get(region).get(district).has(room) ) {
-      regions.get(region).get(district).set(room, [])
+    if ( !regions.get(region).get(district).has(zone) ) {
+      regions.get(region).get(district).set(zone, [])
     }
-    regions.get(region).get(district).get(room).push(message)
+    regions.get(region).get(district).get(zone).push(message)
   }
-  let groups: MessagesByRoom = []
+  let groups: MessagesByZone = []
   for ( let [region, districts] of regions ) {
-    for ( let [district, rooms] of districts ) {
-      for ( let [room, messages] of rooms ) {
+    for ( let [district, zones] of districts ) {
+      for ( let [zone, messages] of zones ) {
         groups.push({
-          roomid: { region, district, room },
+          zoneid: { region, district, zone },
           messages,
         })
       }
@@ -56,28 +56,28 @@ export const groupMessagesByRoom = (messages: Message[]): MessagesByRoom => {
   return groups
 }
 
-export const groupMessageidsByRoom = (messageids: Messageid[]): MessageidsByRoom => {
-  type Rooms = Map<string | number, Set<number | string>>
-  let regions = new Map<string, Map<string | number, Rooms>>()
+export const groupMessageidsByZone = (messageids: Messageid[]): MessageidsByZone => {
+  type Zones = Map<string | number, Set<number | string>>
+  let regions = new Map<string, Map<string | number, Zones>>()
   for ( let messageid of messageids ) {
-    let { region, district, room, index } = messageid
+    let { region, district, zone, index } = messageid
     if ( !regions.has(region) ) {
       regions.set(region, new Map())
     }
     if ( !regions.get(region).has(district) ) {
       regions.get(region).set(district, new Map())
     }
-    if ( !regions.get(region).get(district).has(room) ) {
-      regions.get(region).get(district).set(room, new Set())
+    if ( !regions.get(region).get(district).has(zone) ) {
+      regions.get(region).get(district).set(zone, new Set())
     }
-    regions.get(region).get(district).get(room).add(index)
+    regions.get(region).get(district).get(zone).add(index)
   }
-  let groups: MessageidsByRoom = []
+  let groups: MessageidsByZone = []
   for ( let [region, districts] of regions ) {
-    for ( let [district, rooms] of districts ) {
-      for ( let [room, indices] of rooms ) {
+    for ( let [district, zones] of districts ) {
+      for ( let [zone, indices] of zones ) {
         groups.push({
-          roomid: { region, district, room },
+          zoneid: { region, district, zone },
           indices: Array.from(indices),
         })
       }
@@ -86,29 +86,29 @@ export const groupMessageidsByRoom = (messageids: Messageid[]): MessageidsByRoom
   return groups
 }
 
-export const groupRoomsByDistrict = (roomids: Roomid[]): RoomsByDistrict => {
-  type Room = Map<number | string, number>
-  let regions = new Map<string, Map<number | string, Room>>()
-  for ( let roomid of roomids ) {
-    let { region, district, room } = roomid
+export const groupZonesByDistrict = (zoneids: Zoneid[]): ZonesByDistrict => {
+  type Zone = Map<number | string, number>
+  let regions = new Map<string, Map<number | string, Zone>>()
+  for ( let zoneid of zoneids ) {
+    let { region, district, zone } = zoneid
     if ( !regions.has(region) ) {
       regions.set(region, new Map())
     }
     if ( !regions.get(region).has(district) ) {
       regions.get(region).set(district, new Map())
     }
-    if ( !regions.get(region).get(district).has(room) ) {
-      regions.get(region).get(district).set(room, 0)
+    if ( !regions.get(region).get(district).has(zone) ) {
+      regions.get(region).get(district).set(zone, 0)
     }
-    let value = regions.get(region).get(district).get(room)
-    regions.get(region).get(district).set(room, value + 1)
+    let value = regions.get(region).get(district).get(zone)
+    regions.get(region).get(district).set(zone, value + 1)
   }
-  let groups: RoomsByDistrict = []
+  let groups: ZonesByDistrict = []
   for ( let [region, districts] of regions ) {
-    for ( let [district, rooms] of districts ) {
+    for ( let [district, zones] of districts ) {
       let msgcounts: Record<number | string, number> = {}
-      for ( let [room, count] of rooms ) {
-        msgcounts[room] = count
+      for ( let [zone, count] of zones ) {
+        msgcounts[zone] = count
       }
       groups.push({
         districtid: { region, district },
@@ -152,8 +152,8 @@ export const modifyMsgcounts = (groups: MsgcountsGroups, modifier: MsgcountsModi
     }
   }
 
-export const getRoomLocation = (roomid: Roomid) => {
-  return `/${roomid.region}/${roomid.district}/${roomid.room}`
+export const getZoneLocation = (zoneid: Zoneid) => {
+  return `/${zoneid.region}/${zoneid.district}/${zoneid.zone}`
 }
 
 export const getDistrictLocation = (districtid: Districtid) => {
@@ -169,7 +169,7 @@ export const getLocation = (data: any): string => {
     return ""
   }
   let location = ""
-  for ( let name of ["region", "district", "room"] ) {
+  for ( let name of ["region", "district", "zone"] ) {
     let value = data[name]
     if ( value === undefined ) {
       break

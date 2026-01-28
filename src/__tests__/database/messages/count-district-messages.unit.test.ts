@@ -1,14 +1,14 @@
 import * as messages from "../../../lib/database/messages"
 import * as conn from "../../../lib/database/conn"
-import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
+import { processZoneMsgcounts as process } from "../../../lib/database/miscs"
 import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
 let stats = [{
-  room: 1,
+  zone: 1,
   msgcount: 2,
 }, {
-  room: 2,
+  zone: 2,
   msgcount: 3,
 }]
 

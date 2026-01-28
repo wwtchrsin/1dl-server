@@ -4,7 +4,7 @@ import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import * as messages from "../../../lib/database/messages"
 import { populateDatabase, databaseDistricts, databaseEmptyDistricts,
-  roomMsgcounts } from "../../../lib/test-data"
+  zoneMsgcounts } from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
@@ -29,7 +29,7 @@ let testServer = supertest(httpServer)
 
 let msgcounts = (districtid: any) => {
   let { region, district } = districtid
-  return roomMsgcounts[region][district]
+  return zoneMsgcounts[region][district]
 }
 
 let cacheEmpty = () => Promise.resolve({ error: false, data: undefined })
@@ -44,11 +44,11 @@ describe("testing endpoints...", () => {
     tag: 1,
     args: databaseDistricts[0],
     mocks: {
-      getRoomMsgcounts: cacheEmpty,
+      getZoneMsgcounts: cacheEmpty,
     },
     calls: {
       countDistrictMessages: 1,
-      updateRoomMsgcounts: 1,
+      updateZoneMsgcounts: 1,
     },
     expres: {
       status: 200,
@@ -61,7 +61,7 @@ describe("testing endpoints...", () => {
     mocks: {},
     calls: {
       countDistrictMessages: 0,
-      updateRoomMsgcounts: 0,
+      updateZoneMsgcounts: 0,
     },
     expres: {
       status: 200,
@@ -72,11 +72,11 @@ describe("testing endpoints...", () => {
     tag: 3,
     args: databaseDistricts[1],
     mocks: {
-      getRoomMsgcounts: cacheEmpty,
+      getZoneMsgcounts: cacheEmpty,
     },
     calls: {
       countDistrictMessages: 1,
-      updateRoomMsgcounts: 1,
+      updateZoneMsgcounts: 1,
     },
     expres: {
       status: 200,
@@ -87,11 +87,11 @@ describe("testing endpoints...", () => {
     tag: 4,
     args: databaseEmptyDistricts[2],
     mocks: {
-      getRoomMsgcounts: cacheEmpty,
+      getZoneMsgcounts: cacheEmpty,
     },
     calls: {
       countDistrictMessages: 1,
-      updateRoomMsgcounts: 1,
+      updateZoneMsgcounts: 1,
     },
     expres: {
       status: 200,
@@ -105,11 +105,11 @@ describe("testing endpoints...", () => {
       district: databaseDistricts[0].district,
     },
     mocks: {
-      getRoomMsgcounts: cacheEmpty,
+      getZoneMsgcounts: cacheEmpty,
     },
     calls: {
       countDistrictMessages: 0,
-      updateRoomMsgcounts: 0,
+      updateZoneMsgcounts: 0,
     },
     expres: {
       status: 400,
@@ -120,13 +120,13 @@ describe("testing endpoints...", () => {
   for ( let testcase of testcases ) {
     let { args, mocks, calls, expres, tag } = testcase
     test(`GET /messages/region/district. Test #${tag}`, async () => {
-      let reportsPromise = getReports("msgcounts:rooms", calls.updateRoomMsgcounts)
-      if ( mocks.getRoomMsgcounts ) {
-        jest.spyOn(redisCache, "getRoomMsgcounts")
-          .mockImplementation(mocks.getRoomMsgcounts)
+      let reportsPromise = getReports("msgcounts:zones", calls.updateZoneMsgcounts)
+      if ( mocks.getZoneMsgcounts ) {
+        jest.spyOn(redisCache, "getZoneMsgcounts")
+          .mockImplementation(mocks.getZoneMsgcounts)
       }
       let countDistrictMessages = jest.spyOn(messages, "countDistrictMessages")
-      let updateRoomMsgcounts = jest.spyOn(redisCache, "updateRoomMsgcounts")
+      let updateZoneMsgcounts = jest.spyOn(redisCache, "updateZoneMsgcounts")
       let { region, district } = args
       let url = `/api/v1/messages/${region}/${district}`
       let result = await testServer.get(url)
@@ -140,10 +140,10 @@ describe("testing endpoints...", () => {
         expect(result.body.msgcounts).toBeUndefined()
       }
       expect(countDistrictMessages).toHaveBeenCalledTimes(calls.countDistrictMessages)
-      expect(updateRoomMsgcounts).toHaveBeenCalledTimes(calls.updateRoomMsgcounts)
+      expect(updateZoneMsgcounts).toHaveBeenCalledTimes(calls.updateZoneMsgcounts)
       let reports = await reportsPromise
-      expect(reports).toHaveLength(calls.updateRoomMsgcounts)
-      if ( calls.updateRoomMsgcounts === 1 ) {
+      expect(reports).toHaveLength(calls.updateZoneMsgcounts)
+      if ( calls.updateZoneMsgcounts === 1 ) {
         expect(reports[0].districtid).toBeDefined()
         expect(reports[0].districtid.region).toBe(region)
         expect(`${reports[0].districtid.district}`).toBe(`${district}`)

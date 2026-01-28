@@ -1,23 +1,23 @@
 import * as redisConn from "./conn"
 import { encodeMsgcounts, decodeMsgcounts } from "./miscs"
-import type { Roomid, Districtid } from "../database/interfaces"
+import type { Zoneid, Districtid } from "../database/interfaces"
 import logger from "../logger"
 
-export const changeRoomMsgcount = async (roomid: Roomid, delta: number): 
+export const changeZoneMsgcount = async (zoneid: Zoneid, delta: number): 
   Promise<boolean> => {
-    let TAG = "redis/cache/changeRoomMsgcount"
-    let { region, district, room } = roomid
-    let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+    let TAG = "redis/cache/changeZoneMsgcount"
+    let { region, district, zone } = zoneid
+    let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
     try {
       let client = await redisConn.getClient()
-      await client.hIncrBy(key, `${room}`, delta)
-      logger.debug({ roomid, delta }, `${TAG}#DONE`)
+      await client.hIncrBy(key, `${zone}`, delta)
+      logger.debug({ zoneid, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
         region: region,
         district: district,
-        room: room,
+        zone: zone,
         delta: delta,
         stack: err.stack,
         message: err.message,
@@ -27,23 +27,23 @@ export const changeRoomMsgcount = async (roomid: Roomid, delta: number):
     }
   }
 
-export const changeRoomMsgcounts = async (roomids: Roomid[], delta: number):
+export const changeZoneMsgcounts = async (zoneids: Zoneid[], delta: number):
   Promise<boolean> => {
-    let TAG = "redis/cache/changeRoomMsgcounts"
+    let TAG = "redis/cache/changeZoneMsgcounts"
     try {
       let client = await redisConn.getClient()
       let promises: Promise<number | string>[] = []
-      for ( let roomid of roomids ) {
-        let { region, district, room } = roomid
-        let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
-        promises.push(client.hIncrBy(key, `${room}`, delta))
+      for ( let zoneid of zoneids ) {
+        let { region, district, zone } = zoneid
+        let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
+        promises.push(client.hIncrBy(key, `${zone}`, delta))
       }
       await Promise.all(promises)
-      logger.debug({ roomids: roomids.length, delta }, `${TAG}#DONE`)
+      logger.debug({ zoneids: zoneids.length, delta }, `${TAG}#DONE`)
       return true
     } catch (err) {
       let errmsg = {
-        roomids: roomids.length,
+        zoneids: zoneids.length,
         delta: delta,
         stack: err.stack,
         message: err.message,
@@ -102,11 +102,11 @@ export const changeDistrictMsgcounts = async (districtids: Districtid[], delta: 
     }
   }
 
-export const updateRoomMsgcounts = async (districtid: Districtid, msgcounts: 
+export const updateZoneMsgcounts = async (districtid: Districtid, msgcounts: 
   Record<string | number, number>): Promise<boolean> => {
-    let TAG = "redis/cache/updateRoomMsgcounts"
+    let TAG = "redis/cache/updateZoneMsgcounts"
     let { region, district } = districtid
-    let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+    let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
     try {
       let client = await redisConn.getClient()
       await client.hSet(key, encodeMsgcounts(msgcounts))
@@ -146,11 +146,11 @@ export const updateDistrictMsgcounts = async (region: string, msgcounts:
     }
   }
 
-export const getRoomMsgcounts = async (districtid: Districtid): 
+export const getZoneMsgcounts = async (districtid: Districtid): 
   Promise<{ error: boolean, data: Record<string, number> | undefined }> => {
-    let TAG = "redis/cache/getRoomMsgcounts"
+    let TAG = "redis/cache/getZoneMsgcounts"
     let { region, district } = districtid
-    let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+    let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
     try {
       let client = await redisConn.getClient()
       let msgcounts = (await client.hGetAll(key)) as Record<string, any> 

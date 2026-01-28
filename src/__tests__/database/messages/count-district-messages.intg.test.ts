@@ -1,6 +1,6 @@
 import { pool, schema } from "../../../lib/database/conn"
 import { countDistrictMessages } from "../../../lib/database/messages"
-import { processRoomMsgcounts as process } from "../../../lib/database/miscs"
+import { processZoneMsgcounts as process } from "../../../lib/database/miscs"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { populateDatabase, databaseMessages, databaseDistricts, 
@@ -20,17 +20,17 @@ afterAll(async () => {
 
 let stats = (districtIndex: number) => {
   let messageIndices = messagesByDistrict[districtIndex]
-  let rooms = new Map()
+  let zones = new Map()
   for ( let messageIndex of messageIndices ) {
-    let room = databaseMessages[messageIndex].room
-    if ( !rooms.has(room) ) {
-      rooms.set(room, 0)
+    let zone = databaseMessages[messageIndex].zone
+    if ( !zones.has(zone) ) {
+      zones.set(zone, 0)
     }
-    rooms.set(room, rooms.get(room) + 1)
+    zones.set(zone, zones.get(zone) + 1)
   }
   let result = []
-  for ( let [room, msgcount] of rooms ) {
-    result.push({ room, msgcount })
+  for ( let [zone, msgcount] of zones ) {
+    result.push({ zone, msgcount })
   }
   return result
 }

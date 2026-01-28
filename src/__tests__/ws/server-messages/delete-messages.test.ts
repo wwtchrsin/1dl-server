@@ -36,24 +36,24 @@ let messageids = new Map([
   ["/foo/1/2", [{
     region: "foo",
     district: 1,
-    room: 2,
+    zone: 2,
     index: 3,
   }, {
     region: "foo",
     district: 1,
-    room: 2,
+    zone: 2,
     index: 4,
   }]], 
   ["/bar/4/3", [{
     region: "bar",
     district: 4,
-    room: 3,
+    zone: 3,
     index: 2,
   }]],
   ["/baz/5/5", [{
     region: "baz",
     district: 5,
-    room: 5,
+    zone: 5,
     index: 5,
   }]],
 ])
@@ -87,7 +87,7 @@ describe("testing ws message handlers...", () => {
       ]],
       ["/foo/1", [
         JSON.stringify({
-          type: "change-room-msgcounts",
+          type: "change-zone-msgcounts",
           msgcounts: { "2": -1 },
         })
       ]],
@@ -119,7 +119,7 @@ describe("testing ws message handlers...", () => {
       ]],
       ["/foo/1", [
         JSON.stringify({
-          type: "change-room-msgcounts",
+          type: "change-zone-msgcounts",
           msgcounts: { "2": -2 },
         })
       ]],
@@ -185,7 +185,7 @@ describe("testing ws message handlers...", () => {
       ]],
       ["/foo/1", [
         JSON.stringify({
-          type: "change-room-msgcounts",
+          type: "change-zone-msgcounts",
           msgcounts: { "2": -2 },
         })
       ]],

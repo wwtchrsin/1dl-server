@@ -91,7 +91,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     return
   }
   let messageids = extractMessageids(result.messages)
-  await redisCache.changeRoomMsgcounts(result.messages, -1)
+  await redisCache.changeZoneMsgcounts(result.messages, -1)
   await redisCache.changeDistrictMsgcounts(result.messages, -1)
   await publish("messages:deleted", { messageids })
   await publish("sessions:deleted", { userids: [userid.data] })

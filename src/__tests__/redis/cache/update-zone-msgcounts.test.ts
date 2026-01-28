@@ -1,6 +1,6 @@
 import * as redisConn from "../../../lib/redis/conn"
 import * as miscs from "../../../lib/database/miscs"
-import { updateRoomMsgcounts } from "../../../lib/redis/cache"
+import { updateZoneMsgcounts } from "../../../lib/redis/cache"
 import { limits } from "../../../lib/database/limits"
 
 afterAll(async () => {
@@ -21,15 +21,15 @@ let districtids = [{
 }]
 
 let msgcounts = [{
-  [limits.message.room.min + 2]: 2,
-  [limits.message.room.max - 2]: 4,
+  [limits.message.zone.min + 2]: 2,
+  [limits.message.zone.max - 2]: 4,
 }, {
-  [limits.message.room.min + 2]: 2,
-  [limits.message.room.min + 4]: 4,
-  [limits.message.room.min + 8]: 6,
-  [limits.message.room.max - 8]: 8,
-  [limits.message.room.max - 4]: 6,
-  [limits.message.room.max - 2]: 4,
+  [limits.message.zone.min + 2]: 2,
+  [limits.message.zone.min + 4]: 4,
+  [limits.message.zone.min + 8]: 6,
+  [limits.message.zone.max - 8]: 8,
+  [limits.message.zone.max - 4]: 6,
+  [limits.message.zone.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({
@@ -40,8 +40,8 @@ let getTimestamp = () => +timestamp
 
 let process = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
-  for ( let room in msgcounts ) {
-    result[room] = `${msgcounts[room]}`
+  for ( let zone in msgcounts ) {
+    result[zone] = `${msgcounts[zone]}`
   }
   result.timestamp = timestamp
   return result
@@ -54,7 +54,7 @@ describe("testing redis operations...", () => {
     let keys = []
     for ( let districtid of districtids ) {
       let { region, district } = districtid
-      keys.push(`${redisConn.redisns}:msgcounts:rooms:${region}:${district}`)
+      keys.push(`${redisConn.redisns}:msgcounts:zones:${region}:${district}`)
     }
     await client.del(keys)
   })
@@ -106,7 +106,7 @@ describe("testing redis operations...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, table, tag } = testcase
-    test(`Function updateRoomMsgcounts. Test #${tag}`, async () => {
+    test(`Function updateZoneMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( mocks.getTimestamp ) {
         jest.spyOn(miscs, "getTimestamp").mockImplementation(mocks.getTimestamp)
@@ -116,8 +116,8 @@ describe("testing redis operations...", () => {
       }
       let { districtid, msgcounts } = args
       let { region, district } = districtid
-      let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
-      let result = await updateRoomMsgcounts(districtid, msgcounts)
+      let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
+      let result = await updateZoneMsgcounts(districtid, msgcounts)
       let dbstate = await client.hGetAll(key)
       expect(result).toBe(expres)
       expect(dbstate).toStrictEqual(table)

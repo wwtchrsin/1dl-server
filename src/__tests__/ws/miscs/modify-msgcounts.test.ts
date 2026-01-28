@@ -80,7 +80,7 @@ describe("testing auxilliary functions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function groupRoomsByDistrict. Test #${tag}`, () => {
+    test(`Function modifyMsgcounts. Test #${tag}`, () => {
       let { groups, modifier } = args
       modifyMsgcounts(groups, modifier)
       expect(groups).toStrictEqual(expres)

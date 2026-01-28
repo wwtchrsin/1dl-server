@@ -2,8 +2,8 @@ import { pool, schema } from "../../../lib/database/conn"
 import { getMessages } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { databaseMessages, databaseRooms, databaseEmptyRooms,
-  messagesByRoom, populateDatabase } from "../../../lib/test-data"
+import { databaseMessages, databaseZones, databaseEmptyZones,
+  messagesByZone, populateDatabase } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -25,7 +25,7 @@ let toMessages = (messageIndices: number[]) => {
   return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
     district: databaseMessages[messageIndex].district,
-    room: databaseMessages[messageIndex].room,
+    zone: databaseMessages[messageIndex].zone,
     index: databaseMessages[messageIndex].index,
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,
@@ -39,31 +39,31 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: databaseRooms[0].region,
-      district: databaseRooms[0].district,
-      room: databaseRooms[0].room,
+      region: databaseZones[0].region,
+      district: databaseZones[0].district,
+      zone: databaseZones[0].zone,
     },
     expres: {
       error: undefined,
-      data: toMessages(messagesByRoom[0]),
+      data: toMessages(messagesByZone[0]),
     },
   }, {
     tag: 2,
     args: {
-      region: databaseRooms[2].region,
-      district: databaseRooms[2].district,
-      room: databaseRooms[2].room,
+      region: databaseZones[2].region,
+      district: databaseZones[2].district,
+      zone: databaseZones[2].zone,
     },
     expres: {
       error: undefined,
-      data: toMessages(messagesByRoom[2]),
+      data: toMessages(messagesByZone[2]),
     },
   }, {
     tag: 3,
     args: {
-      region: databaseEmptyRooms[0].region,
-      district: databaseEmptyRooms[0].district,
-      room: databaseEmptyRooms[0].room,
+      region: databaseEmptyZones[0].region,
+      district: databaseEmptyZones[0].district,
+      zone: databaseEmptyZones[0].zone,
     },
     expres: {
       error: undefined,
@@ -74,7 +74,7 @@ describe("testing database queries...", () => {
     args: {
       region: limits.message.region.values[0],
       district: limits.message.district.max + 1,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
     },
     expres: {
       error: undefined,

@@ -7,11 +7,11 @@ let timestamp = 123456789
 let userid = examples.uuid[0]
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
-  let [region, district, room, index, text, color, userid] = queryParams
+  let [region, district, zone, index, text, color, userid] = queryParams
   let message = {
     region: region, 
     district: Number(district),
-    room: Number(room),
+    zone: Number(zone),
     index: Number(index),
     text: text,
     color: color,
@@ -35,7 +35,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       }, 
       content: {
@@ -58,7 +58,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: examples.region.last,
         district: `${limits.message.district.max}`,
-        room: `${limits.message.room.max}`,
+        zone: `${limits.message.zone.max}`,
         index: `${limits.message.index.max}`,
       },
       content: {
@@ -81,7 +81,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: "12345678",
         district: `${limits.message.district.max}`,
-        room: `${limits.message.room.max}`,
+        zone: `${limits.message.zone.max}`,
         index: `${limits.message.index.max}`,
       },
       content: {
@@ -104,7 +104,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -119,7 +119,7 @@ describe("testing database queries...", () => {
           rows: [{
             region: examples.region.first,
             district: limits.message.district.min,
-            room: limits.message.room.min,
+            zone: limits.message.zone.min,
             index: limits.message.index.min,
             text: examples.text.minLen,
             color: examples.color.first,
@@ -137,7 +137,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -160,7 +160,7 @@ describe("testing database queries...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -189,7 +189,7 @@ describe("testing database queries...", () => {
         expect(result.data).toBeDefined()
         expect(result.data.region).toBe(messageid.region)
         expect(`${result.data.district}`).toBe(messageid.district)
-        expect(`${result.data.room}`).toBe(messageid.room)
+        expect(`${result.data.zone}`).toBe(messageid.zone)
         expect(`${result.data.index}`).toBe(messageid.index)
         expect(result.data.text).toBe(content.text)
         expect(result.data.color).toBe(content.color)

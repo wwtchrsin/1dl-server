@@ -321,31 +321,31 @@ export const databaseDistricts = [
   },
 ]
 
-export const databaseRooms = [
+export const databaseZones = [
   /*[0]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.min + 4,
-    room: limits.message.room.min + 4,
+    zone: limits.message.zone.min + 4,
   },
   /*[1]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.min + 4,
-    room: limits.message.room.min + 8,
+    zone: limits.message.zone.min + 8,
   },
   /*[2]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.min + 8,
-    room: limits.message.room.max - 4,
+    zone: limits.message.zone.max - 4,
   },
   /*[3]*/ {
     region: limits.message.region.values[1],
     district: limits.message.district.max - 4,
-    room: limits.message.room.min + 4,
+    zone: limits.message.zone.min + 4,
   },
   /*[4]*/ {
     region: limits.message.region.values[1],
     district: limits.message.district.max - 4,
-    room: limits.message.room.max - 4,
+    zone: limits.message.zone.max - 4,
   },
 ]
 
@@ -368,30 +368,30 @@ export const databaseEmptyDistricts = [
   },
 ]
 
-export const databaseEmptyRooms = [
+export const databaseEmptyZones = [
   /*[0]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.min,
-    room: limits.message.room.min,
+    zone: limits.message.zone.min,
   },
   /*[1]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.max,
-    room: limits.message.room.max,
+    zone: limits.message.zone.max,
   },
   /*[2]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.min + 1,
-    room: limits.message.room.min + 1,
+    zone: limits.message.zone.min + 1,
   },
   /*[3]*/ {
     region: limits.message.region.values[0],
     district: limits.message.district.max - 1,
-    room: limits.message.room.max - 1,
+    zone: limits.message.zone.max - 1,
   },
 ]
 
-export const roomByMessage = [
+export const zoneByMessage = [
   /**(REG#0)**/
   /*[0]*/ 0,
   /*[1]*/ 0,
@@ -496,13 +496,13 @@ export const regionByMessage = [
   /*[29]*/ 1,
 ]
 
-export const messagesByRoom = (() => {
+export const messagesByZone = (() => {
   let result = []
-  for ( let i=0; i < roomByMessage.length; i++ ) {
-    if ( result[roomByMessage[i]] === undefined ) {
-      result[roomByMessage[i]] = []
+  for ( let i=0; i < zoneByMessage.length; i++ ) {
+    if ( result[zoneByMessage[i]] === undefined ) {
+      result[zoneByMessage[i]] = []
     }
-    result[roomByMessage[i]].push(i)
+    result[zoneByMessage[i]].push(i)
   }
   return result
 })()
@@ -531,16 +531,16 @@ export const messagesByRegion = (() => {
 
 export const databaseMessages = (() => {
   let result = []
-  for ( let i=0; i < roomByMessage.length; i++ ) {
-    let roomid = databaseRooms[roomByMessage[i]]
+  for ( let i=0; i < zoneByMessage.length; i++ ) {
+    let zoneid = databaseZones[zoneByMessage[i]]
     let user = databaseUsers[userByMessage[i]]
     let text = examples.text.correct[i % examples.text.correct.length] + " " + i
     let color = limits.message.color.values[i % limits.message.color.values.length]
     let timestamp = "12345672" + ("0" + i).slice(-2)
     result.push({
-      region: roomid.region,
-      district: roomid.district,
-      room: roomid.room,
+      region: zoneid.region,
+      district: zoneid.district,
+      zone: zoneid.zone,
       index: i,
       text: text,
       color: color,
@@ -576,7 +576,7 @@ export const populateDatabase = (() => {
   for ( let message of databaseMessages ) {
     let entry = `
       INSERT INTO messages VALUES
-        ('${message.region}', ${message.district}, ${message.room},
+        ('${message.region}', ${message.district}, ${message.zone},
         ${message.index}, '${message.text}', '${message.color}',
         '${message.userid}', ${message.timestamp});
     `
@@ -589,21 +589,21 @@ export const populateDatabase = (() => {
   }
 })()
 
-export const roomMsgcounts = (() => {
+export const zoneMsgcounts = (() => {
   let result = {}
-  for ( let i=0; i < roomByMessage.length; i++ ) {
-    let roomid = databaseRooms[roomByMessage[i]]
-    let { region, district, room } = roomid
+  for ( let i=0; i < zoneByMessage.length; i++ ) {
+    let zoneid = databaseZones[zoneByMessage[i]]
+    let { region, district, zone } = zoneid
     if ( result[region] === undefined ) {
       result[region] = {}
     }
     if ( result[region][district] === undefined ) {
       result[region][district] = {}
     }
-    if ( result[region][district][room] === undefined ) {
-      result[region][district][room] = 0
+    if ( result[region][district][zone] === undefined ) {
+      result[region][district][zone] = 0
     }
-    result[region][district][room]++
+    result[region][district][zone]++
   }
   return result
 })()

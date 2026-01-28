@@ -51,10 +51,10 @@ describe("testing ws subscriptions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { tag, args, calls } = testcase
-    test(`Function listeners["msgcounts:rooms"]. Test #${tag}`, () => {
-      let update = jest.spyOn(serverMessages, "updateRoomMsgcounts")
+    test(`Function listeners["msgcounts:zones"]. Test #${tag}`, () => {
+      let update = jest.spyOn(serverMessages, "updateZoneMsgcounts")
         .mockImplementation(() => undefined)
-      let listener = listeners.get("msgcounts:rooms")
+      let listener = listeners.get("msgcounts:zones")
       listener(args)
       expect(update).toHaveBeenCalledTimes(calls.update.length)
       for ( let [ index, args ] of calls.update.entries() ) {

@@ -41,7 +41,7 @@ let getMessages = (userIndex: number) => {
     return {
       region: message.region,
       district: message.district,
-      room: message.room,
+      zone: message.zone,
       index: message.index,
       text: message.text,
       color: message.color,

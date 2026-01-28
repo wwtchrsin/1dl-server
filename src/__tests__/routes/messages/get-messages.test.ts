@@ -3,8 +3,8 @@ import httpServer from "../../../http-server"
 import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { populateDatabase, databaseRooms,
-  databaseMessages, messagesByRoom, databaseEmptyRooms } from "../../../lib/test-data"
+import { populateDatabase, databaseZones,
+  databaseMessages, messagesByZone, databaseEmptyZones } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -28,7 +28,7 @@ let messages = (messageIndices: number[]) => {
   return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
     district: databaseMessages[messageIndex].district,
-    room: databaseMessages[messageIndex].room,
+    zone: databaseMessages[messageIndex].zone,
     index: databaseMessages[messageIndex].index,
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,
@@ -41,23 +41,23 @@ let messages = (messageIndices: number[]) => {
 describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
-    args: databaseRooms[0],
+    args: databaseZones[0],
     expres: {
       status: 200,
       error: undefined,
-      messages: messages(messagesByRoom[0]),
+      messages: messages(messagesByZone[0]),
     },
   }, {
     tag: 2,
-    args: databaseRooms[4],
+    args: databaseZones[4],
     expres: {
       status: 200,
       error: undefined,
-      messages: messages(messagesByRoom[4]),
+      messages: messages(messagesByZone[4]),
     },
   }, {
     tag: 3,
-    args: databaseEmptyRooms[2],
+    args: databaseEmptyZones[2],
     expres: {
       status: 200,
       error: undefined,
@@ -67,8 +67,8 @@ describe("testing endpoints...", () => {
     tag: 4,
     args: {
       region: "abcd",
-      district: databaseRooms[0].district,
-      room: databaseRooms[0].room,
+      district: databaseZones[0].district,
+      zone: databaseZones[0].zone,
     },
     expres: {
       status: 400,
@@ -78,9 +78,9 @@ describe("testing endpoints...", () => {
   }, {
     tag: 5,
     args: {
-      region: databaseRooms[0].region,
+      region: databaseZones[0].region,
       district: limits.message.district.max + 1,
-      room: databaseRooms[0].room,
+      zone: databaseZones[0].zone,
     },
     expres: {
       status: 400,
@@ -90,21 +90,21 @@ describe("testing endpoints...", () => {
   }, {
     tag: 6,
     args: {
-      region: databaseRooms[0].region,
+      region: databaseZones[0].region,
       district: limits.message.district.max,
-      room: "abcd",
+      zone: "abcd",
     },
     expres: {
       status: 400,
-      error: "wrongValue.message.room",
+      error: "wrongValue.message.zone",
       messages: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`GET /messages/r/d/room. Test #${tag}`, async () => {
-      let { region, district, room } = args
-      let url = `/api/v1/messages/${region}/${district}/${room}` 
+    test(`GET /messages/r/d/zone. Test #${tag}`, async () => {
+      let { region, district, zone } = args
+      let url = `/api/v1/messages/${region}/${district}/${zone}` 
       let result = await testServer.get(url)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()

@@ -36,8 +36,8 @@ export const listeners = new Map([
     serverMessages.deleteMessages(report.messageids)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
-  ["msgcounts:rooms", (messageJSON: string) => {
-    let TAG = "ws/channels/msgcounts:rooms"
+  ["msgcounts:zones", (messageJSON: string) => {
+    let TAG = "ws/channels/msgcounts:zones"
     let message = parseJSON(messageJSON)
     if ( message.error ) {
       logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
@@ -47,8 +47,8 @@ export const listeners = new Map([
       logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
       return
     }
-    let report = message.data as RedisTypes.RoomMsgcountsUpdate
-    serverMessages.updateRoomMsgcounts(report)
+    let report = message.data as RedisTypes.ZoneMsgcountsUpdate
+    serverMessages.updateZoneMsgcounts(report)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
   ["msgcounts:districts", (messageJSON: string) => {

@@ -6,7 +6,7 @@ import { examples } from "../../../lib/test-data"
 let toMessage = (args: any) => ({
   region: args.region,
   district: Number(args.district),
-  room: Number(args.room),
+  zone: Number(args.zone),
   index: 0,
   text: examples.text.correct[0],
   color: examples.color.first,
@@ -16,8 +16,8 @@ let toMessage = (args: any) => ({
 let toMessages = (args: any) => [toMessage(args)]
 
 let returnMessage = (queryString: string, queryParams: string[]) => {
-  let [region, district, room] = queryParams
-  let message = toMessage({ region, district, room })
+  let [region, district, zone] = queryParams
+  let message = toMessage({ region, district, zone })
   return Promise.resolve({ rows: [message] })
 }
 
@@ -34,7 +34,7 @@ describe("testing database queries...", () => {
     args: {
       region: examples.region.first,
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
     },
     mocks: {
       queryDatabase: returnMessage,
@@ -45,7 +45,7 @@ describe("testing database queries...", () => {
     args: {
       region: examples.region.first,
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
     },
     mocks: {
       queryDatabase: returnZeroMessages,
@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     args: {
       region: examples.region.first,
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
     },
     mocks: {
       queryDatabase: returnError,
@@ -73,7 +73,7 @@ describe("testing database queries...", () => {
     args: {
       region: "abcdefg",
       district: `${limits.message.district.min}`,
-      room: `${limits.message.room.min}`,
+      zone: `${limits.message.zone.min}`,
     },
     mocks: {
       queryDatabase: returnMessage,

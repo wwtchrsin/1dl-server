@@ -1,5 +1,5 @@
 import * as redisConn from "../../../lib/redis/conn"
-import { getRoomMsgcounts } from "../../../lib/redis/cache"
+import { getZoneMsgcounts } from "../../../lib/redis/cache"
 import { limits } from "../../../lib/database/limits"
 
 afterAll(async () => {
@@ -18,15 +18,15 @@ let districtids = [{
 }]
 
 let msgcounts = [{
-  [limits.message.room.min + 2]: 2,
-  [limits.message.room.max - 2]: 4,
+  [limits.message.zone.min + 2]: 2,
+  [limits.message.zone.max - 2]: 4,
 }, {
-  [limits.message.room.min + 2]: 2,
-  [limits.message.room.min + 4]: 4,
-  [limits.message.room.min + 8]: 6,
-  [limits.message.room.max - 8]: 8,
-  [limits.message.room.max - 4]: 6,
-  [limits.message.room.max - 2]: 4,
+  [limits.message.zone.min + 2]: 2,
+  [limits.message.zone.min + 4]: 4,
+  [limits.message.zone.min + 8]: 6,
+  [limits.message.zone.max - 8]: 8,
+  [limits.message.zone.max - 4]: 6,
+  [limits.message.zone.max - 2]: 4,
 }]
 
 let requestFails = () => Promise.resolve({
@@ -37,8 +37,8 @@ let timestamp = "1234567890"
 
 let process = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
-  for ( let room in msgcounts ) {
-    result[room] = `${msgcounts[room]}`
+  for ( let zone in msgcounts ) {
+    result[zone] = `${msgcounts[zone]}`
   }
   result.timestamp = timestamp
   return result
@@ -51,7 +51,7 @@ describe("testing redis operations...", () => {
     let keys = []
     for ( let districtid of districtids ) {
       let { region, district } = districtid
-      keys.push(`${redisConn.redisns}:msgcounts:rooms:${region}:${district}`)
+      keys.push(`${redisConn.redisns}:msgcounts:zones:${region}:${district}`)
     }
     await client.del(keys)
   })
@@ -129,18 +129,18 @@ describe("testing redis operations...", () => {
   }]
   for ( let testcase of testcases ) {
     let { init, args, mocks, expres, tag } = testcase
-    test(`Function getRoomMsgcounts. Test #${tag}`, async () => {
+    test(`Function getZoneMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( init ) {
         let { districtid, msgcounts } = init
         let { region, district } = districtid
-        let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+        let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
         await client.hSet(key, msgcounts)
       }
       if ( mocks.getClient ) {
         jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
-      let result = await getRoomMsgcounts(args)
+      let result = await getZoneMsgcounts(args)
       expect(result).toStrictEqual(expres)
     })
   }

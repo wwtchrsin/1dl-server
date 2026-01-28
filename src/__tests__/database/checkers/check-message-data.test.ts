@@ -10,7 +10,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -26,7 +26,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.last,
         district: `${limits.message.district.max}`,
-        room: `${limits.message.room.max}`,
+        zone: `${limits.message.zone.max}`,
         index: `${limits.message.index.max}`,
       },
       content: {
@@ -42,7 +42,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -58,7 +58,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: "abcd",
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -74,7 +74,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min - 1}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -90,7 +90,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.max + 1}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -106,7 +106,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min - 1}`,
+        zone: `${limits.message.zone.min - 1}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -114,7 +114,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.room",
+    expres: "wrongValue.message.zone",
   }, {
     tag: 8,
     args: {
@@ -122,7 +122,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.max + 1}`,
+        zone: `${limits.message.zone.max + 1}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -130,7 +130,7 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.room",
+    expres: "wrongValue.message.zone",
   }, {
     tag: 9,
     args: {
@@ -138,7 +138,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min - 1}`,
       },
       content: {
@@ -154,7 +154,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.max + 1}`,
       },
       content: {
@@ -170,7 +170,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -186,7 +186,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -202,7 +202,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.first,
         district: `${limits.message.district.min}`,
-        room: `${limits.message.room.min}`,
+        zone: `${limits.message.zone.min}`,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -218,7 +218,7 @@ describe("testing query validators...", () => {
       messageid: {
         region: examples.region.some,
         district: `${limits.message.district.min + 1}`,
-        room: `${limits.message.room.min + 1}`,
+        zone: `${limits.message.zone.min + 1}`,
         index: `${limits.message.index.min + 1}`,
       },
       content: {

@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { createMessage, deleteMessage, getMessage, getMessages,
   countDistrictMessages, countRegionMessages } from "../lib/database/messages"
-import { checkRegion, checkDistrictid, checkRoomid, checkMessageid,
+import { checkRegion, checkDistrictid, checkZoneid, checkMessageid,
   checkMessageData } from "../lib/database/checkers"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
@@ -10,7 +10,7 @@ import { readProfile, readUserid, completeMessage,
   extractMessageids } from "./miscs"
 import logger from "../lib/logger"
 import type { Request, Response } from "express"
-import type { Messageid, Roomid, Districtid } from "../lib/database/interfaces"
+import type { Messageid, Zoneid, Districtid } from "../lib/database/interfaces"
 
 const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/createMessage"
@@ -55,7 +55,7 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     return
   }
   let msg = completeMessage(message.data, profile.data)
-  await redisCache.changeRoomMsgcount(req.params, 1)
+  await redisCache.changeZoneMsgcount(req.params, 1)
   await redisCache.changeDistrictMsgcount(req.params, 1)
   await publish("messages:created", { messages: [msg] })
   logger.debug(args, `${TAG}#DONE`)
@@ -94,29 +94,29 @@ const getMessageAction = async (req: Request<Messageid>, res: Response) => {
   })
 }
 
-const getMessagesAction = async (req: Request<Roomid>, res: Response) => {
+const getMessagesAction = async (req: Request<Zoneid>, res: Response) => {
   let TAG = "routes/messages/getMessages"
-  let checkError = checkRoomid(req.params)
+  let checkError = checkZoneid(req.params)
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
-    logger.info({ roomid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
+    logger.info({ zoneid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
       error: checkError,
       message: undefined,
     })
     return
   }
-  let messages = await getMessages(req.params as Roomid)
+  let messages = await getMessages(req.params as Zoneid)
   if ( messages.error !== undefined ) {
     let status = getStatusCode(messages.error)
-    logger.info({ roomid: req.params }, `${TAG}#ERROR_DB_QUERY`)
+    logger.info({ zoneid: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
       error: messages.error,
       message: undefined,
     })
     return
   }
-  logger.debug({ roomid: req.params }, `${TAG}#DONE`)
+  logger.debug({ zoneid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
     messages: messages.data,
@@ -136,7 +136,7 @@ const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) =
     return
   }
   let { region, district } = req.params as Districtid
-  let cache = await redisCache.getRoomMsgcounts({ region, district })
+  let cache = await redisCache.getZoneMsgcounts({ region, district })
   if ( cache.data ) {
     logger.debug({ districtid: req.params }, `${TAG}#CACHED_VALUE_RETURNED`)
     res.status(200).json({
@@ -159,8 +159,8 @@ const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) =
     districtid: req.params as Districtid,
     msgcounts: msgcounts.data,
   }
-  await redisCache.updateRoomMsgcounts({ region, district }, msgcounts.data)
-  await publish("msgcounts:rooms", reportData)
+  await redisCache.updateZoneMsgcounts({ region, district }, msgcounts.data)
+  await publish("msgcounts:zones", reportData)
   logger.debug({ districtid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
@@ -243,7 +243,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     return
   }
   let messageids = extractMessageids([req.params as Messageid])
-  await redisCache.changeRoomMsgcount(req.params as Messageid, -1)
+  await redisCache.changeZoneMsgcount(req.params as Messageid, -1)
   await redisCache.changeDistrictMsgcount(req.params as Messageid, -1)
   await publish("messages:deleted", { messageids })
   logger.debug({ messageid: req.params }, `${TAG}#DONE`)
@@ -257,10 +257,10 @@ const router = Router()
 
 router.get("/:region", getRegionStatsAction)
 router.get("/:region/:district", getDistrictStatsAction)
-router.get("/:region/:district/:room", getMessagesAction)
-router.post("/:region/:district/:room/:index", createMessageAction)
-router.get("/:region/:district/:room/:index", getMessageAction)
-router.delete("/:region/:district/:room/:index", deleteMessageAction)
+router.get("/:region/:district/:zone", getMessagesAction)
+router.post("/:region/:district/:zone/:index", createMessageAction)
+router.get("/:region/:district/:zone/:index", getMessageAction)
+router.delete("/:region/:district/:zone/:index", deleteMessageAction)
 
 export default router
 

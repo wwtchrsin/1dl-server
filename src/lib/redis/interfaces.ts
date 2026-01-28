@@ -8,7 +8,7 @@ export type DeletedMessages = {
   messageids: Messageid[],
 }
 
-export type RoomMsgcountsUpdate = {
+export type ZoneMsgcountsUpdate = {
   districtid: Districtid,
   msgcounts: Record<string | number, number>,
 }

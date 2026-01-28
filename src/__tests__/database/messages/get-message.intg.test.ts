@@ -20,7 +20,7 @@ afterAll(async () => {
 let toMessage = (message: any) => ({
   region: message.region,
   district: message.district,
-  room: message.room,
+  zone: message.zone,
   index: message.index,
   text: message.text,
   color: message.color,
@@ -35,7 +35,7 @@ describe("testing database queries...", () => {
     args: {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
-      room: databaseMessages[0].room,
+      zone: databaseMessages[0].zone,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -47,7 +47,7 @@ describe("testing database queries...", () => {
     args: {
       region: databaseMessages[10].region,
       district: databaseMessages[10].district,
-      room: databaseMessages[10].room,
+      zone: databaseMessages[10].zone,
       index: databaseMessages[10].index,
     },
     expres: {
@@ -59,7 +59,7 @@ describe("testing database queries...", () => {
     args: {
       region: examples.region.first,
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     },
     expres: {
@@ -71,7 +71,7 @@ describe("testing database queries...", () => {
     args: {
       region: "abcd",
       district: limits.message.district.min,
-      room: limits.message.room.min,
+      zone: limits.message.zone.min,
       index: limits.message.index.min,
     },
     expres: {

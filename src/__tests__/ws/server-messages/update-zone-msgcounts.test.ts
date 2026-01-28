@@ -1,4 +1,4 @@
-import { updateRoomMsgcounts } from "../../../lib/ws/server-messages"
+import { updateZoneMsgcounts } from "../../../lib/ws/server-messages"
 import * as wsStorage from "../../../lib/ws/state-storage"
 import type { WebSocket } from "ws"
 
@@ -65,7 +65,7 @@ describe("testing ws message handlers...", () => {
       ["/foo/2/2", []],
       ["/foo/2", [
         JSON.stringify({
-          type: "update-room-msgcounts",
+          type: "update-zone-msgcounts",
           msgcounts: {
             "2": 4,
             "3": 7,
@@ -97,7 +97,7 @@ describe("testing ws message handlers...", () => {
       ["/bar/4/4", []],
       ["/bar/4", [
         JSON.stringify({
-          type: "update-room-msgcounts",
+          type: "update-zone-msgcounts",
           msgcounts: {
             "3": 5,
             "7": 11,
@@ -151,8 +151,8 @@ describe("testing ws message handlers...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, calls, tag } = testcase
-    test(`Function updateRoomMsgcounts. Test #${tag}`, () => {
-      updateRoomMsgcounts(args)
+    test(`Function updateZoneMsgcounts. Test #${tag}`, () => {
+      updateZoneMsgcounts(args)
       for ( let [location, calllist] of calls ) {
         let clients = users.get(location)
         for ( let { client } of clients ) {

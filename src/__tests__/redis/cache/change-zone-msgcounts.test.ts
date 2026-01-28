@@ -1,5 +1,5 @@
 import * as redisConn from "../../../lib/redis/conn"
-import { changeRoomMsgcounts } from "../../../lib/redis/cache"
+import { changeZoneMsgcounts } from "../../../lib/redis/cache"
 import { limits } from "../../../lib/database/limits"
 
 afterAll(async () => {
@@ -15,8 +15,8 @@ let stats = [{
     district: limits.message.district.min,
   },
   msgcounts: {
-    [limits.message.room.min + 2]: 2,
-    [limits.message.room.max - 2]: 4,
+    [limits.message.zone.min + 2]: 2,
+    [limits.message.zone.max - 2]: 4,
   },
 }, {
   districtid: {
@@ -24,12 +24,12 @@ let stats = [{
     district: limits.message.district.min + 1,
   },
   msgcounts: {
-    [limits.message.room.min + 2]: 2,
-    [limits.message.room.min + 4]: 4,
-    [limits.message.room.min + 8]: 6,
-    [limits.message.room.max - 8]: 8,
-    [limits.message.room.max - 4]: 6,
-    [limits.message.room.max - 2]: 4,
+    [limits.message.zone.min + 2]: 2,
+    [limits.message.zone.min + 4]: 4,
+    [limits.message.zone.min + 8]: 6,
+    [limits.message.zone.max - 8]: 8,
+    [limits.message.zone.max - 4]: 6,
+    [limits.message.zone.max - 2]: 4,
   },
 }]
 
@@ -41,8 +41,8 @@ let timestamp = "1234567890"
 
 let addts = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
-  for ( let room in msgcounts ) {
-    result[room] = `${msgcounts[room]}`
+  for ( let zone in msgcounts ) {
+    result[zone] = `${msgcounts[zone]}`
   }
   result.timestamp = timestamp
   return result
@@ -50,11 +50,11 @@ let addts = (msgcounts: Record<string, number>) => {
 
 let change = (msgcounts: Record<string | number, number>, indices: number[], delta: number) => {
   let result: Record<string, string> = Object.create(null)
-  for ( let room in msgcounts ) {
-    result[room] = `${msgcounts[room]}`
+  for ( let zone in msgcounts ) {
+    result[zone] = `${msgcounts[zone]}`
   }
   for ( let index of indices ) {
-    let key = limits.message.room.min + index
+    let key = limits.message.zone.min + index
     let value = result[key] ?? "0"
     result[key] = (Number(value) + delta).toString()
   }
@@ -70,7 +70,7 @@ describe("testing redis operations...", () => {
     for ( let entry of stats ) {
       let { districtid, msgcounts } = entry
       let { region, district } = districtid
-      let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+      let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
       promises.push(client.hSet(key, addts(msgcounts)))
     }
     await Promise.all(promises)
@@ -82,17 +82,17 @@ describe("testing redis operations...", () => {
     for ( let entry of stats ) {
       let { districtid } = entry
       let { region, district } = districtid
-      keys.push(`${redisConn.redisns}:msgcounts:rooms:${region}:${district}`)
+      keys.push(`${redisConn.redisns}:msgcounts:zones:${region}:${district}`)
     }
     await client.del(keys)
   })
   let testcases = [{
     tag: 1,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }],
       delta: 1,
     },
@@ -105,10 +105,10 @@ describe("testing redis operations...", () => {
   }, {
     tag: 2,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }],
       delta: -1,
     },
@@ -121,14 +121,14 @@ describe("testing redis operations...", () => {
   }, {
     tag: 3,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 4,
+        zone: limits.message.zone.min + 4,
       }],
       delta: 1,
     },
@@ -141,14 +141,14 @@ describe("testing redis operations...", () => {
   }, {
     tag: 4,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 3,
+        zone: limits.message.zone.min + 3,
       }],
       delta: 1,
     },
@@ -161,18 +161,18 @@ describe("testing redis operations...", () => {
   }, {
     tag: 5,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }, {
         region: stats[1].districtid.region,
         district: stats[1].districtid.district,
-        room: limits.message.room.min + 4,
+        zone: limits.message.zone.min + 4,
       }],
       delta: 2,
     },
@@ -188,10 +188,10 @@ describe("testing redis operations...", () => {
   }, {
     tag: 6,
     args: {
-      roomids: [{
+      zoneids: [{
         region: stats[0].districtid.region,
         district: stats[0].districtid.district,
-        room: limits.message.room.min + 2,
+        zone: limits.message.zone.min + 2,
       }],
       delta: 1,
     },
@@ -206,18 +206,18 @@ describe("testing redis operations...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tables, tag } = testcase
-    test(`Function changeRoomMsgcounts. Test #${tag}`, async () => {
+    test(`Function changeZoneMsgcounts. Test #${tag}`, async () => {
       let client = await redisConn.getClient()
       if ( mocks.getClient ) {
         jest.spyOn(redisConn, "getClient").mockImplementation(mocks.getClient as any)
       }
-      let { roomids, delta } = args
-      let result = await changeRoomMsgcounts(roomids, delta)
+      let { zoneids, delta } = args
+      let result = await changeZoneMsgcounts(zoneids, delta)
       expect(result).toBe(expres)
       for ( let table of tables ) {
         let { districtid, value } = table
         let { region, district } = districtid
-        let key = `${redisConn.redisns}:msgcounts:rooms:${region}:${district}`
+        let key = `${redisConn.redisns}:msgcounts:zones:${region}:${district}`
         let dbstate = await client.hGetAll(key)
         expect(dbstate).toStrictEqual(value)
       }

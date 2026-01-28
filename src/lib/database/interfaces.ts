@@ -26,11 +26,11 @@ export type Districtid = {
   district: string | number,
 }
 
-export type Roomid = Districtid & {
-  room: string | number,
+export type Zoneid = Districtid & {
+  zone: string | number,
 }
 
-export type Messageid = Roomid & {
+export type Messageid = Zoneid & {
   index: string | number,
 }
 
@@ -42,7 +42,7 @@ export type MessageContent = {
 export type UserMessage = {
   region: string,
   district: number,
-  room: number,
+  zone: number,
   index: number,
   text: string,
   color: string,
@@ -54,8 +54,8 @@ export type Message = UserMessage & {
   username: string,
 }
 
-export type RoomMsgcount = {
-  room: number,
+export type ZoneMsgcount = {
+  zone: number,
   msgcount: number,
 }
 

@@ -4,7 +4,7 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions, databaseMessages,
-  messagesByUser, sessionByUser, databaseEmptyRooms, databaseCompleteUsers } 
+  messagesByUser, sessionByUser, databaseEmptyZones, databaseCompleteUsers } 
   from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
@@ -39,7 +39,7 @@ let messageid = (uIndex: number, messageIndex: number) => {
   return {
     region: message.region,
     district: message.district,
-    room: message.room,
+    zone: message.zone,
     index: message.index,
   }
 }
@@ -50,7 +50,7 @@ let message = (uIndex: number, messageIndex: number) => {
   return {
     region: message.region,
     district: message.district,
-    room: message.room,
+    zone: message.zone,
     index: message.index,
     text: message.text,
     color: message.color,
@@ -141,9 +141,9 @@ describe("testing endpoints...", () => {
       args: {
         auth: "Bearer " + sessionid(2), 
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
       },
@@ -161,8 +161,8 @@ describe("testing endpoints...", () => {
         auth: "Bearer " + sessionid(2), 
         messageid: {
           region: "abcd",
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
       },
@@ -179,9 +179,9 @@ describe("testing endpoints...", () => {
       args: {
         auth: "Bearer " + sessionid(2), 
         messageid: {
-          region: databaseEmptyRooms[0].region,
+          region: databaseEmptyZones[0].region,
           district: limits.message.district.max + 1,
-          room: databaseEmptyRooms[0].room,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
       },
@@ -198,14 +198,14 @@ describe("testing endpoints...", () => {
       args: {
         auth: "Bearer " + sessionid(2), 
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: limits.message.room.min - 1,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: limits.message.zone.min - 1,
           index: limits.message.index.min,
         },
       },
       expres: {
-        error: "wrongValue.message.room",
+        error: "wrongValue.message.zone",
         message: undefined,
         status: 400,
       },
@@ -217,9 +217,9 @@ describe("testing endpoints...", () => {
       args: {
         auth: "Bearer " + sessionid(2), 
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.max + 1,
         },
       },
@@ -267,13 +267,13 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { actions, deletedRows, tag } = testcase
-    test(`DELETE /messages/r/d/room/index. Test #${tag}`, async () => {
+    test(`DELETE /messages/r/d/zone/index. Test #${tag}`, async () => {
       let reportsPromise = getReports("messages:deleted", deletedRows)
       for ( let action of actions ) {
         let { args, expres } = action
         let { auth, messageid } = args
-        let { region, district, room, index } = messageid
-        let url = `/api/v1/messages/${region}/${district}/${room}/${index}`
+        let { region, district, zone, index } = messageid
+        let url = `/api/v1/messages/${region}/${district}/${zone}/${index}`
         let result = await testServer.delete(url).set("Authorization", auth)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
@@ -296,7 +296,7 @@ describe("testing endpoints...", () => {
         expect(reports[i].messageids).toHaveLength(1)
         expect(reports[i].messageids[0].region).toBeDefined()
         expect(reports[i].messageids[0].district).toBeDefined()
-        expect(reports[i].messageids[0].room).toBeDefined()
+        expect(reports[i].messageids[0].zone).toBeDefined()
         expect(reports[i].messageids[0].index).toBeDefined()
         expect(reports[i].messageids[0].text).toBeUndefined()
         expect(reports[i].messageids[0].color).toBeUndefined()

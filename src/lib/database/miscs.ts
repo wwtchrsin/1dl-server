@@ -3,7 +3,7 @@ import { promisify } from "node:util"
 import { limits, hashSizes } from "./limits"
 import env from "../env"
 import logger from "../logger"
-import type { RoomMsgcount, DistrictMsgcount } from "./interfaces"
+import type { ZoneMsgcount, DistrictMsgcount } from "./interfaces"
 
 export const getHashingAlgorithm = (hashSize: number) => {
   switch ( hashSize ) {
@@ -52,11 +52,11 @@ export const redactPassword = (data: any) => {
   return redacted
 }
 
-export const processRoomMsgcounts = (entries: RoomMsgcount[]): 
+export const processZoneMsgcounts = (entries: ZoneMsgcount[]): 
   Record<string | number, number> => {
     let result: Record<string | number, number> = {}
     for ( let entry of entries ) {
-      result[entry.room] = entry.msgcount
+      result[entry.zone] = entry.msgcount
     }
     return result
   }

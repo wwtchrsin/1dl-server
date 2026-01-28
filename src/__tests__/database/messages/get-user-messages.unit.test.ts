@@ -6,7 +6,7 @@ import { examples } from "../../../lib/test-data"
 let message = {
   region: examples.region.first,
   district: limits.message.district.min,
-  room: limits.message.room.min,
+  zone: limits.message.zone.min,
   index: limits.message.index.min,
   text: examples.text.correct[0],
   color: examples.color.first,

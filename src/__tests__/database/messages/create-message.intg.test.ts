@@ -3,7 +3,7 @@ import { createMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions,
-  databaseEmptyRooms } from "../../../lib/test-data"
+  databaseEmptyZones } from "../../../lib/test-data"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -26,9 +26,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -44,9 +44,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[1].region,
-          district: databaseEmptyRooms[1].district,
-          room: databaseEmptyRooms[1].room,
+          region: databaseEmptyZones[1].region,
+          district: databaseEmptyZones[1].district,
+          zone: databaseEmptyZones[1].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -62,9 +62,9 @@ describe("testing database queries...", () => {
       args: {
         userid: "abcd",
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -81,8 +81,8 @@ describe("testing database queries...", () => {
         userid: databaseSessions[0].userid,
         messageid: {
           region: "abcd",
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -98,9 +98,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -116,9 +116,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -131,9 +131,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min + 1,
         },
         content: {
@@ -149,9 +149,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -164,9 +164,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min,
         },
         content: {
@@ -179,9 +179,9 @@ describe("testing database queries...", () => {
       args: {
         userid: databaseSessions[0].userid,
         messageid: {
-          region: databaseEmptyRooms[0].region,
-          district: databaseEmptyRooms[0].district,
-          room: databaseEmptyRooms[0].room,
+          region: databaseEmptyZones[0].region,
+          district: databaseEmptyZones[0].district,
+          zone: databaseEmptyZones[0].zone,
           index: limits.message.index.min + 1,
         },
         content: {
@@ -205,7 +205,7 @@ describe("testing database queries...", () => {
           expect(result.data).toBeDefined()
           expect(result.data.region).toBe(messageid.region)
           expect(result.data.district).toBe(messageid.district)
-          expect(result.data.room).toBe(messageid.room)
+          expect(result.data.zone).toBe(messageid.zone)
           expect(result.data.index).toBe(messageid.index)
           expect(result.data.text).toBe(content.text)
           expect(result.data.color).toBe(content.color)
@@ -223,8 +223,8 @@ describe("testing database queries...", () => {
         expect(limits.message.region.values).toContain(result.rows[i].region)
         expect(result.rows[i].district).toBeGreaterThanOrEqual(limits.message.district.min)
         expect(result.rows[i].district).toBeLessThanOrEqual(limits.message.district.max)
-        expect(result.rows[i].room).toBeGreaterThanOrEqual(limits.message.room.min)
-        expect(result.rows[i].room).toBeLessThanOrEqual(limits.message.room.max)
+        expect(result.rows[i].zone).toBeGreaterThanOrEqual(limits.message.zone.min)
+        expect(result.rows[i].zone).toBeLessThanOrEqual(limits.message.zone.max)
         expect(result.rows[i].index).toBeGreaterThanOrEqual(limits.message.index.min)
         expect(result.rows[i].index).toBeLessThanOrEqual(limits.message.index.max)
         expect(result.rows[i].text).toBeDefined()

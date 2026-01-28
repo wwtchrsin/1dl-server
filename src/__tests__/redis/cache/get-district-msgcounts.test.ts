@@ -29,8 +29,8 @@ let timestamp = "1234567890"
 
 let process = (msgcounts: Record<string, number>) => {
   let result: Record<string, string> = Object.create(null)
-  for ( let room in msgcounts ) {
-    result[room] = `${msgcounts[room]}`
+  for ( let zone in msgcounts ) {
+    result[zone] = `${msgcounts[zone]}`
   }
   result.timestamp = timestamp
   return result

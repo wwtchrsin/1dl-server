@@ -6,17 +6,17 @@ import { examples } from "../../../lib/test-data"
 let correctMessageid = {
   region: examples.region.first,
   district: `${limits.message.district.min}`,
-  room: `${limits.message.room.min}`,
+  zone: `${limits.message.zone.min}`,
   index: `${limits.message.index.min}`,
 }
 
 let requestSucceeds = (query: string, queryParams: string[]) => {
-  let [userid, region, district, room, index] = queryParams
+  let [userid, region, district, zone, index] = queryParams
   return Promise.resolve({
     rows: [{
       region: region,
       district: district,
-      room: room,
+      zone: zone,
       index: index,
       text: examples.text.correct[0],
       color: examples.color.first,
@@ -86,7 +86,7 @@ describe("testing database queries...", () => {
         expect(result.data).toBeDefined()
         expect(result.data.region).toBe(correctMessageid.region)
         expect(result.data.district).toBe(correctMessageid.district)
-        expect(result.data.room).toBe(correctMessageid.room)
+        expect(result.data.zone).toBe(correctMessageid.zone)
         expect(result.data.index).toBe(correctMessageid.index)
         expect(result.data.text).toBeDefined()
         expect(result.data.color).toBeDefined()
