@@ -50,9 +50,9 @@ export const wrongValues: WrongValues = {
         getCorrectRange("ru", limits.message.index.min, limits.message.index.max),
     },
     text: {
-      en: "The message not sent. The message length must be within the range " +
+      en: "The message length must be within the range " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
-      ru: "Сообщение не отправлено. Длина сообщения должна находиться в интервале " +
+      ru: "Длина сообщения должна находиться в интервале " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
     },
     color: {
