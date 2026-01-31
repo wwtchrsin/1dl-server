@@ -192,7 +192,9 @@ describe("testing endpoints...", () => {
         expect(result.body).toBeDefined()
         expect(result.body.error).toBe(expres.error)
         if ( expres.error === undefined ) {
-          expect(result.body.session).toMatch(patterns.sessionid)
+          expect(result.body.sessionid).toMatch(patterns.sessionid)
+          expect(result.body.token).toMatch(patterns.sessionid)
+          expect(result.body.token).not.toBe(result.body.sessionid)
           expect(result.body.profile).toBeDefined()
           expect(result.body.profile.userid).toBeUndefined()
           expect(result.body.profile.login).toBe(args.login)
@@ -202,7 +204,8 @@ describe("testing endpoints...", () => {
           expect(result.body.profile.puid).toMatch(patterns.uuid)
           expect(result.body.profile.timestamp).toMatch(patterns.timestamp)
         } else {
-          expect(result.body.session).toBeUndefined()
+          expect(result.body.sessionid).toBeUndefined()
+          expect(result.body.token).toBeUndefined()
           expect(result.body.profile).toBeUndefined()
         }
       }

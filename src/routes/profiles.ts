@@ -20,7 +20,8 @@ const createProfileAction = async (req: Request, res: Response) => {
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({ 
       error: checkError,
-      session: undefined,
+      sessionid: undefined,
+      token: undefined,
       profile: undefined,
     })
     return
@@ -31,7 +32,8 @@ const createProfileAction = async (req: Request, res: Response) => {
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({ 
       error: result.error,
-      session: undefined,
+      sessionid: undefined,
+      token: undefined,
       profile: undefined,
     })
     return
@@ -41,7 +43,8 @@ const createProfileAction = async (req: Request, res: Response) => {
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
-    session: session.sessionid,
+    sessionid: session.sessionid,
+    token: session.token,
     profile: redactProfile(result.data),
   })
 }

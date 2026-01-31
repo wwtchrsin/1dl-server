@@ -7,9 +7,9 @@ import type { ZoneMsgcount, DistrictMsgcount } from "./interfaces"
 
 export const getHashingAlgorithm = (hashSize: number) => {
   switch ( hashSize ) {
-    case 64: return "sha256"
-    case 96: return "sha384"
-    case 128: return "sha512"
+    case 32: return "sha256"
+    case 48: return "sha384"
+    case 64: return "sha512"
     default: {
       logger.fatal({ hashSize }, "database/miscs/getHashingAlgorith")
       process.exit(1)
@@ -35,7 +35,7 @@ export const hashSession = (sessionid: string) => {
 }
 
 export const generateToken = async () => {
-  let bytes = await randomBytesAsync(limits.session.sessionid.len / 2)
+  let bytes = await randomBytesAsync(limits.session.sessionid.size)
   return bytes.toString("hex")
 }
 

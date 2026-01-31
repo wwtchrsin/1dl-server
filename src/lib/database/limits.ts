@@ -62,15 +62,15 @@ export const limits = {
   },
   session: {
     sessionid: {
-      len: 128,
+      size: 64,
       pattern: "^[0-9A-Fa-f]{128}$",
     }
   }
 }
 
 export const hashSizes = {
-  password: 128,
-  sessionid: 128,
+  password: 64,
+  sessionid: 64,
 }
 
 export const patterns = {

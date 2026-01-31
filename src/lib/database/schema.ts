@@ -61,7 +61,7 @@ const sqlCreateTables = `
     userid UUID NOT NULL PRIMARY KEY,
     region VARCHAR NOT NULL,
     login VARCHAR(${limits.user.login.maxLen}) NOT NULL,
-    password CHAR(${hashSizes.password}) NOT NULL,
+    password CHAR(${hashSizes.password * 2}) NOT NULL,
     name VARCHAR(${limits.user.name.maxLen}) NOT NULL,
     state VARCHAR NOT NULL,
     puid UUID NOT NULL,
@@ -72,7 +72,8 @@ const sqlCreateTables = `
   );
   CREATE TABLE IF NOT EXISTS sessions (
     userid UUID NOT NULL,
-    sessionid CHAR(${hashSizes.sessionid}) NOT NULL,
+    sessionid CHAR(${hashSizes.sessionid * 2}) NOT NULL,
+    token CHAR(${hashSizes.sessionid * 2}) NOT NULL,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY(userid),
     UNIQUE(userid),

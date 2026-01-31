@@ -88,7 +88,7 @@ export const deleteSession = async (userid: string): Promise<string | undefined>
 
 export const createSession = async (credentials: Credentials):
   Promise<{ error: string | undefined, sessionid: string | undefined, 
-  userid: string | undefined }> => {
+  userid: string | undefined, token: string | undefined }> => {
     let TAG = "db/users/createSession"
     let args = { credentials: redactPassword(credentials) }
     let { region, login, password } = credentials
@@ -105,6 +105,7 @@ export const createSession = async (credentials: Credentials):
         error: "databaseError.checkCredentials",
         sessionid: undefined,
         userid: undefined,
+        token: undefined,
       }
     }
     if ( checkResult.rows.length === 0 ) {
@@ -113,6 +114,7 @@ export const createSession = async (credentials: Credentials):
         error: "databaseConflict.profileNotFound",
         sessionid: undefined,
         userid: undefined,
+        token: undefined,
       }
     }
     let { userid } = checkResult.rows[0]
@@ -124,12 +126,15 @@ export const createSession = async (credentials: Credentials):
         error: "databaseError.deleteSession",
         sessionid: undefined,
         userid: undefined,
+        token: undefined,
       }
     }
     let sessionid = await generateToken()
+    let token = await generateToken()
     let sessionHash = hashSession(sessionid)
-    let query = "INSERT INTO sessions VALUES($1, $2, $3)"
-    let queryParams = [userid, sessionHash, getTimestamp()]
+    let tokenHash = hashSession(token)
+    let query = "INSERT INTO sessions VALUES($1, $2, $3, $4)"
+    let queryParams = [userid, sessionHash, tokenHash, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result === undefined || result.rowCount !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
@@ -137,6 +142,7 @@ export const createSession = async (credentials: Credentials):
         error: "databaseError.createSession",
         sessionid: undefined,
         userid: undefined,
+        token: undefined,
       }
     }
     logger.debug(args, `${TAG}#DONE`)
@@ -144,6 +150,7 @@ export const createSession = async (credentials: Credentials):
       error: undefined,
       sessionid: sessionid,
       userid: userid,
+      token: token,
     }
   }
      

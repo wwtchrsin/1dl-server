@@ -203,10 +203,13 @@ describe("testing database queries...", () => {
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.sessionid).toMatch(patterns.sessionid)
+        expect(result.token).toMatch(patterns.sessionid)
+        expect(result.token).not.toBe(result.sessionid)
         expect(result.userid).toBe(correctData.userid)
       } else {
         expect(result.error).toBe(expres)
         expect(result.sessionid).toBeUndefined()
+        expect(result.token).toBeUndefined()
         expect(result.userid).toBeUndefined()
       }
     })

@@ -217,13 +217,18 @@ export const databaseSessions = (() => {
   let result = []
   for ( let i=0; i < userBySession.length; i++ ) {
     let userid = databaseUsers[userBySession[i]].userid
-    let sessionid = randomBytes(limits.session.sessionid.len / 2).toString("hex")
+    let sessionidSize = limits.session.sessionid.size
+    let sessionid = randomBytes(sessionidSize).toString("hex")
+    let token = randomBytes(sessionidSize).toString("hex")
     let sessionidHash = hashSession(sessionid)
+    let tokenHash = hashSession(token)
     let timestamp = "12345671" + ("0" + i).slice(-2)
     result.push({
       userid: userid,
       sessionid: sessionid,
       sessionidHash: sessionidHash,
+      token: token,
+      tokenHash: tokenHash,
       timestamp: timestamp,
     })
   }
@@ -568,7 +573,7 @@ export const populateDatabase = (() => {
     let entry = `
       INSERT INTO sessions VALUES
         ('${session.userid}', '${session.sessionidHash}', 
-        ${session.timestamp});
+        '${session.tokenHash}', ${session.timestamp});
     `
     addSessions += entry
   }
