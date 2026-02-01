@@ -1,4 +1,5 @@
-import { getUserid, getProfile } from "../lib/database/users"
+import { getUserid, getProfile, verifySessionToken } 
+  from "../lib/database/users"
 import { checkUserid, checkSessionid } from "../lib/database/checkers"
 import type { Profile, UserMessage, Message, Messageid } 
   from "../lib/database/interfaces"
@@ -53,6 +54,19 @@ export const readUserid = async (header: string | undefined):
     return result
   }
 
+export const verifyToken = async (header: string | undefined):
+  Promise<{ error: string | undefined, userid: string | undefined }> => {
+    let session = getToken(header)
+    if ( session.error !== undefined ) {
+      return {
+        error: session.error,
+        userid: undefined
+      }
+    }
+    let result = await verifySessionToken(session.data)
+    return result
+  }
+
 export const readProfile = async (header: string | undefined):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let userid = await readUserid(header)
@@ -72,6 +86,8 @@ export const readProfile = async (header: string | undefined):
     let result = await getProfile(userid.data)
     return result
   }
+
+
 
 export const redactProfile = (profile: Profile | undefined): RedactedProfile | undefined => {
   if ( profile === undefined ) {

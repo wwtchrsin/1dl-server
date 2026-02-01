@@ -3,7 +3,8 @@ import { WebSocketServer } from "ws"
 import { onConnection } from "./lib/ws/client-messages"
 import { enableConnCheck } from "./lib/ws/server-messages"
 import { subscribeServer } from "./lib/ws/subscriptions"
-import { readProfile } from "./routes/miscs"
+import { getProfile } from "./lib/database/users"
+import { verifyToken } from "./routes/miscs"
 import env from "./lib/env"
 
 let httpServer = createServer()
@@ -14,14 +15,20 @@ let pingTimerId = enableConnCheck(env.ws.pingInterval)
 
 httpServer.on("upgrade", async (request, socket, head) => {
   let header = request.headers["Authorization"] as string
-  let userid = await readProfile(header)
-  if ( userid.error !== undefined || userid.data?.state !== "active" ) {
+  let session = await verifyToken(header)
+  if ( session.error || !session.userid ) {
+    socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n")
+    socket.destroy()
+    return
+  }
+  let profile = await getProfile(session.userid)
+  if ( !profile.error || profile.data?.state !== "active" ) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n")
     socket.destroy()
     return
   }
   wsServer.handleUpgrade(request, socket, head, (ws) => {
-    wsServer.emit("connection", ws, userid.data!.userid)
+    wsServer.emit("connection", ws, session.userid!)
   })
 })
 

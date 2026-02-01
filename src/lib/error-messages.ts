@@ -196,6 +196,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to count messages",
     ru: "Невозможно посчитать сообщения",
   },
+  verifySessionToken: {
+    en: "Impossible to verify token",
+    ru: "Невозможно проверить токен",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {

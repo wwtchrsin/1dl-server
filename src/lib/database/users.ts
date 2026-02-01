@@ -66,7 +66,7 @@ export const createProfile = async(userData: UserData, defaultState: string):
     logger.debug(args, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result!.rows![0] as Profile,
+      data: result!.rows![0],
     }
   }
 
@@ -179,7 +179,7 @@ export const getProfile = async (userid: string):
     logger.debug({ userid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows[0] as Profile,
+      data: result.rows[0],
     }
   }
 
@@ -250,7 +250,34 @@ export const getUserid = async (sessionid: string):
     logger.debug({ sessionid: !!sessionid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows[0].userid as string
+      data: result.rows[0].userid
+    }
+  }
+
+export const verifySessionToken = async (token: string):
+  Promise<{ error: string | undefined, userid: string | undefined }> => {
+    let TAG = "db/users/verifySessionToken"
+    let tokenHash = hashSession(token)
+    let query = "SELECT userid FROM sessions WHERE token = $1"
+    let result = await queryDatabase(query, [tokenHash])
+    if ( !result?.rows || result.rows.length > 1 ) {
+      logger.error({ token: !!token }, `${TAG}#ERROR_DB_QUERY`)
+      return {
+        error: "databaseError.verifySessionToken",
+        userid: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      logger.info({ token: !!token }, `${TAG}#ERROR_NOT_FOUND`)
+      return {
+        error: "databaseConflict.sessionNotFound",
+        userid: undefined,
+      }
+    }
+    logger.debug({ token: !!token }, `${TAG}#DONE`)
+    return {
+      error: undefined,
+      userid: result.rows[0].userid
     }
   }
   

@@ -75,7 +75,7 @@ export const getMessages = async (zoneid: Zoneid):
     logger.debug({ zoneid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows as Message[]
+      data: result.rows,
     }
   }
 
@@ -108,7 +108,7 @@ export const getMessage = async (messageid: Messageid):
     logger.debug({ messageid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows[0] as Message,
+      data: result.rows[0],
     }
   }
 
@@ -130,7 +130,7 @@ export const getUserMessages = async (userid: string):
     logger.debug({ userid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows as UserMessage[],
+      data: result.rows,
     }
   }
 
@@ -171,7 +171,7 @@ export const createMessage = async (userid: string, messageid: Messageid, conten
     logger.debug({ userid, messageid, content }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows[0] as UserMessage,
+      data: result.rows[0],
     }
   }
 
@@ -204,7 +204,7 @@ export const deleteMessage = async (userid: string, messageid: Messageid):
     logger.debug({ userid, messageid }, `${TAG}#DONE`)
     return {
       error: undefined,
-      data: result.rows[0] as UserMessage,
+      data: result.rows[0],
     }
   }
     
