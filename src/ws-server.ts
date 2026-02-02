@@ -1,4 +1,5 @@
 import { createServer } from "node:http"
+import { parse } from "node:url"
 import { WebSocketServer } from "ws"
 import { onConnection } from "./lib/ws/client-messages"
 import { enableConnCheck } from "./lib/ws/server-messages"
@@ -14,8 +15,8 @@ let wsServer = new WebSocketServer({ noServer: true })
 let pingTimerId = enableConnCheck(env.ws.pingInterval)
 
 httpServer.on("upgrade", async (request, socket, head) => {
-  let header = request.headers["Authorization"] as string
-  let session = await verifyToken(header)
+  let { query } = parse(request.url, true)
+  let session = await verifyToken(query)
   if ( session.error || !session.userid ) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n")
     socket.destroy()

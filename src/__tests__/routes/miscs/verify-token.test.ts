@@ -8,7 +8,7 @@ describe("testing auxilliary functions...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: "Bearer " + examples.sessionid[0],
+    args: { token: examples.sessionid[0] },
     mocks: {
       verify: {
         error: undefined,
@@ -24,7 +24,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer " + examples.sessionid[0],
+    args: { token: examples.sessionid[0] },
     mocks: {
       verify: {
         error: "databaseConflict.sessionNotFound",
@@ -40,23 +40,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + examples.sessionid[0],
-    mocks: {
-      verify: {
-        error: "databaseConflict.sessionNotFound",
-        userid: undefined,
-      },
-    },
-    mocksCalledWith: {
-      verify: examples.sessionid[0],
-    },
-    expres: {
-      error: "databaseConflict.sessionNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 4,
-    args: "",
+    args: { token: "abcd" },
     mocks: {
       verify: {
         error: undefined,
@@ -65,13 +49,27 @@ describe("testing auxilliary functions...", () => {
     },
     mocksCalledWith: {},
     expres: {
-      error: "wrongValue.auth.header",
+      error: "wrongValue.auth.token",
+      userid: undefined,
+    },
+  }, {
+    tag: 4,
+    args: {},
+    mocks: {
+      verify: {
+        error: undefined,
+        userid: examples.uuid[0],
+      },
+    },
+    mocksCalledWith: {},
+    expres: {
+      error: "wrongValue.auth.token",
       userid: undefined,
     },
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, mocksCalledWith, expres, tag } = testcase
-    test(`Function readUserid. Test #${tag}`, async () => {
+    test(`Function verifyToken. Test #${tag}`, async () => {
       let verify = jest.spyOn(users, "verifySessionToken")
         .mockResolvedValue(mocks.verify)
       let result = await verifyToken(args)

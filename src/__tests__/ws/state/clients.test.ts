@@ -1,4 +1,4 @@
-import { clients, usersByLocation, locationByUser } 
+import { clients, usersByLocation, locationByUser, pingState } 
   from "../../../lib/ws/state-storage"
 import { addClient, deleteClient, getClients } from "../../../lib/ws/state"
 import { examples } from "../../../lib/test-data"
@@ -37,6 +37,7 @@ describe("testing ws state handlers...", () => {
         usersByLocation.set(location, new Set())
       }
       usersByLocation.get(location).add(userid)
+      pingState.set(userid, false)
     }
   })
   test("Function addClient. Test #1", () => {
@@ -58,6 +59,7 @@ describe("testing ws state handlers...", () => {
     expect(clients.size).toBe(initialSize.clients + 1)
     expect(locationByUser.size).toBe(initialSize.locationByUser)
     expect(usersByLocation.size).toBe(initialSize.usersByLocation)
+    expect(pingState.get(userid)).toBe(true)
     expect(closeFunction[0]).not.toHaveBeenCalled()
     expect(closeFunction[1]).not.toHaveBeenCalled()
     expect(closeFunction[2]).not.toHaveBeenCalled()
@@ -80,8 +82,9 @@ describe("testing ws state handlers...", () => {
     expect(result).toBe(true)
     expect(client).toBeDefined()
     expect(clients.size).toBe(initialSize.clients)
-    expect(locationByUser.size).toBe(initialSize.locationByUser)
+    expect(locationByUser.size).toBe(initialSize.locationByUser - 1)
     expect(usersByLocation.size).toBe(initialSize.usersByLocation)
+    expect(pingState.get(userid)).toBe(true)
     expect(closeFunction[0]).toHaveBeenCalled()
     expect(closeFunction[1]).not.toHaveBeenCalled()
     expect(closeFunction[2]).not.toHaveBeenCalled()

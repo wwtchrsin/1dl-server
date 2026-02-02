@@ -13,7 +13,7 @@ export type RedactedProfile = {
   timestamp: string | number,
 }
 
-export const getToken = (header: string | undefined):
+export const getSessionid = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
     if ( typeof header !== "string" ) {
       return {
@@ -43,7 +43,7 @@ export const getToken = (header: string | undefined):
 
 export const readUserid = async (header: string | undefined):
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let session = getToken(header)
+    let session = getSessionid(header)
     if ( session.error !== undefined ) {
       return {
         error: session.error,
@@ -54,16 +54,21 @@ export const readUserid = async (header: string | undefined):
     return result
   }
 
-export const verifyToken = async (header: string | undefined):
+export const verifyToken = async (query: Record<string, string | string[]>):
   Promise<{ error: string | undefined, userid: string | undefined }> => {
-    let session = getToken(header)
-    if ( session.error !== undefined ) {
+    if ( typeof query.token !== "string" ) {
       return {
-        error: session.error,
-        userid: undefined
+        error: "wrongValue.auth.token",
+        userid: undefined,
       }
     }
-    let result = await verifySessionToken(session.data)
+    if ( checkSessionid(query.token as string) ) {
+      return {
+        error: "wrongValue.auth.token",
+        userid: undefined,
+      }
+    }
+    let result = await verifySessionToken(query.token as string)
     return result
   }
 
@@ -86,8 +91,6 @@ export const readProfile = async (header: string | undefined):
     let result = await getProfile(userid.data)
     return result
   }
-
-
 
 export const redactProfile = (profile: Profile | undefined): RedactedProfile | undefined => {
   if ( profile === undefined ) {

@@ -51,7 +51,9 @@ export const deleteUserLocation = (userid: string): string | undefined => {
 export const addClient = (userid: string, client: WebSocket): boolean => {
   let openConn = storage.clients.get(userid)
   openConn && openConn.close()
+  deleteUserLocation(userid)
   storage.clients.set(userid, client)
+  storage.pingState.set(userid, true)
   return !!openConn
 }
 

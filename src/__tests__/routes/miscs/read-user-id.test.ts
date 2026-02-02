@@ -40,18 +40,16 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + examples.sessionid[0],
+    args: "Bearer abcd",
     mocks: {
       getUserid: {
-        error: "databaseConflict.sessionNotFound",
-        data: undefined,
+        error: undefined,
+        data: examples.uuid[0],
       },
     },
-    mocksCalledWith: {
-      getUserid: examples.sessionid[0],
-    },
+    mocksCalledWith: {},
     expres: {
-      error: "databaseConflict.sessionNotFound",
+      error: "wrongValue.auth.sessionid",
       data: undefined,
     },
   }, {

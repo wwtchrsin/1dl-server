@@ -1,4 +1,4 @@
-import { getToken } from "../../../routes/miscs"
+import { getSessionid } from "../../../routes/miscs"
 import { examples } from "../../../lib/test-data"
 
 describe("testing auxilliary functions...", () => {
@@ -47,8 +47,8 @@ describe("testing auxilliary functions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function getToken. Test #${tag}`, async () => {
-      let result = getToken(args)
+    test(`Function getSessionid. Test #${tag}`, async () => {
+      let result = getSessionid(args)
       expect(result).toStrictEqual(expres)
     })
   }
