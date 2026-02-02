@@ -20,7 +20,7 @@ export const onMessage = (userid: string) =>
         if ( !location ) {
           wsState.deleteUserLocation(userid)
           reportError(userid, "wrongValue.wsMessage.location")
-          logger.info({ message: messageJSON }, `#${TAG}#WRONG_LOCATION`)
+          logger.info({ message: messageJSON }, `${TAG}#WRONG_LOCATION`)
           return
         }
         wsState.setUserLocation(userid, location)
@@ -28,7 +28,7 @@ export const onMessage = (userid: string) =>
       }
       default: {
         reportError(userid, "wrongValue.wsMessage.type")
-        logger.info({ message: messageJSON }, `#${TAG}#WRONG_MSG_TYPE`)
+        logger.info({ message: messageJSON }, `${TAG}#WRONG_MSG_TYPE`)
       }
     }
   }

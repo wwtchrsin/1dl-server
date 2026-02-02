@@ -23,7 +23,7 @@ httpServer.on("upgrade", async (request, socket, head) => {
     return
   }
   let profile = await getProfile(session.userid)
-  if ( !profile.error || profile.data?.state !== "active" ) {
+  if ( profile.error || profile.data?.state !== "active" ) {
     socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n")
     socket.destroy()
     return
