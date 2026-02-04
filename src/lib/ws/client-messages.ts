@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import * as wsState from "./state"
 import { reportError } from "./server-messages"
 import { getLocation } from "./miscs"
@@ -5,12 +6,12 @@ import { parseJSON } from "../miscs"
 import logger from "../logger"
 import type { WebSocket } from "ws"
 
-export const onMessage = (userid: string) => 
+export const onMessage = (connid: string) => 
   (messageJSON: string) => {
     let TAG = "ws/client-messages"
     let message = parseJSON(messageJSON)
     if ( message.error ) {
-      reportError(userid, "wrongValue.wsMessage.json")
+      reportError(connid, "wrongValue.wsMessage.json")
       logger.info({ message: messageJSON }, `${TAG}#WRONG_JSON`)
       return
     }
@@ -18,37 +19,38 @@ export const onMessage = (userid: string) =>
       case "set-location": {
         let location = getLocation(message.data?.location)
         if ( !location ) {
-          wsState.deleteUserLocation(userid)
-          reportError(userid, "wrongValue.wsMessage.location")
+          wsState.deleteConnLocation(connid)
+          reportError(connid, "wrongValue.wsMessage.location")
           logger.info({ message: messageJSON }, `${TAG}#WRONG_LOCATION`)
           return
         }
-        wsState.setUserLocation(userid, location)
+        wsState.setConnLocation(connid, location)
         return
       }
       default: {
-        reportError(userid, "wrongValue.wsMessage.type")
+        reportError(connid, "wrongValue.wsMessage.type")
         logger.info({ message: messageJSON }, `${TAG}#WRONG_MSG_TYPE`)
       }
     }
   }
 
-  export const onClose = (userid: string) => () => {
-    wsState.deleteClient(userid)
+  export const onClose = (connid: string) => () => {
+    wsState.deleteClient(connid)
   }
 
-  export const onError = (userid: string) => (error: any) => {
+  export const onError = (connid: string) => (error: any) => {
     logger.error({ error }, "ws/connection/error")
   }
 
-  export const onPong = (userid: string) => () => {
-    wsState.setPingState(userid, true)
+  export const onPong = (connid: string) => () => {
+    wsState.setPingState(connid, true)
   }
 
-  export const onConnection = (ws: WebSocket, userid: string) => {
-    wsState.addClient(userid, ws)
-    ws.on("message", onMessage(userid))
-    ws.on("close", onClose(userid))
-    ws.on("error", onError(userid))
-    ws.on("pong", onPong(userid))
+  export const onConnection = (ws: WebSocket) => {
+    let connid = randomUUID()
+    wsState.addClient(connid, ws)
+    ws.on("message", onMessage(connid))
+    ws.on("close", onClose(connid))
+    ws.on("error", onError(connid))
+    ws.on("pong", onPong(connid))
   }

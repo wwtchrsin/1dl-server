@@ -1,6 +1,5 @@
 import { getLocation, getZoneLocation, getDistrictLocation,
   getRegionLocation } from "../../../lib/ws/miscs"
-import { limits } from "../../../lib/database/limits"
 import type { Districtid, Zoneid } from "../../../lib/database/interfaces"
 
 describe("testing auxilliary functions...", () => {

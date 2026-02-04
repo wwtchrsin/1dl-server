@@ -66,22 +66,6 @@ export const listeners = new Map([
     serverMessages.updateDistrictMsgcounts(report)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
-  ["sessions:deleted", (messageJSON: string) => {
-    let TAG = "ws/channels/sessions:deleted"
-    let message = parseJSON(messageJSON)
-    if ( message.error ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
-      return
-    }
-    if ( isNaN(message.data?.userids?.length) ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
-      return
-    }
-    let { userids } = message.data
-    for ( let i=0; i < userids.length; i++ ) {
-      wsState.deleteClient(userids[i] as string)
-    }
-  }]
 ])
 
 export const subscribeServer = async () => {

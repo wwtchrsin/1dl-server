@@ -5,19 +5,19 @@ import type { WebSocket } from "ws"
 
 let locations = [ "/foo", "/bar" ]
 
-let users = [
+let conns = [
   { 
-    userid: examples.uuid[0], 
+    connid: examples.uuid[0], 
     location: locations[0],
     client: { close: jest.fn(x => undefined) },
   },
   {
-    userid: examples.uuid[1],
+    connid: examples.uuid[1],
     location: locations[0],
     client: { close: jest.fn(x => undefined) },
   },
   {
-    userid: examples.uuid[2],
+    connid: examples.uuid[2],
     location: locations[1],
     client: { close: jest.fn(x => undefined) },
   }, 
@@ -27,55 +27,55 @@ describe("testing ws message handlers...", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     wsStorage.clients.clear()
-    wsStorage.usersByLocation.clear()
-    wsStorage.locationByUser.clear()
+    wsStorage.connidsByLocation.clear()
+    wsStorage.locationByConnid.clear()
     wsStorage.pingState.clear()
-    for ( let { userid, location, client } of users ) {
-      wsStorage.clients.set(userid, client as unknown as WebSocket)
-      wsStorage.locationByUser.set(userid, location)
-      if ( !wsStorage.usersByLocation.has(location) ) {
-        wsStorage.usersByLocation.set(location, new Set())
+    for ( let { connid, location, client } of conns ) {
+      wsStorage.clients.set(connid, client as unknown as WebSocket)
+      wsStorage.locationByConnid.set(connid, location)
+      if ( !wsStorage.connidsByLocation.has(location) ) {
+        wsStorage.connidsByLocation.set(location, new Set())
       }
-      wsStorage.usersByLocation.get(location).add(userid)
-      wsStorage.pingState.set(userid, false)
+      wsStorage.connidsByLocation.get(location).add(connid)
+      wsStorage.pingState.set(connid, false)
     }
   })
   test("Function onClose. Test #1", () => {
-    let userid = users[0].userid
-    onClose(userid)()
-    let client = wsStorage.clients.get(userid)
-    let location = wsStorage.locationByUser.get(userid)
-    let userlist = wsStorage.usersByLocation.get(users[0].location)
-    expect(wsStorage.clients.size).toBe(users.length - 1)
-    expect(wsStorage.locationByUser.size).toBe(users.length - 1)
-    expect(wsStorage.usersByLocation.size).toBe(locations.length)
+    let connid = conns[0].connid
+    onClose(connid)()
+    let client = wsStorage.clients.get(connid)
+    let location = wsStorage.locationByConnid.get(connid)
+    let connlist = wsStorage.connidsByLocation.get(conns[0].location)
+    expect(wsStorage.clients.size).toBe(conns.length - 1)
+    expect(wsStorage.locationByConnid.size).toBe(conns.length - 1)
+    expect(wsStorage.connidsByLocation.size).toBe(locations.length)
     expect(client).toBeUndefined()
     expect(location).toBeUndefined()
-    expect(userlist?.has(userid)).toBe(false)
-    expect(users[0].client.close).toHaveBeenCalled()
-    expect(users[1].client.close).not.toHaveBeenCalled()
-    expect(users[2].client.close).not.toHaveBeenCalled()
+    expect(connlist?.has(connid)).toBe(false)
+    expect(conns[0].client.close).toHaveBeenCalled()
+    expect(conns[1].client.close).not.toHaveBeenCalled()
+    expect(conns[2].client.close).not.toHaveBeenCalled()
   })
   test("Function onClose. Test #2", () => {
-    let userid = examples.uuid[3]
-    onClose(userid)()
-    expect(wsStorage.clients.size).toBe(users.length)
-    expect(wsStorage.locationByUser.size).toBe(users.length)
-    expect(wsStorage.usersByLocation.size).toBe(locations.length)
-    expect(users[0].client.close).not.toHaveBeenCalled()
-    expect(users[1].client.close).not.toHaveBeenCalled()
-    expect(users[2].client.close).not.toHaveBeenCalled()
+    let connid = examples.uuid[3]
+    onClose(connid)()
+    expect(wsStorage.clients.size).toBe(conns.length)
+    expect(wsStorage.locationByConnid.size).toBe(conns.length)
+    expect(wsStorage.connidsByLocation.size).toBe(locations.length)
+    expect(conns[0].client.close).not.toHaveBeenCalled()
+    expect(conns[1].client.close).not.toHaveBeenCalled()
+    expect(conns[2].client.close).not.toHaveBeenCalled()
   })
   test("Function onPong. Test #1", () => {
-    let userid = users[0].userid
-    onPong(userid)()
-    let pingState = wsStorage.pingState.get(userid)
+    let connid = conns[0].connid
+    onPong(connid)()
+    let pingState = wsStorage.pingState.get(connid)
     expect(pingState).toBe(true)
   })
   test("Function onPong. Test #2", () => {
-    let userid = examples.uuid[3]
-    onPong(userid)()
-    let pingState = wsStorage.pingState.get(userid)
+    let connid = examples.uuid[3]
+    onPong(connid)()
+    let pingState = wsStorage.pingState.get(connid)
     expect(pingState).toBeUndefined()
   })
 })

@@ -10,7 +10,7 @@ describe("testing ws message handlers...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      userid: examples.uuid[0],
+      connid: examples.uuid[0],
       message: JSON.stringify({
         type: "set-location",
         location: {
@@ -19,16 +19,16 @@ describe("testing ws message handlers...", () => {
       }),
     },
     calls: {
-      setUserLocation: [
+      setConnLocation: [
         [examples.uuid[0], "/foo"]
       ],
-      deleteUserLocation: [],
+      deleteConnLocation: [],
       reportError: [],
     },
   }, {
     tag: 2,
     args: {
-      userid: examples.uuid[0],
+      connid: examples.uuid[0],
       message: JSON.stringify({
         type: "set-location",
         location: {
@@ -38,24 +38,24 @@ describe("testing ws message handlers...", () => {
       }),
     },
     calls: {
-      setUserLocation: [
+      setConnLocation: [
         [examples.uuid[0], "/foo/4"]
       ],
-      deleteUserLocation: [],
+      deleteConnLocation: [],
       reportError: [],
     },
   }, {
     tag: 3,
     args: {
-      userid: examples.uuid[0],
+      connid: examples.uuid[0],
       message: JSON.stringify({
         type: "set-location",
         location: undefined,
       }),
     },
     calls: {
-      setUserLocation: [],
-      deleteUserLocation: [
+      setConnLocation: [],
+      deleteConnLocation: [
         [examples.uuid[0]]
       ],
       reportError: [
@@ -65,7 +65,7 @@ describe("testing ws message handlers...", () => {
   }, {
     tag: 4,
     args: {
-      userid: examples.uuid[1],
+      connid: examples.uuid[1],
       message: JSON.stringify({
         type: "abcd",
         location: {
@@ -75,8 +75,8 @@ describe("testing ws message handlers...", () => {
       }),
     },
     calls: {
-      setUserLocation: [],
-      deleteUserLocation: [],
+      setConnLocation: [],
+      deleteConnLocation: [],
       reportError: [
         [examples.uuid[1], "wrongValue.wsMessage.type"]
       ],
@@ -84,12 +84,12 @@ describe("testing ws message handlers...", () => {
   }, {
     tag: 5,
     args: {
-      userid: examples.uuid[0],
+      connid: examples.uuid[0],
       message: "{{++",
     },
     calls: {
-      setUserLocation: [],
-      deleteUserLocation: [],
+      setConnLocation: [],
+      deleteConnLocation: [],
       reportError: [
         [examples.uuid[0], "wrongValue.wsMessage.json"]
       ],
@@ -98,24 +98,24 @@ describe("testing ws message handlers...", () => {
   for ( let testcase of testcases ) {
     let { tag, args, calls } = testcase
     test(`Function onMessage. Test #${tag}`, () => {
-      let setUserLocation = jest.spyOn(wsState, "setUserLocation")
+      let setConnLocation = jest.spyOn(wsState, "setConnLocation")
         .mockImplementation(() => undefined)
-      let deleteUserLocation = jest.spyOn(wsState, "deleteUserLocation")
+      let deleteConnLocation = jest.spyOn(wsState, "deleteConnLocation")
         .mockImplementation(() => undefined)
       let reportError = jest.spyOn(serverMessages, "reportError")
         .mockImplementation(() => undefined)
-      let { userid, message } = args
-      onMessage(userid)(message)
-      expect(setUserLocation).toHaveBeenCalledTimes(calls.setUserLocation.length)
-      expect(deleteUserLocation).toHaveBeenCalledTimes(calls.deleteUserLocation.length)
+      let { connid, message } = args
+      onMessage(connid)(message)
+      expect(setConnLocation).toHaveBeenCalledTimes(calls.setConnLocation.length)
+      expect(deleteConnLocation).toHaveBeenCalledTimes(calls.deleteConnLocation.length)
       expect(reportError).toHaveBeenCalledTimes(calls.reportError.length)
-      for ( let i=0; i < calls.setUserLocation.length; i++ ) {
-        let args = calls.setUserLocation[i]
-        expect(setUserLocation).toHaveBeenNthCalledWith(i+1, ...args)
+      for ( let i=0; i < calls.setConnLocation.length; i++ ) {
+        let args = calls.setConnLocation[i]
+        expect(setConnLocation).toHaveBeenNthCalledWith(i+1, ...args)
       }
-      for ( let i=0; i < calls.deleteUserLocation.length; i++ ) {
-        let args = calls.deleteUserLocation[i]
-        expect(deleteUserLocation).toHaveBeenNthCalledWith(i+1, ...args)
+      for ( let i=0; i < calls.deleteConnLocation.length; i++ ) {
+        let args = calls.deleteConnLocation[i]
+        expect(deleteConnLocation).toHaveBeenNthCalledWith(i+1, ...args)
       }
       for ( let i=0; i < calls.reportError.length; i++ ) {
         let args = calls.reportError[i]

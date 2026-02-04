@@ -1,70 +1,70 @@
-import { clients, usersByLocation, locationByUser } 
+import { clients, connidsByLocation, locationByConnid } 
   from "../../../lib/ws/state-storage"
-import { getClientsByLocation, getUsersByLocation } from "../../../lib/ws/state"
+import { getClientsByLocation, getConnidsByLocation } from "../../../lib/ws/state"
 import { examples } from "../../../lib/test-data"
 import type { WebSocket } from "ws"
 
 let locations = [ "/foo", "/bar" ]
 
-let users = [
+let conns = [
   { 
-    userid: examples.uuid[0],
+    connid: examples.uuid[0],
     location: locations[0],
-    client: { userid: examples.uuid[0] }
+    client: { connid: examples.uuid[0] }
   }, { 
-    userid: examples.uuid[1],
+    connid: examples.uuid[1],
     location: locations[0],
-    client: { userid: examples.uuid[1] }
+    client: { connid: examples.uuid[1] }
   }, {
-    userid: examples.uuid[2],
+    connid: examples.uuid[2],
     location: locations[1],
-    client: { userid: examples.uuid[2] }
+    client: { connid: examples.uuid[2] }
   },
 ]
 
 describe("testing ws state handlers...", () => {
   beforeEach(() => {
     clients.clear()
-    usersByLocation.clear()
-    locationByUser.clear()
-    for ( let { userid, location, client } of users ) {
-      clients.set(userid, client as unknown as WebSocket)
-      locationByUser.set(userid, location)
-      if ( !usersByLocation.has(location) ) {
-        usersByLocation.set(location, new Set())
+    connidsByLocation.clear()
+    locationByConnid.clear()
+    for ( let { connid, location, client } of conns ) {
+      clients.set(connid, client as unknown as WebSocket)
+      locationByConnid.set(connid, location)
+      if ( !connidsByLocation.has(location) ) {
+        connidsByLocation.set(location, new Set())
       }
-      usersByLocation.get(location).add(userid)
+      connidsByLocation.get(location).add(connid)
     }
   })
   test("Function getClientsByLocation. Test #1", () => {
     let location = locations[0]
     let result = getClientsByLocation(location)
     expect(result).toHaveLength(2)
-    expect(result[0]).toStrictEqual(users[0].client)
-    expect(result[1]).toStrictEqual(users[1].client)
+    expect(result[0]).toStrictEqual(conns[0].client)
+    expect(result[1]).toStrictEqual(conns[1].client)
   })
   test("Function getClientsByLocation. Test #2", () => {
     let location = locations[1]
     let result = getClientsByLocation(location)
     expect(result).toHaveLength(1)
-    expect(result[0]).toStrictEqual(users[2].client)
+    expect(result[0]).toStrictEqual(conns[2].client)
   })
   test("Function getClientsByLocation. Test #2", () => {
     let location = "/baz"
     let result = getClientsByLocation(location)
     expect(result).toHaveLength(0)
   })
-  test("Function getUsersByLocation. Test #1", () => {
+  test("Function getConnidsByLocation. Test #1", () => {
     let location = "/foo"
-    let result = getUsersByLocation(location)
+    let result = getConnidsByLocation(location)
     expect(result.size).toBe(2)
-    expect(result.has(users[0].userid)).toBe(true)
-    expect(result.has(users[1].userid)).toBe(true)
+    expect(result.has(conns[0].connid)).toBe(true)
+    expect(result.has(conns[1].connid)).toBe(true)
   })
-  test("Function getUsersByLocation. Test #1", () => {
+  test("Function getConnidsByLocation. Test #1", () => {
     let location = "/bar"
-    let result = getUsersByLocation(location)
+    let result = getConnidsByLocation(location)
     expect(result.size).toBe(1)
-    expect(result.has(users[2].userid)).toBe(true)
+    expect(result.has(conns[2].connid)).toBe(true)
   })
 })

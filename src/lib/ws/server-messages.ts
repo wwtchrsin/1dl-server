@@ -5,8 +5,8 @@ import type * as DatabaseTypes from "../database/interfaces"
 import type { ZoneMsgcountsUpdate, DistrictMsgcountsUpdate } 
   from "../redis/interfaces"
 
-export const reportError = (userid: string, error: string) => {
-  let client = wsState.getClient(userid)
+export const reportError = (connid: string, error: string) => {
+  let client = wsState.getClient(connid)
   if ( client ) {
     logger.info({ error }, "ws/server-messages/error")
     client.send(JSON.stringify({
@@ -18,14 +18,14 @@ export const reportError = (userid: string, error: string) => {
 
 export const pingClients = () => {
   let TAG = "ws/server-messages/pingClients"
-  for ( let [userid, client] of wsState.getClients() ) {
-    if ( !wsState.getPingState(userid) ) {
+  for ( let [connid, client] of wsState.getClients() ) {
+    if ( !wsState.getPingState(connid) ) {
       logger.info(`${TAG}#CONN_LOST`)
-      wsState.deleteClient(userid)
+      wsState.deleteClient(connid)
       client.terminate()
       continue
     }
-    wsState.setPingState(userid, false)
+    wsState.setPingState(connid, false)
     client?.ping()
   }
   logger.debug(`${TAG}#MESSAGES_SENT`)
