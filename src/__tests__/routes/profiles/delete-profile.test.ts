@@ -7,6 +7,7 @@ import { examples, populateDatabase, databaseSessions,
   databaseMessages, messagesByUser } from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -81,7 +82,7 @@ describe("testing endpoints...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: "Bearer " + sessionid(1),
+    args: `Bearer ${env.serviceid}:${sessionid(1)}`,
     expres: {
       status: 200,
       error: undefined,
@@ -91,7 +92,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer " + sessionid(3),
+    args: `Bearer ${env.serviceid}:${sessionid(3)}`,
     expres: {
       status: 200,
       error: undefined,
@@ -101,7 +102,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + examples.sessionid[2],
+    args: `Bearer ${env.serviceid}:${examples.sessionid[2]}`,
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
@@ -111,7 +112,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
-    args: "Bearer abcd",
+    args: `Bearer ${env.serviceid}:abcd`,
     expres: {
       status: 401,
       error: "wrongValue.auth.sessionid",
@@ -121,6 +122,16 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
+    args: `Bearer abcd:${examples.sessionid[2]}`,
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      profile: undefined,
+      messages: undefined,
+      userid: undefined,
+    },
+  }, {
+    tag: 6,
     args: "abcd",
     expres: {
       status: 401,

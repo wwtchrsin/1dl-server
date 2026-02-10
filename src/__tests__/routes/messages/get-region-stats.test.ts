@@ -9,6 +9,7 @@ import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
 import { getReports } from "../../../lib/redis/tests"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -39,6 +40,7 @@ describe("testing endpoints...", () => {
   })
   let testcases = [{
     tag: 1,
+    auth: `Bearer ${env.serviceid}:`,
     args: limits.message.region.values[0],
     mocks: {
       getDistrictMsgcounts: cacheEmpty,
@@ -54,6 +56,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
+    auth: `Bearer ${env.serviceid}:`,
     args: limits.message.region.values[0],
     mocks: {},
     calls: {
@@ -67,6 +70,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
+    auth: `Bearer ${env.serviceid}:`,
     args: limits.message.region.values[1],
     mocks: {
       getDistrictMsgcounts: cacheEmpty,
@@ -82,6 +86,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
+    auth: `Bearer ${env.serviceid}:`,
     args: "abcd",
     mocks: {
       getDistrictMsgcounts: cacheEmpty,
@@ -95,9 +100,25 @@ describe("testing endpoints...", () => {
       error: "wrongValue.message.region",
       msgcounts: undefined,
     },
+  }, {
+    tag: 5,
+    auth: `Bearer abcd:`,
+    args: limits.message.region.values[0],
+    mocks: {
+      getDistrictMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countRegionMessages: 0,
+      updateDistrictMsgcounts: 0,
+    },
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      msgcounts: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
-    let { args, mocks, calls, expres, tag } = testcase
+    let { args, mocks, calls, expres, auth, tag } = testcase
     test(`GET /messages/region. Test #${tag}`, async () => {
       let reportsPromise = getReports("msgcounts:districts", calls.updateDistrictMsgcounts)
       if ( mocks.getDistrictMsgcounts ) {
@@ -107,6 +128,7 @@ describe("testing endpoints...", () => {
       let countRegionMessages = jest.spyOn(messages, "countRegionMessages")
       let updateDistrictMsgcounts = jest.spyOn(redisCache, "updateDistrictMsgcounts")
       let result = await testServer.get(`/api/v1/messages/${args}`)
+        .set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {

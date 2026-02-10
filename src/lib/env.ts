@@ -26,6 +26,7 @@ const env = {
     namespace: process.env.REDIS_NAMESPACE ?? "1dl",
   },
   hashSalt: process.env.HASH_SALT ?? "",
+  serviceid: process.env.SERVICE_ID ?? "",
   pinoLogLevel: process.env.PINO_LOGLEVEL ?? "error",
   users: {
     defaultState: process.env.USER_DEFAULT_STATE ?? "active",

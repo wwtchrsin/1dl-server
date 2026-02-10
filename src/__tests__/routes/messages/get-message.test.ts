@@ -5,6 +5,7 @@ import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { populateDatabase, databaseMessages, databaseEmptyZones } 
   from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -38,6 +39,7 @@ let message = (messageIndex: number) => {
 describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
@@ -51,6 +53,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[8].region,
       district: databaseMessages[8].district,
@@ -64,6 +67,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseEmptyZones[2].region,
       district: databaseEmptyZones[2].district,
@@ -77,6 +81,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: "abcd",
       district: databaseMessages[0].district,
@@ -90,6 +95,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
       district: limits.message.district.max + 1,
@@ -103,6 +109,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 6,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
@@ -116,6 +123,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 7,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
       district: databaseMessages[0].district,
@@ -127,13 +135,27 @@ describe("testing endpoints...", () => {
       error: "wrongValue.message.index",
       message: undefined,
     },
+  }, {
+    tag: 8,
+    auth: `Bearer abcd:`,
+    args: {
+      region: databaseMessages[0].region,
+      district: databaseMessages[0].district,
+      zone: databaseMessages[0].zone,
+      index: databaseMessages[0].index,
+    },
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      message: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
-    let { args, expres, tag } = testcase
+    let { args, expres, auth, tag } = testcase
     test(`GET /messages/r/d/zone/index. Test #${tag}`, async () => {
       let { region, district, zone, index } = args
       let url = `/api/v1/messages/${region}/${district}/${zone}/${index}`
-      let result = await testServer.get(url)
+      let result = await testServer.get(url).set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {

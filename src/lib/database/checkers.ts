@@ -126,10 +126,12 @@ export const checkUserid = (userid: string): string | undefined => {
   return undefined
 }
 
-export const checkSessionid = (sessionid: string): string | undefined => {
-  if ( !patterns.sessionid.test(sessionid) ) {
+export const checkSessionid = (sessionid: string | undefined): string | undefined => {
+  if ( !sessionid || !patterns.sessionid.test(sessionid) ) {
     return "wrongValue.auth.sessionid"
   }
   return undefined
 }
+
+
 

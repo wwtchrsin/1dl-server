@@ -15,7 +15,7 @@ import type { Messageid, Zoneid, Districtid } from "../lib/database/interfaces"
 const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/createMessage"
   let args = { messageid: req.params, content: req.body }
-  let profile = await readProfile(req.header("Authorization"))
+  let profile = await readProfile(req.sessionid)
   if ( profile.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(profile.error))
     logger.info(args, `${TAG}#ERROR_AUTHORIZATION`)
@@ -222,7 +222,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     })
     return
   }
-  let userid = await readUserid(req.header("Authorization"))
+  let userid = await readUserid(req.sessionid)
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info({ messageid: req.params }, `${TAG}#ERROR_AUTHORIZATION`)

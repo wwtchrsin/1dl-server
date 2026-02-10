@@ -69,8 +69,7 @@ const createSessionAction = async (req: Request, res: Response) => {
 
 const deleteSessionAction = async (req: Request, res: Response) => {
   let TAG = "routes/sessions/deleteSession"
-  let header = req.header("Authorization")
-  let userid = await readUserid(header)
+  let userid = await readUserid(req.sessionid)
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info(`${TAG}#ERROR_ARGS_CHECK`)

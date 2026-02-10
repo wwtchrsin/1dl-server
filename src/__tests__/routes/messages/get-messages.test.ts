@@ -5,6 +5,7 @@ import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { populateDatabase, databaseZones,
   databaseMessages, messagesByZone, databaseEmptyZones } from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -41,6 +42,7 @@ let messages = (messageIndices: number[]) => {
 describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseZones[0],
     expres: {
       status: 200,
@@ -49,6 +51,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseZones[4],
     expres: {
       status: 200,
@@ -57,6 +60,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseEmptyZones[2],
     expres: {
       status: 200,
@@ -65,6 +69,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: "abcd",
       district: databaseZones[0].district,
@@ -77,6 +82,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseZones[0].region,
       district: limits.message.district.max + 1,
@@ -89,6 +95,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 6,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseZones[0].region,
       district: limits.message.district.max,
@@ -99,13 +106,31 @@ describe("testing endpoints...", () => {
       error: "wrongValue.message.zone",
       messages: undefined,
     },
+  }, {
+    tag: 7,
+    auth: `Bearer abcd:`,
+    args: databaseZones[0],
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      messages: undefined,
+    },
+  }, {
+    tag: 8,
+    auth: `abcd`,
+    args: databaseZones[0],
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.header",
+      messages: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
-    let { args, expres, tag } = testcase
+    let { args, expres, auth, tag } = testcase
     test(`GET /messages/r/d/zone. Test #${tag}`, async () => {
       let { region, district, zone } = args
       let url = `/api/v1/messages/${region}/${district}/${zone}` 
-      let result = await testServer.get(url)
+      let result = await testServer.get(url).set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {

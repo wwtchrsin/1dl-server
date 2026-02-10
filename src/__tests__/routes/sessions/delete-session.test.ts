@@ -4,6 +4,7 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { examples, populateDatabase, databaseSessions } from "../../../lib/test-data"
 import { getReports } from "../../../lib/redis/tests"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -23,7 +24,7 @@ let rowCount = databaseSessions.length
 describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
-    args: "Bearer " + databaseSessions[0].sessionid,
+    args: `Bearer ${env.serviceid}:${databaseSessions[0].sessionid}`,
     expres: {
       status: 200,
       error: undefined,
@@ -31,7 +32,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer " + databaseSessions[1].sessionid,
+    args: `Bearer ${env.serviceid}:${databaseSessions[1].sessionid}`,
     expres: {
       status: 200,
       error: undefined,
@@ -39,7 +40,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + databaseSessions[0].sessionid,
+    args: `Bearer ${env.serviceid}:${databaseSessions[0].sessionid}`,
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
@@ -47,7 +48,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
-    args: "Bearer " + examples.sessionid[0],
+    args: `Bearer ${env.serviceid}:${examples.sessionid[0]}`,
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
@@ -55,7 +56,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
-    args: "Bearer abcd",
+    args: `Bearer ${env.serviceid}:abcd`,
     expres: {
       status: 401,
       error: "wrongValue.auth.sessionid",
@@ -63,6 +64,14 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 6,
+    args: `Bearer abcd:${examples.sessionid[0]}`,
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      userid: undefined,
+    },
+  }, {
+    tag: 7,
     args: "",
     expres: {
       status: 401,

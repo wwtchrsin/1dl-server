@@ -9,6 +9,7 @@ import * as redisConn from "../../../lib/redis/conn"
 import * as redisCache from "../../../lib/redis/cache"
 import { clearRedis, initRedisCache } from "../../../lib/redis/tests"
 import { getReports } from "../../../lib/redis/tests"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -42,6 +43,7 @@ describe("testing endpoints...", () => {
   })
   let testcases = [{
     tag: 1,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseDistricts[0],
     mocks: {
       getZoneMsgcounts: cacheEmpty,
@@ -57,6 +59,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseDistricts[0],
     mocks: {},
     calls: {
@@ -70,6 +73,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseDistricts[1],
     mocks: {
       getZoneMsgcounts: cacheEmpty,
@@ -85,6 +89,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 4,
+    auth: `Bearer ${env.serviceid}:`,
     args: databaseEmptyDistricts[2],
     mocks: {
       getZoneMsgcounts: cacheEmpty,
@@ -100,6 +105,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
+    auth: `Bearer ${env.serviceid}:`,
     args: {
       region: "abcd",
       district: databaseDistricts[0].district,
@@ -116,9 +122,41 @@ describe("testing endpoints...", () => {
       error: "wrongValue.message.region",
       msgcounts: undefined,
     },
+  }, {
+    tag: 6,
+    auth: "Bearer abcd:",
+    args: databaseDistricts[0],
+    mocks: {
+      getZoneMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 0,
+      updateZoneMsgcounts: 0,
+    },
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      msgcounts: undefined,
+    },
+  }, {
+    tag: 7,
+    auth: "abcd",
+    args: databaseDistricts[0],
+    mocks: {
+      getZoneMsgcounts: cacheEmpty,
+    },
+    calls: {
+      countDistrictMessages: 0,
+      updateZoneMsgcounts: 0,
+    },
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.header",
+      msgcounts: undefined,
+    },
   }]
   for ( let testcase of testcases ) {
-    let { args, mocks, calls, expres, tag } = testcase
+    let { args, mocks, calls, expres, auth, tag } = testcase
     test(`GET /messages/region/district. Test #${tag}`, async () => {
       let reportsPromise = getReports("msgcounts:zones", calls.updateZoneMsgcounts)
       if ( mocks.getZoneMsgcounts ) {
@@ -129,7 +167,7 @@ describe("testing endpoints...", () => {
       let updateZoneMsgcounts = jest.spyOn(redisCache, "updateZoneMsgcounts")
       let { region, district } = args
       let url = `/api/v1/messages/${region}/${district}`
-      let result = await testServer.get(url)
+      let result = await testServer.get(url).set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()
       if ( expres.error === undefined ) {

@@ -5,6 +5,7 @@ import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseUsers, activeUsersByRegion } 
   from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -26,6 +27,7 @@ describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -40,6 +42,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 2,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -54,6 +57,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 3,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[1].region,
         login: databaseUsers[1].login,
@@ -69,6 +73,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 4,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: limits.message.region.values[1],
         login: databaseUsers[activeUsersByRegion[0][0]].login,
@@ -83,6 +88,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 5,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[1].login,
@@ -97,6 +103,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 6,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -111,6 +118,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 7,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: examples.region.first + "abcd",
         login: examples.login.minLen + "abcd",
@@ -125,6 +133,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 8,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
@@ -138,6 +147,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 9,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: {},
         login: databaseUsers[0].login,
@@ -152,6 +162,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 10,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         password: databaseUsers[0].password,
@@ -165,6 +176,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 11,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: {},
@@ -179,6 +191,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 12,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -192,6 +205,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 13,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -206,6 +220,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 14,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -216,6 +231,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -230,6 +246,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 15,
     actions: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[1].region,
         login: databaseUsers[1].login,
@@ -240,6 +257,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
@@ -251,13 +269,29 @@ describe("testing endpoints...", () => {
       },
     }],
     rowCount: 2,
+  }, {
+    tag: 16,
+    actions: [{
+      auth: `Bearer abcd:`,
+      args: {
+        region: databaseUsers[0].region,
+        login: databaseUsers[0].login,
+        password: databaseUsers[0].password,
+      },
+      expres: {
+        error: "wrongValue.auth.serviceid",
+        status: 401,
+      },
+    }],
+    rowCount: 0,
   }]
   for ( let testcase of testcases ) {
     let { actions, rowCount, tag } = testcase
     test(`POST /sessions. Test #${tag}`, async () => {
       for ( let action of actions ) {
-        let { args, expres } = action
-        let result = await testServer.post("/api/v1/sessions").send(args)
+        let { args, auth, expres } = action
+        let result = await testServer.post("/api/v1/sessions")
+          .set("Authorization", auth).send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
         if ( expres.error === undefined ) {

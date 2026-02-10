@@ -8,6 +8,7 @@ import { examples, populateDatabase, databaseSessions, databaseMessages,
   from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -69,7 +70,7 @@ describe("testing endpoints...", () => {
     tag: 1,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(0), 
+        auth: `Bearer ${env.serviceid}:${sessionid(0)}`, 
         messageid: messageid(0, 0),
       },
       expres: {
@@ -83,7 +84,7 @@ describe("testing endpoints...", () => {
     tag: 2,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(1), 
+        auth: `Bearer ${env.serviceid}:${sessionid(1)}`, 
         messageid: messageid(1, 0),
       },
       expres: {
@@ -97,7 +98,7 @@ describe("testing endpoints...", () => {
     tag: 3,
     actions: [{
       args:  {
-        auth: "Bearer " + sessionid(0), 
+        auth: `Bearer ${env.serviceid}:${sessionid(0)}`, 
         messageid: messageid(2, 0),
       },
       expres: {
@@ -111,8 +112,8 @@ describe("testing endpoints...", () => {
     tag: 4,
     actions: [{
       args:  {
-        auth: "Bearer " + examples.sessionid[1], 
-        messageid: messageid(2, 0),
+        auth: `Bearer ${env.serviceid}:${examples.sessionid[1]}`, 
+        messageid: messageid(0, 0),
       },
       expres: {
         error: "databaseConflict.sessionNotFound",
@@ -124,12 +125,12 @@ describe("testing endpoints...", () => {
   }, {
     tag: 5,
     actions: [{
-      args: {
-        auth: "Bearer abcd", 
-        messageid: messageid(2, 0),
+      args:  {
+        auth: `Bearer abcd:${sessionid(0)}`, 
+        messageid: messageid(0, 0),
       },
       expres: {
-        error: "wrongValue.auth.sessionid",
+        error: "wrongValue.auth.serviceid",
         message: undefined,
         status: 401,
       },
@@ -139,7 +140,21 @@ describe("testing endpoints...", () => {
     tag: 6,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: "Bearer abcd", 
+        messageid: messageid(2, 0),
+      },
+      expres: {
+        error: "wrongValue.auth.header",
+        message: undefined,
+        status: 401,
+      },
+    }],
+    deletedRows: 0,
+  }, {
+    tag: 7,
+    actions: [{
+      args: {
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: databaseEmptyZones[0].region,
           district: databaseEmptyZones[0].district,
@@ -155,10 +170,10 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 7,
+    tag: 8,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: "abcd",
           district: databaseEmptyZones[0].district,
@@ -174,10 +189,10 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 8,
+    tag: 9,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: databaseEmptyZones[0].region,
           district: limits.message.district.max + 1,
@@ -193,10 +208,10 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 9,
+    tag: 10,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: databaseEmptyZones[0].region,
           district: databaseEmptyZones[0].district,
@@ -212,10 +227,10 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 10,
+    tag: 11,
     actions: [{
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: databaseEmptyZones[0].region,
           district: databaseEmptyZones[0].district,
@@ -231,10 +246,10 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 11,
+    tag: 12,
     actions: [{
      args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: messageid(2, 0),
       },
       expres: {
@@ -244,7 +259,7 @@ describe("testing endpoints...", () => {
       },
     }, {
       args: {
-        auth: "Bearer " + sessionid(2), 
+        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: messageid(2, 0),
       },
       expres: {
@@ -254,7 +269,7 @@ describe("testing endpoints...", () => {
       },
     }, {
       args: {
-        auth: "Bearer " + sessionid(3), 
+        auth: `Bearer ${env.serviceid}:${sessionid(3)}`, 
         messageid: messageid(3, 0),
       },
       expres: {

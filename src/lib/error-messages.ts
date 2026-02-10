@@ -121,6 +121,10 @@ export const wrongValues: WrongValues = {
       en: "Wrong session identifier",
       ru: "Недопустимый идентификатор сессии",
     },
+    serviceid: {
+      en: "Wrong service id",
+      ru: "Недопустимый идентификатор сервиса",
+    },
     token: {
       en: "Wrong token",
       ru: "Недопустимый токен",
@@ -265,6 +269,7 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
       switch ( error ) {
         case "wrongValue.auth.header":
         case "wrongValue.auth.sessionid":
+        case "wrongValue.auth.serviceid":
         case "wrongValue.auth.token": {
           return 401
         }

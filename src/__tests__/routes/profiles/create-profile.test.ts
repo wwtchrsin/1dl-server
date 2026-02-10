@@ -4,6 +4,7 @@ import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -24,7 +25,8 @@ describe("testing endpoints...", () => {
   })
   let testcases = [{
     tag: 1,
-    calls: [{   
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: examples.region.first,
         login: examples.login.minLen,
@@ -38,7 +40,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 2,
-    calls: [{    
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,    
       args: {
         region: examples.region.last,
         login: examples.login.maxLen,
@@ -52,7 +55,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 3,
-    calls: [{    
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,    
       args: {
         region: examples.region.some,
         login: examples.login.regLen,
@@ -66,7 +70,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 4,
-    calls: [{    
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,    
       args: {
         region: examples.region.first,
         login: examples.login.tooShort,
@@ -80,7 +85,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 5,
-    calls: [{    
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
         login: examples.login.minLen,
@@ -94,7 +100,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 6,
-    calls: [{    
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
         login: examples.login.minLen,
@@ -108,7 +115,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 7,
-    calls: [{   
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
         login: examples.login.correct[0],
@@ -119,7 +127,8 @@ describe("testing endpoints...", () => {
         error: undefined,
         status: 201,
       },
-    }, {   
+    }, {
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
         login: examples.login.correct[0],
@@ -133,7 +142,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 8,
-    calls: [{   
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,  
       args: {
         region: examples.region.first,
         login: examples.login.correct[0],
@@ -144,7 +154,8 @@ describe("testing endpoints...", () => {
         error: undefined,
         status: 201,
       },
-    }, {   
+    }, {
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
         login: examples.login.correct[1],
@@ -158,7 +169,8 @@ describe("testing endpoints...", () => {
     }],
   }, {
     tag: 9,
-    calls: [{   
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: "abcd",
         login: examples.login.tooShort,
@@ -170,6 +182,7 @@ describe("testing endpoints...", () => {
         status: 400,
       },
     }, {   
+      auth: `Bearer ${env.serviceid}:`,
       args: {
         region: examples.region.first,
         login: examples.login.minLen,
@@ -181,13 +194,29 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }],
+  }, {
+    tag: 10,
+    calls: [{
+      auth: `Bearer abcd:`,
+      args: {
+        region: examples.region.first,
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+      },
+      expres: {
+        error: "wrongValue.auth.serviceid",
+        status: 401,
+      },
+    }],
   }]
   for ( let testcase of testcases ) {
     let { calls, tag } = testcase
     test(`POST /profiles. Test #${tag}`, async () => {
       for ( let call of calls ) {
-        let { args, expres } = call
-        let result = await testServer.post("/api/v1/profiles").send(args)
+        let { args, auth, expres } = call
+        let result = await testServer.post("/api/v1/profiles")
+          .set("Authorization", auth).send(args)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
         expect(result.body.error).toBe(expres.error)

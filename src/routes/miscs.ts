@@ -1,6 +1,7 @@
-import { getUserid, getProfile, verifySessionToken } 
-  from "../lib/database/users"
-import { checkUserid, checkSessionid } from "../lib/database/checkers"
+import { timingSafeEqual } from "node:crypto"
+import { getUserid, getProfile } from "../lib/database/users"
+import { checkSessionid } from "../lib/database/checkers"
+import env from "../lib/env"
 import type { Profile, UserMessage, Message, Messageid } 
   from "../lib/database/interfaces"
 
@@ -15,76 +16,65 @@ export type RedactedProfile = {
 
 export const getSessionid = (header: string | undefined):
   { error: string | undefined, data: string | undefined } => {
-    if ( typeof header !== "string" ) {
-      return {
-        error: "wrongValue.auth.header",
-        data: undefined,
-      }
-    }
-    let session = header.split(" ")[1]
-    if ( !session ) {
-      return {
-        error: "wrongValue.auth.header",
-        data: undefined,
-      }
-    }
-    let checkError = checkSessionid(session)
-    if ( checkError !== undefined ) {
-      return {
-        error: checkError,
-        data: undefined,
-      }
-    }
+  if ( typeof header !== "string" ) {
     return {
-      error: undefined,
-      data: session,
+      error: "wrongValue.auth.header",
+      data: undefined,
     }
   }
+  let key = header.split(" ")[1]
+  if ( !key ) {
+    return {
+      error: "wrongValue.auth.header",
+      data: undefined,
+    }
+  }
+  let ids = key.split(":")
+  if ( ids?.length !== 2 ) {
+    return {
+      error: "wrongValue.auth.header",
+      data: undefined,
+    }
+  }
+  let [ serviceid, sessionid ] = ids
+  if ( serviceid?.length !== env.serviceid.length ) {
+    return {
+      error: "wrongValue.auth.serviceid",
+      data: undefined,
+    }
+  }
+  let verified = timingSafeEqual(Buffer.from(serviceid), Buffer.from(env.serviceid))
+  if ( !verified ) {
+    return {
+      error: "wrongValue.auth.serviceid",
+      data: undefined,
+    }
+  }
+  return {
+    error: undefined,
+    data: sessionid,
+  }
+}
 
-export const readUserid = async (header: string | undefined):
+export const readUserid = async (sessionid: string | undefined):
   Promise<{ error: string | undefined, data: string | undefined }> => {
-    let session = getSessionid(header)
-    if ( session.error !== undefined ) {
+    let error = checkSessionid(sessionid)
+    if ( error !== undefined ) {
       return {
-        error: session.error,
+        error: error,
         data: undefined
       }
     }
-    let result = await getUserid(session.data)
+    let result = await getUserid(sessionid!)
     return result
   }
 
-export const verifyToken = async (query: Record<string, string | string[]>):
-  Promise<{ error: string | undefined, userid: string | undefined }> => {
-    if ( typeof query.token !== "string" ) {
-      return {
-        error: "wrongValue.auth.token",
-        userid: undefined,
-      }
-    }
-    if ( checkSessionid(query.token as string) ) {
-      return {
-        error: "wrongValue.auth.token",
-        userid: undefined,
-      }
-    }
-    let result = await verifySessionToken(query.token as string)
-    return result
-  }
-
-export const readProfile = async (header: string | undefined):
+export const readProfile = async (sessionid: string | undefined):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
-    let userid = await readUserid(header)
+    let userid = await readUserid(sessionid)
     if ( userid.error !== undefined ) {
       return {
         error: userid.error,
-        data: undefined,
-      }
-    }
-    let checkError = checkUserid(userid.data)
-    if ( checkError !== undefined ) {
-      return {
-        error: checkError,
         data: undefined,
       }
     }

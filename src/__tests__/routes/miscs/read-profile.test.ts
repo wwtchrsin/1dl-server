@@ -1,6 +1,7 @@
 import * as users from "../../../lib/database/users"
 import * as miscs from "../../../routes/miscs"
 import { examples } from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 let profile = (userid: string) => ({
   userid: userid,
@@ -18,7 +19,7 @@ describe("testing auxilliary functions...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: "Bearer " + examples.sessionid[0],
+    args: examples.sessionid[0],
     mocks: {
       readUserid: {
         error: undefined,
@@ -30,7 +31,7 @@ describe("testing auxilliary functions...", () => {
       },
     },
     mocksCalledWith: {
-      readUserid: "Bearer " + examples.sessionid[0],
+      readUserid: examples.sessionid[0],
       getProfile: examples.uuid[0],
     },
     expres: {
@@ -39,7 +40,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer abcd",
+    args: "abcd",
     mocks: {
       readUserid: {
         error: "wrongValue.auth.sessionid",
@@ -51,7 +52,7 @@ describe("testing auxilliary functions...", () => {
       },
     },
     mocksCalledWith: {
-      readUserid: "Bearer abcd",
+      readUserid: "abcd",
     },
     expres: {
       error: "wrongValue.auth.sessionid",
@@ -59,7 +60,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + examples.sessionid[1],
+    args: examples.sessionid[0],
     mocks: {
       readUserid: {
         error: undefined,
@@ -71,7 +72,7 @@ describe("testing auxilliary functions...", () => {
       },
     },
     mocksCalledWith: {
-      readUserid: "Bearer " + examples.sessionid[1],
+      readUserid: examples.sessionid[0],
       readProfile: examples.uuid[1],
     },
     expres: {

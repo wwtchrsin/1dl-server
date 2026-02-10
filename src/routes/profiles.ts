@@ -51,7 +51,7 @@ const createProfileAction = async (req: Request, res: Response) => {
 
 const getProfileAction = async (req: Request, res: Response) => {
   let TAG = "routes/profiles/getProfile"
-  let profile = await readProfile(req.header("Authorization"))
+  let profile = await readProfile(req.sessionid)
   if ( profile.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(profile.error))
     logger.info(`${TAG}#ERROR_ARGS_CHECK`)
@@ -70,8 +70,7 @@ const getProfileAction = async (req: Request, res: Response) => {
 
 const deleteProfileAction = async (req: Request, res: Response) => {
   let TAG = "routes/profiles/deleteProfile"
-  let header = req.header("Authorization")
-  let userid = await readUserid(header)
+  let userid = await readUserid(req.sessionid)
   if ( userid.error !== undefined ) {
     let status = getAuthStatus(getStatusCode(userid.error))
     logger.info(`${TAG}#ERROR_AUTHORIZATION`)

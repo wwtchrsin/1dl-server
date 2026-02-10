@@ -1,6 +1,7 @@
 import * as users from "../../../lib/database/users"
 import { readUserid } from "../../../routes/miscs"
 import { examples } from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 describe("testing auxilliary functions...", () => {
   afterEach(() => {
@@ -8,7 +9,7 @@ describe("testing auxilliary functions...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: "Bearer " + examples.sessionid[0],
+    args: examples.sessionid[0],
     mocks: {
       getUserid: {
         error: undefined,
@@ -24,7 +25,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer " + examples.sessionid[0],
+    args: examples.sessionid[0],
     mocks: {
       getUserid: {
         error: "databaseConflict.sessionNotFound",
@@ -40,7 +41,7 @@ describe("testing auxilliary functions...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer abcd",
+    args: "abcd",
     mocks: {
       getUserid: {
         error: undefined,
@@ -63,7 +64,7 @@ describe("testing auxilliary functions...", () => {
     },
     mocksCalledWith: {},
     expres: {
-      error: "wrongValue.auth.header",
+      error: "wrongValue.auth.sessionid",
       data: undefined,
     },
   }]

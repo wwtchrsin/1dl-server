@@ -5,6 +5,7 @@ import { sql } from "../../../lib/database/schema"
 import { examples, populateDatabase, databaseSessions,
   sessionByUser, databaseCompleteUsers, databaseUsers } 
   from "../../../lib/test-data"
+import env from "../../../lib/env"
 
 beforeAll(async () => {
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
@@ -41,7 +42,7 @@ let profile = (uIndex: number) => {
 describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
-    args: "Bearer " + sessionid(0),
+    args: `Bearer ${env.serviceid}:${sessionid(0)}`,
     expres: {
       status: 200,
       error: undefined,
@@ -49,7 +50,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 2,
-    args: "Bearer " + sessionid(2),
+    args: `Bearer ${env.serviceid}:${sessionid(2)}`,
     expres: {
       status: 200,
       error: undefined,
@@ -57,7 +58,7 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 3,
-    args: "Bearer " + examples.sessionid[0],
+    args: `Bearer ${env.serviceid}:${examples.sessionid[0]}`,
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
@@ -65,7 +66,7 @@ describe("testing endpoints...", () => {
     }
   }, {
     tag: 4,
-    args: "Bearer aaabbb",
+    args: `Bearer ${env.serviceid}:aaabbb`,
     expres: {
       status: 401,
       error: "wrongValue.auth.sessionid",
@@ -73,6 +74,14 @@ describe("testing endpoints...", () => {
     },
   }, {
     tag: 5,
+    args: `Bearer aaabbb:${sessionid(0)}`,
+    expres: {
+      status: 401,
+      error: "wrongValue.auth.serviceid",
+      profile: undefined,
+    },
+  }, {
+    tag: 6,
     args: "aaabbb",
     expres: {
       status: 401,
