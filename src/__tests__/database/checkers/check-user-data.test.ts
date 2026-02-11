@@ -119,6 +119,15 @@ describe("testing query validators...", () => {
       name: examples.name.tooLong,
     },
     expres: "wrongValue.user.name",
+  }, {
+    tag: 14,
+    args: {
+      region: examples.region.some,
+      login: examples.login.regLen,
+      password: examples.password.regLen,
+      name: examples.name.wrongSymbols,
+    },
+    expres: "wrongValue.user.name",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

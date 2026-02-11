@@ -21,6 +21,7 @@ export const limits = {
     text: {
       minLen: 16,
       maxLen: 128,
+      pattern: "^[\x20-\x7E]{16,128}$",
     },
     color: {
       values: [
@@ -51,6 +52,7 @@ export const limits = {
     name: {
       minLen: 8,
       maxLen: 16,
+      pattern: "^[A-Za-z0-9_-]{8,16}$",
     },
     state: {
       values: [
@@ -80,7 +82,9 @@ export const patterns = {
   sessionid: new RegExp(limits.session.sessionid.pattern),
   login: new RegExp(limits.user.login.pattern),
   password: new RegExp(limits.user.password.pattern),
+  name: new RegExp(limits.user.name.pattern),
   region: new RegExp(limits.message.region.pattern),
+  text: new RegExp(limits.message.text.pattern),
 }
        
 

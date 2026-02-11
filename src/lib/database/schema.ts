@@ -16,18 +16,17 @@ const sqlAddConstraints = `
   ALTER TABLE messages ALTER COLUMN text TYPE VARCHAR(${limits.message.text.maxLen}),
     ALTER COLUMN text SET NOT NULL;
   ALTER TABLE messages ADD CONSTRAINT text_check
-    CHECK (LENGTH(text) >= ${limits.message.text.minLen});
+    CHECK (text ~ '${limits.message.text.pattern}');
   ALTER TABLE messages ADD CONSTRAINT color_check
     CHECK (color IN (${colors}));
   ALTER TABLE users ALTER COLUMN login TYPE VARCHAR(${limits.user.login.maxLen}),
     ALTER COLUMN login SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT login_check
-    CHECK (LENGTH(login) >= ${limits.user.login.minLen} AND 
-    login ~ '${limits.user.login.pattern}');
+    CHECK (login ~ '${limits.user.login.pattern}');
   ALTER TABLE users ALTER COLUMN name TYPE VARCHAR(${limits.user.name.maxLen}),
     ALTER COLUMN name SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT name_check
-    CHECK (LENGTH(name) >= ${limits.user.name.minLen});
+    CHECK (name ~ '${limits.user.name.pattern}');
   ALTER TABLE users ADD CONSTRAINT state_check
     CHECK (state IN (${states}));
 `

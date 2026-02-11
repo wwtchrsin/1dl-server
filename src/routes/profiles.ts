@@ -1,4 +1,5 @@
 import { Router } from "express"
+import { verifyRequest } from "./middleware"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
 import { checkUserData } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
@@ -107,6 +108,7 @@ const deleteProfileAction = async (req: Request, res: Response) => {
 
 const router = Router()
 
+router.use(verifyRequest)
 router.get("/", getProfileAction)
 router.post("/", createProfileAction)
 router.delete("/", deleteProfileAction)

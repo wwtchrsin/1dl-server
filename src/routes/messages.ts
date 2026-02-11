@@ -1,4 +1,5 @@
 import { Router } from "express"
+import { verifyRequest } from "./middleware"
 import { createMessage, deleteMessage, getMessage, getMessages,
   countDistrictMessages, countRegionMessages } from "../lib/database/messages"
 import { checkRegion, checkDistrictid, checkZoneid, checkMessageid,
@@ -255,6 +256,7 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
 
 const router = Router()
 
+router.use(verifyRequest)
 router.get("/:region", getRegionStatsAction)
 router.get("/:region/:district", getDistrictStatsAction)
 router.get("/:region/:district/:zone", getMessagesAction)

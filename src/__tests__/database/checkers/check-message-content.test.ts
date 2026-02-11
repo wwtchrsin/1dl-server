@@ -40,6 +40,13 @@ describe("testing query validators...", () => {
   }, {
     tag: 6,
     args: {
+      text: examples.text.wrongSymbols,
+      color: examples.color.first,
+    },
+    expres: "wrongValue.message.text",
+  }, {
+    tag: 7,
+    args: {
       text: examples.text.minLen,
       color: "12345678",
     },

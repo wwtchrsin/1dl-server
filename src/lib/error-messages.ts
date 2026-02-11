@@ -5,16 +5,16 @@ const passwordSymbols = specialSymbols.split("").map(r => `"${r}"`).join(", ")
 
 const getErrorCause = (lang: string, parameter: string) => {
   if ( lang === "ru" ) {
-    return `Следующему параметру задано неверное значение: ${parameter}.`
+    return `Неверное значение для ${parameter}.`
   }
-  return `An incorrect value set for the following parameter: ${parameter}.`
+  return `An incorrect value for ${parameter}.`
 }
 
 const getCorrectRange = (lang: string, min: number, max: number) => {
   if ( lang === "ru" ) {
     return `Значение должно быть целым числов находящимся в интервале [${min}, ${max}].`
   }
-  return `The value must be an integer within the range [${min}, ${max}].`
+  return `The value must be an integer within the range of [${min}, ${max}].`
 }
 
 type WrongValues = {
@@ -50,9 +50,15 @@ export const wrongValues: WrongValues = {
         getCorrectRange("ru", limits.message.index.min, limits.message.index.max),
     },
     text: {
-      en: "The message length must be within the range " +
+      en: getErrorCause("en", "text") +
+        " The message text can only contain characters with codes from 32 to 127 " +
+        "(latin letters, digits, spaces, punctuation marks and some other characters " +
+        "like # or @) and the message length must be within the range of " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
-      ru: "Длина сообщения должна находиться в интервале " +
+      ru: getErrorCause("ru", "text") +
+        " Текст сообщения может содержать только символы с кодами от 32 до 127 " +
+        "(латинские буквы, цифры, пробелы, знаки препинания и некоторые другие " +
+        'символы как "@" или "#") и длина сообщения должна находиться в интервале ' +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
     },
     color: {
@@ -70,30 +76,38 @@ export const wrongValues: WrongValues = {
         limits.message.region.values.join(", ") + ".",
     },
     login: {
-      en: "Login not accepted. The login can only contain latin letters, digits, " +
-        'and symbols "-" and "_". The login length must be between ' +
-        `${limits.user.login.minLen} and ${limits.user.login.maxLen} symbols.`,
-      ru: "Логин не принят. Логин может содержать только латинские буквы, цифры, " +
-        'и символы "-" и "_". Длина логина должна находиться в интервале от ' +
-        `${limits.user.login.minLen} до ${limits.user.login.maxLen} символов.`,
+      en: getErrorCause("en", "login") +
+        " The login can only contain latin letters, digits, " +
+        'and symbols "-" and "_". The login length must be within the range of ' +
+        `[${limits.user.login.minLen}, ${limits.user.login.maxLen}].`,
+      ru: getErrorCause("ru", "login") +
+        " Логин может содержать только латинские буквы, цифры, " +
+        'и символы "-" и "_". Длина логина должна находиться в интервале ' +
+        `[${limits.user.login.minLen}, ${limits.user.login.maxLen}].`,
     },
     password: {
-      en: "Password not accepted. The password can only contain latin letters, " +
+      en: getErrorCause("en", "password") +
+        " The password can only contain latin letters, " +
         `digits and special symbols (${passwordSymbols}), ` +
         "and must contain at least one lowercase letter, one uppercase letter, " +
-        "one digit and one special symbol. The password length must be between " +
-        `${limits.user.password.minLen} and ${limits.user.password.maxLen} symbols.`,
-      ru: "Пароль не принят. Пароль может содержать только латинские буквы, цифры, " +
+        "one digit and one special symbol. The password length must be within the range of " +
+        `[${limits.user.password.minLen}, ${limits.user.password.maxLen}].`,
+      ru: getErrorCause("ru", "password") +
+        " Пароль может содержать только латинские буквы, цифры, " +
         `и специальные символы (${passwordSymbols}), ` +
         "и должен содержать хотя бы одну строчную букву, одну заглавную букву, " +
-        "одну цифру и один специальный символ. Длина пароля должна находиться в интервале от " +
-        `${limits.user.password.minLen} до ${limits.user.password.maxLen} символов.`
+        "одну цифру и один специальный символ. Длина пароля должна находиться в интервале " +
+        `[${limits.user.password.minLen}, ${limits.user.password.maxLen}].`
     },
     name: {
-      en: "Wrong user name. The name length must be between " +
-        `${limits.user.name.minLen} and ${limits.user.name.maxLen} symbols.`,
-      ru: "Недопустимое имя пользователя. Длина имени должна находиться в интервале от " +
-        `${limits.user.name.minLen} до ${limits.user.name.maxLen} символов.`,
+      en: getErrorCause("en", "name") +
+        " The user name can only contain latin letters, digits, " +
+        'and symbols "-" and "_". The name length must be within the range of ' +
+        `[${limits.user.name.minLen}, ${limits.user.name.maxLen}].`,
+      ru: getErrorCause("ru", "name") +
+        " Имя пользователя может содержать только латинские буквы, цифры, " +
+        'и символы "-" и "_". Длина имени должна находиться в интервале ' +
+        `[${limits.user.name.minLen}, ${limits.user.name.maxLen}].`,
     },
     userid: {
       en: "Wrong user identifier",
@@ -317,5 +331,3 @@ export const getAuthStatus = (status: number): number => {
     }
   }
 }
-
-

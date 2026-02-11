@@ -49,10 +49,8 @@ export const checkMessageid = (req: any): string | undefined => {
 }
 
 export const checkMessageContent = (req: any): string | undefined => {
-  let textLen = Number(req?.text?.length)
-  if ( isNaN(textLen) || textLen < limits.message.text.minLen ||
-    textLen > limits.message.text.maxLen ||
-    typeof req?.text !== "string" ) {
+  if ( typeof req?.text !== "string" ||
+    !patterns.text.test(req?.text) ) {
       return "wrongValue.message.text"
     }
   if ( !limits.message.color.values.includes(req?.color) ) {
@@ -82,24 +80,16 @@ export const checkUserData = (req: any): string | undefined => {
   if ( !limits.message.region.values.includes(req?.region) ) {
     return "wrongValue.user.region"
   }
-  let loginLen = Number(req?.login?.length)
-  if ( isNaN(loginLen) || loginLen < limits.user.login.minLen ||
-    loginLen > limits.user.login.maxLen ||
-    typeof req?.login !== "string" ||
+  if ( typeof req?.login !== "string" || 
     !patterns.login.test(req?.login) ) {
       return "wrongValue.user.login"
     }
-  let passwordLen = Number(req?.password?.length)
-  if ( isNaN(passwordLen) || passwordLen < limits.user.password.minLen ||
-    passwordLen > limits.user.password.maxLen ||
-    typeof req?.password !== "string" ||
+  if ( typeof req?.password !== "string" ||
     !patterns.password.test(req?.password) ) {
       return "wrongValue.user.password"
     }
-  let nameLen = Number(req?.name?.length)
-  if ( isNaN(nameLen) || nameLen < limits.user.name.minLen ||
-    nameLen > limits.user.name.maxLen ||
-    typeof req?.name !== "string" ) {
+  if ( typeof req?.name !== "string" ||
+    !patterns.name.test(req?.name) ) {
       return "wrongValue.user.name"
     }
   return undefined
