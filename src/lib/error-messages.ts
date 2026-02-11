@@ -51,14 +51,18 @@ export const wrongValues: WrongValues = {
     },
     text: {
       en: getErrorCause("en", "text") +
-        " The message text can only contain characters with codes from 32 to 127 " +
+        " The message text can only contain printable ASCII characters " +
         "(latin letters, digits, spaces, punctuation marks and some other characters " +
-        "like # or @) and the message length must be within the range of " +
+        'like "#" or "@") and cannot have trailing or leading spaces ' +
+        "nor have more than one space in a row. " +
+        "The message length must be within the range of " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
       ru: getErrorCause("ru", "text") +
-        " Текст сообщения может содержать только символы с кодами от 32 до 127 " +
+        " Текст сообщения может содержать только печатные символы таблицы ASCII " +
         "(латинские буквы, цифры, пробелы, знаки препинания и некоторые другие " +
-        'символы как "@" или "#") и длина сообщения должна находиться в интервале ' +
+        'символы как "@" или "#") и не может начинаться или заканчиваться пробелом ' +
+        "или содержать больше одного пробела подряд. " +
+        "Длина сообщения должна находиться в интервале " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
     },
     color: {

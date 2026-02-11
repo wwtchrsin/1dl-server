@@ -222,13 +222,29 @@ describe("testing query validators...", () => {
         index: `${limits.message.index.min}`,
       },
       content: {
+        text: examples.text.consecutiveSpaces,
+        color: examples.color.first,
+      }
+    },
+    expres: "wrongValue.message.text",
+  }, {
+    tag: 15,
+    args: {
+      uuid: examples.uuid[0],
+      messageid: {
+        region: examples.region.first,
+        district: `${limits.message.district.min}`,
+        zone: `${limits.message.zone.min}`,
+        index: `${limits.message.index.min}`,
+      },
+      content: {
         text: examples.text.minLen,
         color: "Abcd",
       }
     },
     expres: "wrongValue.message.color",
   }, {
-    tag: 15,
+    tag: 16,
     args: {
       uuid: examples.uuid[0],
       messageid: {

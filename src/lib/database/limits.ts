@@ -21,7 +21,7 @@ export const limits = {
     text: {
       minLen: 16,
       maxLen: 128,
-      pattern: "^[\x20-\x7E]{16,128}$",
+      pattern: "^(?!.*\x20{2})[\x21-\x7E][\x20-\x7E]{14,126}[\x21-\x7E]$",
     },
     color: {
       values: [

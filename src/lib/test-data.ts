@@ -76,6 +76,9 @@ export const examples = {
     tooShort: "Aacd 1234 #$ <.",
     tooLong: "A" + "Aacd 1234 #$ <.'".repeat(8),
     wrongSymbols: "АААБББВВВГГГ",
+    trailingSpaces: "Aacd 1234 #$ <. ",
+    leadingSpaces: " Aacd 1234 #$ <.",
+    consecutiveSpaces: "Aacd 1234  #$ <.'",
     correct: [
       "ABCD ABCD ABCD ABCD",
       "7890 7890 7890 7890",
