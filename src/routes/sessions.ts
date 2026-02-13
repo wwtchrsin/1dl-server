@@ -20,7 +20,6 @@ const createSessionAction = async (req: Request, res: Response) => {
     res.status(status).json({ 
       error: checkError,
       sessionid: undefined,
-      token: undefined,
       prfile: undefined,
     })
     return
@@ -32,7 +31,6 @@ const createSessionAction = async (req: Request, res: Response) => {
     res.status(status).json({
       error: session.error,
       sessionid: undefined,
-      token: undefined,
       profile: undefined,
     })
     return
@@ -42,7 +40,6 @@ const createSessionAction = async (req: Request, res: Response) => {
     res.status(201).json({
       error: undefined,
       sessionid: session.sessionid,
-      token: session.token,
       profile: undefined,
     })
     return
@@ -54,7 +51,6 @@ const createSessionAction = async (req: Request, res: Response) => {
     res.status(status).json({
       error: profile.error,
       sessionid: undefined,
-      token: undefined,
       profile: undefined,
     })
     return
@@ -63,7 +59,6 @@ const createSessionAction = async (req: Request, res: Response) => {
   res.status(201).json({
     error: undefined,
     sessionid: session.sessionid,
-    token: session.token,
     profile: redactProfile(profile.data),
   })
 }

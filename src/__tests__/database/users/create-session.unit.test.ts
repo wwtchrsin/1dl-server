@@ -9,12 +9,14 @@ let correctData = {
   login: examples.login.correct[2],
   password: examples.password.correct[2],
   region: examples.region.first,
+  identifier: examples.sessionid[2],
 }
 
 let wrongData = {
   login: examples.login.correct[3],
   password: examples.password.correct[3],
   region: examples.region.last,
+  identifier: examples.sessionid[3],
 }
 
 let checkRequestSucceeds = (query: string, queryParams: string[]) => {
@@ -65,6 +67,7 @@ describe("testing database queries...", () => {
       region: correctData.region,
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -80,6 +83,7 @@ describe("testing database queries...", () => {
       region: wrongData.region,
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -95,6 +99,7 @@ describe("testing database queries...", () => {
       region: wrongData.region,
       login: wrongData.login,
       password: wrongData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -110,6 +115,7 @@ describe("testing database queries...", () => {
       region: "a",
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -125,6 +131,7 @@ describe("testing database queries...", () => {
       region: correctData.region,
       login: "a",
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -140,6 +147,7 @@ describe("testing database queries...", () => {
       region: correctData.region,
       login: correctData.login,
       password: "a",
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -150,11 +158,28 @@ describe("testing database queries...", () => {
     },
     expres: "databaseConflict.profileNotFound",
   }, {
+    tag: 6,
+    args: {
+      region: correctData.region,
+      login: correctData.login,
+      password: correctData.password,
+      identifier: "a",
+    },
+    mocks: {
+      queryDatabase: mockDatabaseQuery({
+        checkRequest: checkRequestSucceeds,
+        deleteRequest: deleteRequestSucceeds,
+        mainRequest: mainRequestSucceeds,
+      })
+    },
+    expres: "success",
+  }, {
     tag: 7,
     args: {
       region: correctData.region,
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -170,6 +195,7 @@ describe("testing database queries...", () => {
       region: correctData.region,
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -185,6 +211,7 @@ describe("testing database queries...", () => {
       region: correctData.region,
       login: correctData.login,
       password: correctData.password,
+      identifier: correctData.identifier,
     },
     mocks: {
       queryDatabase: mockDatabaseQuery({
@@ -203,13 +230,10 @@ describe("testing database queries...", () => {
       if ( expres === "success" ) {
         expect(result.error).toBeUndefined()
         expect(result.sessionid).toMatch(patterns.sessionid)
-        expect(result.token).toMatch(patterns.sessionid)
-        expect(result.token).not.toBe(result.sessionid)
         expect(result.userid).toBe(correctData.userid)
       } else {
         expect(result.error).toBe(expres)
         expect(result.sessionid).toBeUndefined()
-        expect(result.token).toBeUndefined()
         expect(result.userid).toBeUndefined()
       }
     })

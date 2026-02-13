@@ -32,6 +32,7 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -47,6 +48,7 @@ describe("testing endpoints...", () => {
         login: examples.login.maxLen,
         password: examples.password.maxLen,
         name: examples.name.maxLen,
+        identifier: examples.sessionid[1],
       },
       expres: {
         error: undefined,
@@ -62,6 +64,7 @@ describe("testing endpoints...", () => {
         login: examples.login.regLen,
         password: examples.password.regLen,
         name: examples.name.regLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -77,6 +80,7 @@ describe("testing endpoints...", () => {
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.login",
@@ -92,6 +96,7 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.tooLong,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.password",
@@ -107,6 +112,7 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.tooShort,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.name",
@@ -119,9 +125,26 @@ describe("testing endpoints...", () => {
       auth: `Bearer ${env.serviceid}:`,   
       args: {
         region: examples.region.first,
+        login: examples.login.minLen,
+        password: examples.password.minLen,
+        name: examples.name.minLen,
+        identifier: "abcd",
+      },
+      expres: {
+        error: "wrongValue.user.identifier",
+        status: 400,
+      },
+    }],
+  }, {
+    tag: 8,
+    calls: [{
+      auth: `Bearer ${env.serviceid}:`,   
+      args: {
+        region: examples.region.first,
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -134,6 +157,7 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[0],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
+        identifier: examples.sessionid[1],
       },
       expres: {
         error: "databaseConflict.loginTaken",
@@ -141,7 +165,7 @@ describe("testing endpoints...", () => {
       },
     }],
   }, {
-    tag: 8,
+    tag: 9,
     calls: [{
       auth: `Bearer ${env.serviceid}:`,  
       args: {
@@ -149,6 +173,7 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -161,6 +186,7 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[1],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
+        identifier: examples.sessionid[1],
       },
       expres: {
         error: undefined,
@@ -168,7 +194,7 @@ describe("testing endpoints...", () => {
       },
     }],
   }, {
-    tag: 9,
+    tag: 10,
     calls: [{
       auth: `Bearer ${env.serviceid}:`,   
       args: {
@@ -176,6 +202,7 @@ describe("testing endpoints...", () => {
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.region",
@@ -188,6 +215,7 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -195,7 +223,7 @@ describe("testing endpoints...", () => {
       },
     }],
   }, {
-    tag: 10,
+    tag: 11,
     calls: [{
       auth: `Bearer abcd:`,
       args: {
@@ -203,6 +231,7 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.auth.serviceid",
@@ -222,8 +251,6 @@ describe("testing endpoints...", () => {
         expect(result.body.error).toBe(expres.error)
         if ( expres.error === undefined ) {
           expect(result.body.sessionid).toMatch(patterns.sessionid)
-          expect(result.body.token).toMatch(patterns.sessionid)
-          expect(result.body.token).not.toBe(result.body.sessionid)
           expect(result.body.profile).toBeDefined()
           expect(result.body.profile.userid).toBeUndefined()
           expect(result.body.profile.login).toBe(args.login)
@@ -234,7 +261,6 @@ describe("testing endpoints...", () => {
           expect(result.body.profile.timestamp).toMatch(patterns.timestamp)
         } else {
           expect(result.body.sessionid).toBeUndefined()
-          expect(result.body.token).toBeUndefined()
           expect(result.body.profile).toBeUndefined()
         }
       }

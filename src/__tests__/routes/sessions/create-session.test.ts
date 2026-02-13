@@ -32,6 +32,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -47,6 +48,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -62,6 +64,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[1].region,
         login: databaseUsers[1].login,
         password: databaseUsers[1].password,
+        identifier: examples.sessionid[0],
         profile: true,
       },
       expres: {
@@ -78,6 +81,7 @@ describe("testing endpoints...", () => {
         region: limits.message.region.values[1],
         login: databaseUsers[activeUsersByRegion[0][0]].login,
         password: databaseUsers[activeUsersByRegion[0][0]].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "databaseConflict.profileNotFound",
@@ -93,6 +97,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[1].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "databaseConflict.profileNotFound",
@@ -108,6 +113,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[1].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "databaseConflict.profileNotFound",
@@ -123,6 +129,7 @@ describe("testing endpoints...", () => {
         region: examples.region.first + "abcd",
         login: examples.login.minLen + "abcd",
         password: examples.password.minLen + "abcd",
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "databaseConflict.profileNotFound",
@@ -137,6 +144,7 @@ describe("testing endpoints...", () => {
       args: {
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.region",
@@ -152,6 +160,7 @@ describe("testing endpoints...", () => {
         region: {},
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.region",
@@ -166,6 +175,7 @@ describe("testing endpoints...", () => {
       args: {
         region: databaseUsers[0].region,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.login",
@@ -181,6 +191,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: {},
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.login",
@@ -195,6 +206,7 @@ describe("testing endpoints...", () => {
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.password",
@@ -210,6 +222,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: {},
+        identifier: examples.sessionid[0]
       },
       expres: {
         error: "wrongValue.auth.password",
@@ -227,6 +240,38 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
+        error: "wrongValue.auth.identifier",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 15,
+    actions: [{
+      auth: `Bearer ${env.serviceid}:`,
+      args: {
+        region: databaseUsers[0].region,
+        login: databaseUsers[0].login,
+        password: databaseUsers[0].password,
+        identifier: {},
+      },
+      expres: {
+        error: "wrongValue.auth.identifier",
+        status: 400,
+      },
+    }],
+    rowCount: 0,
+  }, {
+    tag: 16,
+    actions: [{
+      auth: `Bearer ${env.serviceid}:`,
+      args: {
+        region: databaseUsers[0].region,
+        login: databaseUsers[0].login,
+        password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
+      },
+      expres: {
         error: undefined,
         status: 201,
       },
@@ -236,6 +281,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -244,13 +290,14 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 1,
   }, {
-    tag: 15,
+    tag: 17,
     actions: [{
       auth: `Bearer ${env.serviceid}:`,
       args: {
         region: databaseUsers[1].region,
         login: databaseUsers[1].login,
         password: databaseUsers[1].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -262,6 +309,7 @@ describe("testing endpoints...", () => {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[1],
       },
       expres: {
         error: undefined,
@@ -270,13 +318,14 @@ describe("testing endpoints...", () => {
     }],
     rowCount: 2,
   }, {
-    tag: 16,
+    tag: 18,
     actions: [{
       auth: `Bearer abcd:`,
       args: {
         region: databaseUsers[0].region,
         login: databaseUsers[0].login,
         password: databaseUsers[0].password,
+        identifier: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.auth.serviceid",
@@ -297,12 +346,9 @@ describe("testing endpoints...", () => {
         if ( expres.error === undefined ) {
           expect(result.body.error).toBeUndefined()
           expect(result.body.sessionid).toMatch(patterns.sessionid)
-          expect(result.body.token).toMatch(patterns.sessionid)
-          expect(result.body.token).not.toBe(result.body.sessionid)
         } else {
           expect(result.body.error).toBe(expres.error)
           expect(result.body.sessionid).toBeUndefined()
-          expect(result.body.token).toBeUndefined()
           expect(result.body.profile).toBeUndefined()
         }
         if ( expres.error === undefined && (args as any).profile === true ) {

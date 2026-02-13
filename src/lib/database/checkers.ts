@@ -92,11 +92,15 @@ export const checkUserData = (req: any): string | undefined => {
     !patterns.name.test(req?.name) ) {
       return "wrongValue.user.name"
     }
+  if ( typeof req?.identifier !== "string" ||
+    !patterns.sessionid.test(req?.identifier) ) {
+      return "wrongValue.user.identifier"
+    }
   return undefined
 }
 
 export const checkUserCredentials = (req: any): string | undefined => {
-  let { region, login, password } = req ?? {}
+  let { region, login, password, identifier } = req ?? {}
   if ( typeof region !== "string" ) {
     return "wrongValue.auth.region"
   }
@@ -105,6 +109,10 @@ export const checkUserCredentials = (req: any): string | undefined => {
   }
   if ( typeof password !== "string" ) {
     return "wrongValue.auth.password"
+  }
+  if ( typeof identifier !== "string" || 
+    !patterns.sessionid.test(identifier) ) {
+    return "wrongValue.auth.identifier"
   }
   return undefined
 }
@@ -122,6 +130,7 @@ export const checkSessionid = (sessionid: string | undefined): string | undefine
   }
   return undefined
 }
+
 
 
 

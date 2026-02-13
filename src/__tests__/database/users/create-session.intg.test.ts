@@ -26,6 +26,7 @@ describe("testing database queries...", () => {
       region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: undefined,
@@ -37,6 +38,7 @@ describe("testing database queries...", () => {
       region: databaseUsers[2].region,
       login: databaseUsers[2].login,
       password: databaseUsers[2].password,
+      identifier: examples.sessionid[2],
     },
     expres: {
       error: undefined,
@@ -48,6 +50,7 @@ describe("testing database queries...", () => {
       region: "a",
       login: databaseUsers[2].login,
       password: databaseUsers[2].password,
+      identifier: examples.sessionid[2],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
@@ -59,6 +62,7 @@ describe("testing database queries...", () => {
       region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: databaseUsers[1].password,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
@@ -70,6 +74,7 @@ describe("testing database queries...", () => {
       region: examples.region.first,
       login: examples.login.minLen,
       password: examples.password.minLen,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
@@ -81,6 +86,7 @@ describe("testing database queries...", () => {
       region: undefined,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
@@ -92,6 +98,7 @@ describe("testing database queries...", () => {
       region: databaseUsers[0].region,
       login: undefined,
       password: databaseUsers[0].password,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
@@ -103,9 +110,22 @@ describe("testing database queries...", () => {
       region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: undefined,
+      identifier: examples.sessionid[0],
     },
     expres: {
       error: "databaseConflict.profileNotFound",
+      userid: undefined,
+    },
+  }, {
+    tag: 9,
+    args: {
+      region: databaseUsers[0].region,
+      login: databaseUsers[0].login,
+      password: databaseUsers[0].password,
+      identifier: undefined,
+    },
+    expres: {
+      error: "databaseError.createSession",
       userid: undefined,
     },
   }]
@@ -117,14 +137,11 @@ describe("testing database queries...", () => {
       if ( expres.error === undefined ) {     
         expect(result.error).toBeUndefined()
         expect(result.sessionid).toMatch(patterns.sessionid)
-        expect(result.token).toMatch(patterns.sessionid)
-        expect(result.token).not.toBe(result.sessionid)
         expect(result.userid).toBe(expres.userid)
         rowCount++
       } else {
         expect(result.error).toBe(expres.error)
         expect(result.sessionid).toBeUndefined()
-        expect(result.token).toBeUndefined()
         expect(result.userid).toBeUndefined()
       }
       let table = await queryDatabase("SELECT * FROM sessions")
@@ -137,36 +154,29 @@ describe("testing database queries...", () => {
       region: databaseUsers[0].region,
       login: databaseUsers[0].login,
       password: databaseUsers[0].password,
+      identifier: examples.sessionid[0],
     }
     let args2 = {
       region: databaseUsers[1].region,
       login: databaseUsers[1].login,
       password: databaseUsers[1].password,
+      identifier: examples.sessionid[1],
     }
     let resultA = await createSession(args1)
     let resultB = await createSession(args1)
     let resultC = await createSession(args2)
     expect(resultA.error).toBeUndefined()
     expect(resultA.sessionid).toMatch(patterns.sessionid)
-    expect(resultA.token).toMatch(patterns.sessionid)
     expect(resultA.userid).toBe(databaseUsers[0].userid)
     expect(resultB.error).toBeUndefined()
     expect(resultB.sessionid).toMatch(patterns.sessionid)
-    expect(resultB.token).toMatch(patterns.sessionid)
     expect(resultB.userid).toBe(databaseUsers[0].userid)
     expect(resultC.error).toBeUndefined()
     expect(resultC.sessionid).toMatch(patterns.sessionid)
-    expect(resultC.token).toMatch(patterns.sessionid)
     expect(resultC.userid).toBe(databaseUsers[1].userid)
     expect(resultA.sessionid).not.toBe(resultB.sessionid)
     expect(resultA.sessionid).not.toBe(resultC.sessionid)
     expect(resultB.sessionid).not.toBe(resultC.sessionid)
-    expect(resultA.sessionid).not.toBe(resultA.token)
-    expect(resultB.sessionid).not.toBe(resultB.token)
-    expect(resultC.sessionid).not.toBe(resultC.token)
-    expect(resultA.token).not.toBe(resultB.token)
-    expect(resultA.token).not.toBe(resultC.token)
-    expect(resultB.token).not.toBe(resultC.token)
   })
 })
 

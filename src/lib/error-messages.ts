@@ -117,6 +117,10 @@ export const wrongValues: WrongValues = {
       en: "Wrong user identifier",
       ru: "Недопустимый идентификатор пользователя",
     },
+    identifier: {
+      en: "Wrong identifier",
+      ru: "Недопустимый идентификатор",
+    },
   },
   auth: {
     region: {
@@ -146,6 +150,10 @@ export const wrongValues: WrongValues = {
     token: {
       en: "Wrong token",
       ru: "Недопустимый токен",
+    },
+    identifier: {
+      en: "Identifier is not set or incorrect",
+      ru: "Идентификатор не задан или имеет недопустимое значение",
     },
   }
 }
@@ -221,10 +229,6 @@ export const databaseErrors: Record<string, TextResource> = {
   countRegionMessages: {
     en: "Impossible to count messages",
     ru: "Невозможно посчитать сообщения",
-  },
-  verifySessionToken: {
-    en: "Impossible to verify token",
-    ru: "Невозможно проверить токен",
   },
 }
 

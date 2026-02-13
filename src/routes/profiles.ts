@@ -22,7 +22,6 @@ const createProfileAction = async (req: Request, res: Response) => {
     res.status(status).json({ 
       error: checkError,
       sessionid: undefined,
-      token: undefined,
       profile: undefined,
     })
     return
@@ -34,18 +33,16 @@ const createProfileAction = async (req: Request, res: Response) => {
     res.status(status).json({ 
       error: result.error,
       sessionid: undefined,
-      token: undefined,
       profile: undefined,
     })
     return
   }
-  let { region, login, password } = req.body as UserData
-  let session = await createSession({ region, login, password })
+  let { region, login, password, identifier } = req.body as UserData
+  let session = await createSession({ region, login, password, identifier })
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
     sessionid: session.sessionid,
-    token: session.token,
     profile: redactProfile(result.data),
   })
 }
