@@ -92,10 +92,6 @@ export const checkUserData = (req: any): string | undefined => {
     !patterns.name.test(req?.name) ) {
       return "wrongValue.user.name"
     }
-  if ( typeof req?.identifier !== "string" ||
-    !patterns.sessionid.test(req?.identifier) ) {
-      return "wrongValue.user.identifier"
-    }
   return undefined
 }
 
@@ -110,10 +106,6 @@ export const checkUserCredentials = (req: any): string | undefined => {
   if ( typeof password !== "string" ) {
     return "wrongValue.auth.password"
   }
-  if ( typeof identifier !== "string" || 
-    !patterns.sessionid.test(identifier) ) {
-    return "wrongValue.auth.identifier"
-  }
   return undefined
 }
 
@@ -124,13 +116,18 @@ export const checkUserid = (userid: string): string | undefined => {
   return undefined
 }
 
-export const checkSessionid = (sessionid: string | undefined): string | undefined => {
-  if ( !sessionid || !patterns.sessionid.test(sessionid) ) {
+export const checkSessionid = (sessionid: any): string | undefined => {
+  if ( typeof sessionid !== "string" || !patterns.sessionid.test(sessionid) ) {
     return "wrongValue.auth.sessionid"
   }
   return undefined
 }
 
-
+export const checkIdentifier = (identifier: string | undefined): string | undefined => {
+  if ( typeof identifier !== "string" || !patterns.sessionid.test(identifier) ) {
+    return "wrongValue.user.identifier"
+  }
+  return undefined
+}
 
 

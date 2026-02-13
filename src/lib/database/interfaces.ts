@@ -3,7 +3,6 @@ export type UserData = {
   login: string,
   password: string,
   name: string,
-  identifier: string,
 }
 
 export type Profile = {
@@ -20,7 +19,6 @@ export type Credentials = {
   region: string,
   login: string,
   password: string,
-  identifier: string,
 }
 
 export type Districtid = {

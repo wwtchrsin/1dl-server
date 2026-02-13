@@ -240,7 +240,7 @@ describe("testing endpoints...", () => {
         password: databaseUsers[0].password,
       },
       expres: {
-        error: "wrongValue.auth.identifier",
+        error: "wrongValue.user.identifier",
         status: 400,
       },
     }],
@@ -256,7 +256,7 @@ describe("testing endpoints...", () => {
         identifier: {},
       },
       expres: {
-        error: "wrongValue.auth.identifier",
+        error: "wrongValue.user.identifier",
         status: 400,
       },
     }],

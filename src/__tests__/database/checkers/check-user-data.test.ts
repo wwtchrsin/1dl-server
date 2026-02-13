@@ -9,7 +9,6 @@ describe("testing query validators...", () => {
       login: examples.login.minLen,
       password: examples.password.minLen,
       name: examples.name.minLen,
-      identifier: examples.sessionid[0],
     },
     expres: undefined,
   }, {
@@ -19,7 +18,6 @@ describe("testing query validators...", () => {
       login: examples.login.maxLen,
       password: examples.password.maxLen,
       name: examples.name.maxLen,
-      identifier: examples.sessionid[1],
     },
     expres: undefined,
   }, {
@@ -29,7 +27,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.regLen,
-      identifier: examples.sessionid[2],
     },
     expres: undefined,
   }, {
@@ -39,7 +36,6 @@ describe("testing query validators...", () => {
       login: examples.login.correct[0],
       password: examples.password.correct[0],
       name: examples.name.correct[0],
-      identifier: examples.sessionid[0],
     },
     expres: undefined,
   }, {
@@ -49,7 +45,6 @@ describe("testing query validators...", () => {
       login: examples.login.tooShort,
       password: examples.password.regLen,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.region",
   }, {
@@ -59,7 +54,6 @@ describe("testing query validators...", () => {
       login: examples.login.tooShort,
       password: examples.password.regLen,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.login",
   }, {
@@ -69,7 +63,6 @@ describe("testing query validators...", () => {
       login: examples.login.tooLong,
       password: examples.password.regLen,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.login",
   }, {
@@ -79,7 +72,6 @@ describe("testing query validators...", () => {
       login: examples.login.wrongSymbols,
       password: examples.password.regLen,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.login",
   }, {
@@ -89,7 +81,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.tooShort,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.password",
   }, {
@@ -99,7 +90,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.tooLong,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.password",
   }, {
@@ -109,7 +99,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.wrongSymbols,
       name: examples.name.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.password",
   }, {
@@ -119,7 +108,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.tooShort,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.name",
   }, {
@@ -129,7 +117,6 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.tooLong,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.name",
   }, {
@@ -139,19 +126,8 @@ describe("testing query validators...", () => {
       login: examples.login.regLen,
       password: examples.password.regLen,
       name: examples.name.wrongSymbols,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.user.name",
-  }, {
-    tag: 15,
-    args: {
-      region: examples.region.some,
-      login: examples.login.regLen,
-      password: examples.password.regLen,
-      name: examples.name.regLen,
-      identifier: "abcd",
-    },
-    expres: "wrongValue.user.identifier",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

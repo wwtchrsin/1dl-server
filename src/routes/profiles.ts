@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { verifyRequest } from "./middleware"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
-import { checkUserData } from "../lib/database/checkers"
+import { checkUserData, checkIdentifier } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
@@ -15,7 +15,9 @@ import logger from "../lib/logger"
 const createProfileAction = async (req: Request, res: Response) => {
   let TAG = "routes/profiles/createProfile"
   let args = { userData: redactPassword(req.body) }
-  let checkError = checkUserData(req.body)
+  let userDataError = checkUserData(req.body)
+  let identifierError = checkIdentifier(req.body?.identifier)
+  let checkError = userDataError || identifierError
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)    
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
@@ -26,24 +28,23 @@ const createProfileAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let result = await createProfile(req.body as UserData, env.users.defaultState)
-  if ( result.error !== undefined ) {
-    let status = getStatusCode(result.error)    
+  let profile = await createProfile(req.body as UserData, env.users.defaultState)
+  if ( profile.error !== undefined ) {
+    let status = getStatusCode(profile.error)    
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({ 
-      error: result.error,
+      error: profile.error,
       sessionid: undefined,
       profile: undefined,
     })
     return
   }
-  let { region, login, password, identifier } = req.body as UserData
-  let session = await createSession({ region, login, password, identifier })
+  let session = await createSession(profile.data!.userid, req.body.identifier!)
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
     sessionid: session.sessionid,
-    profile: redactProfile(result.data),
+    profile: redactProfile(profile.data),
   })
 }
 

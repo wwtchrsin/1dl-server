@@ -8,7 +8,6 @@ describe("testing query validators...", () => {
       region: examples.region.first,
       login: examples.login.regLen,
       password: examples.password.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: undefined,
   }, {
@@ -17,28 +16,17 @@ describe("testing query validators...", () => {
       region: "#",
       login: "#",
       password: "#",
-      identifier: examples.sessionid[0],
     },
     expres: undefined,
   }, {
     tag: 3,
     args: {
-      region: "#",
-      login: "#",
-      password: "#",
-      identifier: "#",
-    },
-    expres: "wrongValue.auth.identifier",
-  }, {
-    tag: 4,
-    args: {
       login: examples.login.regLen,
       password: examples.password.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.auth.region",
   }, {
-    tag: 5,
+    tag: 4,
     args: {
       region: examples.region.first,
       password: examples.password.regLen,
@@ -46,23 +34,14 @@ describe("testing query validators...", () => {
     },
     expres: "wrongValue.auth.login",
   }, {
-    tag: 6,
+    tag: 5,
     args: {
       region: examples.region.first,
       login: examples.login.regLen,
-      identifier: examples.sessionid[0],
     },
     expres: "wrongValue.auth.password",
   }, {
-    tag: 7,
-    args: {
-      region: examples.region.first,
-      login: examples.login.regLen,
-      password: examples.password.regLen,
-    },
-    expres: "wrongValue.auth.identifier",
-  }, {
-    tag: 8,
+    tag: 6,
     args: {
       region: {},
       login: examples.login.regLen,
@@ -70,7 +49,7 @@ describe("testing query validators...", () => {
     },
     expres: "wrongValue.auth.region",
   }, {
-    tag: 9,
+    tag: 7,
     args: {
       region: examples.region.first,
       login: {},
@@ -78,22 +57,13 @@ describe("testing query validators...", () => {
     },
     expres: "wrongValue.auth.login",
   }, {
-    tag: 10,
+    tag: 8,
     args: {
       region: examples.region.first,
       login: examples.login.regLen,
       password: {},
     },
     expres: "wrongValue.auth.password",
-  }, {
-    tag: 11,
-    args: {
-      region: examples.region.first,
-      login: examples.login.regLen,
-      password: examples.password.regLen,
-      identifier: {},
-    },
-    expres: "wrongValue.auth.identifier",
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase

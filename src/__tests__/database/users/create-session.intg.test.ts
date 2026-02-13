@@ -23,126 +23,44 @@ describe("testing database queries...", () => {
   let testcases = [{
     tag: 1,
     args: {
-      region: databaseUsers[0].region,
-      login: databaseUsers[0].login,
-      password: databaseUsers[0].password,
+      userid: databaseUsers[0].userid,
       identifier: examples.sessionid[0],
     },
-    expres: {
-      error: undefined,
-      userid: databaseUsers[0].userid,
-    },
+    expres: undefined,
   }, {
     tag: 2,
     args: {
-      region: databaseUsers[2].region,
-      login: databaseUsers[2].login,
-      password: databaseUsers[2].password,
+      userid: databaseUsers[2].userid,
       identifier: examples.sessionid[2],
     },
-    expres: {
-      error: undefined,
-      userid: databaseUsers[2].userid,
-    },
+    expres: undefined,
   }, {
     tag: 3,
     args: {
-      region: "a",
-      login: databaseUsers[2].login,
-      password: databaseUsers[2].password,
+      userid: "abcd",
       identifier: examples.sessionid[2],
     },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
+    expres: "databaseError.deleteSession",
   }, {
     tag: 4,
     args: {
-      region: databaseUsers[0].region,
-      login: databaseUsers[0].login,
-      password: databaseUsers[1].password,
-      identifier: examples.sessionid[0],
+      userid: databaseUsers[2].userid,
+      identifier: "abcd",
     },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 5,
-    args: {
-      region: examples.region.first,
-      login: examples.login.minLen,
-      password: examples.password.minLen,
-      identifier: examples.sessionid[0],
-    },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 6,
-    args: {
-      region: undefined,
-      login: databaseUsers[0].login,
-      password: databaseUsers[0].password,
-      identifier: examples.sessionid[0],
-    },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 7,
-    args: {
-      region: databaseUsers[0].region,
-      login: undefined,
-      password: databaseUsers[0].password,
-      identifier: examples.sessionid[0],
-    },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 8,
-    args: {
-      region: databaseUsers[0].region,
-      login: databaseUsers[0].login,
-      password: undefined,
-      identifier: examples.sessionid[0],
-    },
-    expres: {
-      error: "databaseConflict.profileNotFound",
-      userid: undefined,
-    },
-  }, {
-    tag: 9,
-    args: {
-      region: databaseUsers[0].region,
-      login: databaseUsers[0].login,
-      password: databaseUsers[0].password,
-      identifier: undefined,
-    },
-    expres: {
-      error: "databaseError.createSession",
-      userid: undefined,
-    },
+    expres: undefined,
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
     test(`Function createSession. Intg Test #${tag}`, async () => {
-      let result = await createSession(args)
-      let rowCount = 0      
-      if ( expres.error === undefined ) {     
+      let result = await createSession(args.userid, args.identifier)
+      let rowCount = 0
+      if ( expres === undefined ) {     
         expect(result.error).toBeUndefined()
         expect(result.sessionid).toMatch(patterns.sessionid)
-        expect(result.userid).toBe(expres.userid)
         rowCount++
       } else {
-        expect(result.error).toBe(expres.error)
+        expect(result.error).toBe(expres)
         expect(result.sessionid).toBeUndefined()
-        expect(result.userid).toBeUndefined()
       }
       let table = await queryDatabase("SELECT * FROM sessions")
       expect(table).toBeDefined()
@@ -151,29 +69,22 @@ describe("testing database queries...", () => {
   }
   test("Function createSession. Intg Test #8", async () => {
     let args1 = {
-      region: databaseUsers[0].region,
-      login: databaseUsers[0].login,
-      password: databaseUsers[0].password,
+      userid: databaseUsers[0].userid,
       identifier: examples.sessionid[0],
     }
     let args2 = {
-      region: databaseUsers[1].region,
-      login: databaseUsers[1].login,
-      password: databaseUsers[1].password,
+      userid: databaseUsers[1].userid,
       identifier: examples.sessionid[1],
     }
-    let resultA = await createSession(args1)
-    let resultB = await createSession(args1)
-    let resultC = await createSession(args2)
+    let resultA = await createSession(args1.userid, args1.identifier)
+    let resultB = await createSession(args1.userid, args1.identifier)
+    let resultC = await createSession(args2.userid, args2.identifier)
     expect(resultA.error).toBeUndefined()
     expect(resultA.sessionid).toMatch(patterns.sessionid)
-    expect(resultA.userid).toBe(databaseUsers[0].userid)
     expect(resultB.error).toBeUndefined()
     expect(resultB.sessionid).toMatch(patterns.sessionid)
-    expect(resultB.userid).toBe(databaseUsers[0].userid)
     expect(resultC.error).toBeUndefined()
     expect(resultC.sessionid).toMatch(patterns.sessionid)
-    expect(resultC.userid).toBe(databaseUsers[1].userid)
     expect(resultA.sessionid).not.toBe(resultB.sessionid)
     expect(resultA.sessionid).not.toBe(resultC.sessionid)
     expect(resultB.sessionid).not.toBe(resultC.sessionid)

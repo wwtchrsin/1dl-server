@@ -1,7 +1,8 @@
 import { Router } from "express"
 import { verifyRequest } from "./middleware"
-import { createSession, deleteSession, getProfile } from "../lib/database/users"
-import { checkUserCredentials } from "../lib/database/checkers"
+import { verifyCredentials, createSession, deleteSession, getProfile } 
+  from "../lib/database/users"
+import { checkUserCredentials, checkIdentifier } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
@@ -13,10 +14,12 @@ import logger from "../lib/logger"
 const createSessionAction = async (req: Request, res: Response) => {
   let TAG = "routes/sessions/createSession"
   let args = { args: redactPassword(req.body) }
-  let checkError = checkUserCredentials(req.body)
+  let credentialsError = checkUserCredentials(req.body)
+  let identifierError = checkIdentifier(req.body?.identifier)
+  let checkError = credentialsError || identifierError
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
-    logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
+    logger.info(args, `${TAG}#ERROR_WRONG_ARGS`)
     res.status(status).json({ 
       error: checkError,
       sessionid: undefined,
@@ -24,7 +27,18 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let session = await createSession(req.body as Credentials)
+  let user = await verifyCredentials(req.body as Credentials)
+  if ( user.error !== undefined ) {
+    let status = getStatusCode(user.error)
+    logger.info(args, `${TAG}#ERROR_CREDENTIALS_VERIFICATION`)    
+    res.status(status).json({
+      error: user.error,
+      sessionid: undefined,
+      profile: undefined,
+    })
+    return
+  }
+  let session = await createSession(user.userid!, req.body.identifier!)
   if ( session.error !== undefined ) {
     let status = getStatusCode(session.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)    
@@ -35,7 +49,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
-  if ( req.body?.profile !== true ) {
+  if ( req.body.profile !== true ) {
     logger.debug(args, `${TAG}#DONE`)
     res.status(201).json({
       error: undefined,
@@ -44,7 +58,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let profile = await getProfile(session.userid)
+  let profile = await getProfile(user.userid!)
   if ( profile.error ) {
     let status = getStatusCode(profile.error)
     logger.info(args, `${TAG}#ERROR_PROFILE_QUERY`)

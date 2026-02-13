@@ -147,14 +147,6 @@ export const wrongValues: WrongValues = {
       en: "Wrong service id",
       ru: "Недопустимый идентификатор сервиса",
     },
-    token: {
-      en: "Wrong token",
-      ru: "Недопустимый токен",
-    },
-    identifier: {
-      en: "Identifier is not set or incorrect",
-      ru: "Идентификатор не задан или имеет недопустимое значение",
-    },
   }
 }
 
@@ -198,8 +190,8 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to create a session",
     ru: "Невозможно создать сессию",
   },
-  checkCredentials: {
-    en: "Impossible to check credentials",
+  verifyCredentials: {
+    en: "Impossible to verify credentials",
     ru: "Невозможно проверить учетные данные пользователя",
   },
   getProfile: {
@@ -291,8 +283,7 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
       switch ( error ) {
         case "wrongValue.auth.header":
         case "wrongValue.auth.sessionid":
-        case "wrongValue.auth.serviceid":
-        case "wrongValue.auth.token": {
+        case "wrongValue.auth.serviceid": {
           return 401
         }
         default: {

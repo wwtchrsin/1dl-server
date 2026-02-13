@@ -86,36 +86,42 @@ export const deleteSession = async (userid: string): Promise<string | undefined>
   return undefined
 }
 
-export const createSession = async (credentials: Credentials):
-  Promise<{ error: string | undefined, sessionid: string | undefined, 
-  userid: string | undefined }> => {
-    let TAG = "db/users/createSession"
+export const verifyCredentials = async (credentials: Credentials):
+  Promise<{ error: string | undefined, userid: string | undefined }> => {
+    let TAG = "db/users/verifyCredentials"
     let args = { credentials: redactPassword(credentials) }
-    let { region, login, password, identifier } = credentials
+    let { region, login, password } = credentials
     let passwordHash = hashPassword(login, password)
-    let checkQuery = `
+    let query = `
       SELECT userid FROM users 
         WHERE region = $1 AND login = $2 AND password = $3
     `
     let queryParameters = [region, login, passwordHash]
-    let checkResult = await queryDatabase(checkQuery, queryParameters)
-    if ( !checkResult?.rows || checkResult.rows.length > 1 ) {
+    let result = await queryDatabase(query, queryParameters)
+    if ( !result?.rows || result.rows.length > 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
-        error: "databaseError.checkCredentials",
-        sessionid: undefined,
+        error: "databaseError.verifyCredentials",
         userid: undefined,
       }
     }
-    if ( checkResult.rows.length === 0 ) {
+    if ( result.rows.length === 0 ) {
       logger.info(args, `${TAG}#ERROR_NOT_FOUND`)
       return {
         error: "databaseConflict.profileNotFound",
-        sessionid: undefined,
         userid: undefined,
       }
     }
-    let { userid } = checkResult.rows[0]
+    return {
+      error: undefined,
+      userid: result.rows[0].userid
+    }
+  }
+
+export const createSession = async (userid: string, identifier: string):
+  Promise<{ error: string | undefined, sessionid: string | undefined }> => {
+    let TAG = "db/users/createSession"
+    let args = { userid, identifier }
     let deleteQuery = "DELETE FROM sessions WHERE userid = $1"
     let deleteResult = await queryDatabase(deleteQuery, [userid])
     if ( deleteResult === undefined ) {
@@ -123,7 +129,6 @@ export const createSession = async (credentials: Credentials):
       return {
         error: "databaseError.deleteSession",
         sessionid: undefined,
-        userid: undefined,
       }
     }
     let sessionid = await generateToken()
@@ -136,14 +141,12 @@ export const createSession = async (credentials: Credentials):
       return {
         error: "databaseError.createSession",
         sessionid: undefined,
-        userid: undefined,
       }
     }
     logger.debug(args, `${TAG}#DONE`)
     return {
       error: undefined,
       sessionid: sessionid,
-      userid: userid,
     }
   }
      
