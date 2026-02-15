@@ -70,21 +70,31 @@ export const createProfile = async(userData: UserData, defaultState: string):
     }
   }
 
-export const deleteSession = async (userid: string): Promise<string | undefined> => {
-  let TAG = "db/users/deleteSession"
-  let query = "DELETE FROM sessions WHERE userid = $1"
-  let result = await queryDatabase(query, [userid])
-  if ( !result || result.rowCount > 1 ) {
-    logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
-    return "databaseError.deleteSession"
+export const deleteSession = async (userid: string): 
+  Promise<{ error: string | undefined, deviceid: string | undefined }> => {
+    let TAG = "db/users/deleteSession"
+    let query = "DELETE FROM sessions WHERE userid = $1 RETURNING deviceid"
+    let result = await queryDatabase(query, [userid])
+    if ( !result || result.rows.length > 1 ) {
+      logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
+      return {
+        error: "databaseError.deleteSession",
+        deviceid: undefined,
+      }
+    }
+    if ( result.rows.length === 0 ) {
+      logger.info({ userid }, `${TAG}#ERROR_NOT_FOUND`)
+      return {
+        error: "databaseConflict.sessionNotFound",
+        deviceid: undefined,
+      }
+    }
+    logger.debug({ userid }, `${TAG}#DONE`)
+    return {
+      error: undefined,
+      deviceid: result.rows[0].deviceid,
+    }
   }
-  if ( result.rowCount === 0 ) {
-    logger.info({ userid }, `${TAG}#ERROR_NOT_FOUND`)
-    return "databaseConflict.sessionNotFound"
-  }
-  logger.debug({ userid }, `${TAG}#DONE`)
-  return undefined
-}
 
 export const verifyCredentials = async (credentials: Credentials):
   Promise<{ error: string | undefined, userid: string | undefined }> => {
@@ -118,35 +128,40 @@ export const verifyCredentials = async (credentials: Credentials):
     }
   }
 
-export const createSession = async (userid: string, identifier: string):
-  Promise<{ error: string | undefined, sessionid: string | undefined }> => {
+export const createSession = async (userid: string, deviceid: string):
+  Promise<{ error: string | undefined, sessionid: string | undefined,
+  deviceid: string | undefined }> => {
     let TAG = "db/users/createSession"
-    let args = { userid, identifier }
-    let deleteQuery = "DELETE FROM sessions WHERE userid = $1"
+    let args = { userid, deviceid }
+    let deleteQuery = "DELETE FROM sessions WHERE userid = $1 RETURNING deviceid"
     let deleteResult = await queryDatabase(deleteQuery, [userid])
     if ( deleteResult === undefined ) {
       logger.error(args, `${TAG}#ERROR_SESSION_REMOVE`)
       return {
         error: "databaseError.deleteSession",
         sessionid: undefined,
+        deviceid: undefined,
       }
     }
+    let prevDeviceid = deleteResult.rows.length && deleteResult.rows[0]?.deviceid
     let sessionid = await generateToken()
     let sessionHash = hashSession(sessionid)
     let query = "INSERT INTO sessions VALUES($1, $2, $3, $4)"
-    let queryParams = [userid, sessionHash, identifier, getTimestamp()]
+    let queryParams = [userid, sessionHash, deviceid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result === undefined || result.rowCount !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseError.createSession",
         sessionid: undefined,
+        deviceid: prevDeviceid,
       }
     }
     logger.debug(args, `${TAG}#DONE`)
     return {
       error: undefined,
       sessionid: sessionid,
+      deviceid: prevDeviceid,
     }
   }
      
@@ -179,9 +194,34 @@ export const getProfile = async (userid: string):
     }
   }
 
+export const getDeviceid = async (userid: string):
+  Promise<{ error: string | undefined, data: string | undefined }> => {
+    let TAG = "db/users/getDeviceid"
+    let query = "SELECT deviceid FROM sessions WHERE userid = $1"
+    let result = await queryDatabase(query, [userid])
+    if ( result === undefined ) {
+      logger.error({ userid }, `${TAG}#ERROR_DB_QUERY`)
+      return {
+        error: "databaseError.getDeviceid",
+        data: undefined,
+      }
+    }
+    if ( result.rows.length !== 1 ) {
+      logger.info({ userid }, `${TAG}#ERROR_NOT_FOUND`)
+      return {
+        error: "databaseConflict.sessionNotFound",
+        data: undefined,
+      }
+    }
+    return {
+      error: undefined,
+      data: result.rows[0].deviceid,
+    }
+  }
+
 export const deleteProfile = async (userid: string):
   Promise<{ error: string | undefined, messages: UserMessage[] | undefined, 
-  profile: Profile | undefined }> => {
+  profile: Profile | undefined, deviceid: string | undefined }> => {
     let TAG = "db/users/deleteProfile"
     let profile = await getProfile(userid)
     if ( profile.error !== undefined ) {
@@ -190,6 +230,7 @@ export const deleteProfile = async (userid: string):
         error: profile.error,
         messages: undefined,
         profile: undefined,
+        deviceid: undefined,
       }
     }
     let messages = await getUserMessages(userid)
@@ -199,6 +240,17 @@ export const deleteProfile = async (userid: string):
         error: messages.error,
         messages: undefined,
         profile: undefined,
+        deviceid: undefined,
+      }
+    }
+    let deviceid = await getDeviceid(userid)
+    if ( deviceid.error && deviceid.error !== "databaseConflict.sessionNotFound" ) {
+      logger.error({ userid }, `${TAG}#ERROR_GETTING_DEVICEID`)
+      return {
+        error: deviceid.error,
+        messages: undefined,
+        profile: undefined,
+        deviceid: undefined,
       }
     }
     let query = `
@@ -213,6 +265,7 @@ export const deleteProfile = async (userid: string):
         error: "databaseError.deleteProfile",
         messages: undefined,
         profile: undefined,
+        deviceid: undefined,
       }
     }
     logger.debug({ userid }, `${TAG}#DONE`)
@@ -220,6 +273,7 @@ export const deleteProfile = async (userid: string):
       error: undefined,
       messages: messages.data,
       profile: profile.data,
+      deviceid: deviceid.data,
     }
   }
 

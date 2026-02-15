@@ -1,7 +1,7 @@
 import { Router } from "express"
 import { verifyRequest } from "./middleware"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
-import { checkUserData, checkIdentifier } from "../lib/database/checkers"
+import { checkUserData, checkDeviceid } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
@@ -16,8 +16,8 @@ const createProfileAction = async (req: Request, res: Response) => {
   let TAG = "routes/profiles/createProfile"
   let args = { userData: redactPassword(req.body) }
   let userDataError = checkUserData(req.body)
-  let identifierError = checkIdentifier(req.body?.identifier)
-  let checkError = userDataError || identifierError
+  let deviceidError = checkDeviceid(req.body?.deviceid)
+  let checkError = userDataError || deviceidError
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)    
     logger.info(args, `${TAG}#ERROR_ARGS_CHECK`)
@@ -39,7 +39,10 @@ const createProfileAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let session = await createSession(profile.data!.userid, req.body.identifier!)
+  let session = await createSession(profile.data!.userid, req.body.deviceid!)
+  if ( session.error === undefined ) {
+    await publish("sessions:created", { deviceids: [req.body.deviceid!] })
+  }
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
     error: undefined,
@@ -94,8 +97,12 @@ const deleteProfileAction = async (req: Request, res: Response) => {
   let messageids = extractMessageids(result.messages)
   await redisCache.changeZoneMsgcounts(result.messages, -1)
   await redisCache.changeDistrictMsgcounts(result.messages, -1)
-  await publish("messages:deleted", { messageids })
-  await publish("sessions:deleted", { userids: [userid.data] })
+  if ( messageids.length ) { 
+    await publish("messages:deleted", { messageids })
+  }
+  if ( result.deviceid ) {
+    await publish("sessions:deleted", { deviceids: [result.deviceid] })
+  }
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined,

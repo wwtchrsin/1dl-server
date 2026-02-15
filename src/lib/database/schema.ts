@@ -72,7 +72,7 @@ const sqlCreateTables = `
   CREATE TABLE IF NOT EXISTS sessions (
     userid UUID NOT NULL,
     sessionid CHAR(${hashSizes.sessionid * 2}) NOT NULL,
-    identifier CHAR(${hashSizes.sessionid * 2}) NOT NULL,
+    deviceid CHAR(${hashSizes.sessionid * 2}) NOT NULL,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY(userid),
     UNIQUE(userid),

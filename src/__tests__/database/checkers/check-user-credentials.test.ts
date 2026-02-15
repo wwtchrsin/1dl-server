@@ -30,7 +30,7 @@ describe("testing query validators...", () => {
     args: {
       region: examples.region.first,
       password: examples.password.regLen,
-      identifier: examples.sessionid[0],
+      deviceid: examples.sessionid[0],
     },
     expres: "wrongValue.auth.login",
   }, {

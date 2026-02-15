@@ -117,9 +117,9 @@ export const wrongValues: WrongValues = {
       en: "Wrong user identifier",
       ru: "Недопустимый идентификатор пользователя",
     },
-    identifier: {
-      en: "Wrong identifier",
-      ru: "Недопустимый идентификатор",
+    deviceid: {
+      en: "Wrong device identifier",
+      ru: "Недопустимый идентификатор устройства",
     },
   },
   auth: {
@@ -185,6 +185,10 @@ export const databaseErrors: Record<string, TextResource> = {
   deleteSession: {
     en: "Impossible to delete the session",
     ru: "Невозможно удалить сессию",
+  },
+  getDeviceid: {
+    en: "Impossible to retrieve device identifier",
+    ru: "Невозможно извлечь идентификатор устройства",
   },
   createSession: {
     en: "Impossible to create a session",

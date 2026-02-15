@@ -37,6 +37,11 @@ let correctUserids = [
 
 let wrongUserid = examples.uuid[2]
 
+let identifiers = [
+  examples.sessionid[1],
+  examples.sessionid[2],
+]
+
 let profiles = [{
   userid: correctUserids[0],
   region: examples.region.first,
@@ -88,6 +93,25 @@ let getUserMessagesFails = () => Promise.resolve({
   data: undefined,
 })
 
+let getIdentifierSucceeds = (userid: string) => {
+  let index = correctUserids.indexOf(userid)
+  if ( index < 0 ) {
+    return Promise.resolve({
+      error: "databaseConflict.sessionNotFound",
+      data: undefined,
+    })
+  }
+  return Promise.resolve({
+    error: undefined,
+    data: identifiers[index],
+  })
+}
+
+let getIdentifierFails = () => Promise.resolve({
+  error: "databaseError.getDeviceid",
+  data: undefined,
+})
+
 let transactionSucceeds = () => Promise.resolve(true)
 
 let transactionFails = () => Promise.resolve(false)
@@ -99,12 +123,14 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionSucceeds,
     },
     expres: {
       error: undefined,
       messages: msgs[0],
       profile: profiles[0],
+      deviceid: identifiers[0],
     }
   }, {
     tag: 2,
@@ -112,12 +138,14 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionSucceeds,
     },
     expres: {
       error: undefined,
       messages: msgs[1],
       profile: profiles[1],
+      deviceid: identifiers[1],
     }
   }, {
     tag: 3,
@@ -125,12 +153,14 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionSucceeds,
     },
     expres: {
       error: "databaseConflict.profileNotFound",
       messages: undefined,
       profile: undefined,
+      deviceid: undefined,
     }
   }, {
     tag: 4,
@@ -138,12 +168,14 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionSucceeds,
     },
     expres: {
       error: "databaseConflict.profileNotFound",
       messages: undefined,
       profile: undefined,
+      deviceid: undefined,
     }
   }, {
     tag: 5,
@@ -151,12 +183,14 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesFails,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionSucceeds,
     },
     expres: {
       error: "databaseError.getUserMessages",
       messages: undefined,
       profile: undefined,
+      deviceid: undefined,
     }
   }, {
     tag: 6,
@@ -164,12 +198,29 @@ describe("testing database queries...", () => {
     mocks: {
       getProfile: getProfile,
       getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierFails,
+      executeTransaction: transactionSucceeds,
+    },
+    expres: {
+      error: "databaseError.getDeviceid",
+      messages: undefined,
+      profile: undefined,
+      deviceid: undefined,
+    }
+  }, {
+    tag: 7,
+    args: correctUserids[0],
+    mocks: {
+      getProfile: getProfile,
+      getUserMessages: getUserMessagesSucceeds,
+      getDeviceid: getIdentifierSucceeds,
       executeTransaction: transactionFails,
     },
     expres: {
       error: "databaseError.deleteProfile",
       messages: undefined,
       profile: undefined,
+      deviceid: undefined,
     }
   }]
   for ( let testcase of testcases ) {
@@ -177,6 +228,7 @@ describe("testing database queries...", () => {
     test(`Function deleteProfile. Unit Test #${tag}`, async () => {
       jest.spyOn(users, "getProfile").mockImplementation(mocks.getProfile)
       jest.spyOn(messages, "getUserMessages").mockImplementation(mocks.getUserMessages)
+      jest.spyOn(users, "getDeviceid").mockImplementation(mocks.getDeviceid)
       jest.spyOn(conn, "executeTransaction").mockImplementation(mocks.executeTransaction)
       let result = await users.deleteProfile(args)
       expect(result).toStrictEqual(expres)

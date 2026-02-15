@@ -28,7 +28,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      userid: databaseSessions[0].userid,
+      deviceid: databaseSessions[0].deviceid,
     },
   }, {
     tag: 2,
@@ -36,7 +36,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 200,
       error: undefined,
-      userid: databaseSessions[1].userid,
+      deviceid: databaseSessions[1].deviceid,
     },
   }, {
     tag: 3,
@@ -44,7 +44,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 4,
@@ -52,7 +52,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 401,
       error: "databaseConflict.sessionNotFound",
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 5,
@@ -60,7 +60,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 401,
       error: "wrongValue.auth.sessionid",
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 6,
@@ -68,7 +68,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 401,
       error: "wrongValue.auth.serviceid",
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 7,
@@ -76,7 +76,7 @@ describe("testing endpoints...", () => {
     expres: {
       status: 401,
       error: "wrongValue.auth.header",
-      userid: undefined,
+      deviceid: undefined,
     },
   }]
   for ( let testcase of testcases ) {
@@ -93,12 +93,12 @@ describe("testing endpoints...", () => {
       let table = await queryDatabase("SELECT * FROM sessions")
       expect(table).toBeDefined()
       expect(table.rows).toHaveLength(rowCount)
-      let reports = await reportsPromise
-      expect(reports).toHaveLength(reportsCount)
-      for ( let i=0; i < reports.length; i++ ) {
-        expect(reports[i].userids).toBeDefined()
-        expect(reports[i].userids).toHaveLength(1)
-        expect(reports[i].userids[0]).toBe(expres.userid)
+      let reportsResult = await reportsPromise
+      expect(reportsResult).toHaveLength(reportsCount)
+      for ( let i=0; i < reportsResult.length; i++ ) {
+        expect(reportsResult[i].deviceids).toBeDefined()
+        expect(reportsResult[i].deviceids).toHaveLength(1)
+        expect(reportsResult[i].deviceids[0]).toBe(expres.deviceid)
       }
     })
   }

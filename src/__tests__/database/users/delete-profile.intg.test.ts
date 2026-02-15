@@ -1,7 +1,7 @@
 import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { deleteProfile } from "../../../lib/database/users"
 import { sql } from "../../../lib/database/schema"
-import { examples, populateDatabase, databaseSessions, 
+import { examples, populateDatabase, databaseSessions, sessionByUser,
   databaseUsers, messagesByUser, databaseMessages } from "../../../lib/test-data"
 
 beforeAll(async () => {
@@ -50,6 +50,14 @@ let getMessages = (userIndex: number) => {
   }))
 }
 
+let getDeviceid = (userIndex: number) => {
+  let sessionIndex = sessionByUser[userIndex]
+  if ( sessionIndex === undefined ) {
+    return undefined
+  }
+  return databaseSessions[sessionIndex].deviceid
+}
+
 let getMessageCount = (userIndex: number) => {
   return messagesByUser[userIndex].length
 }
@@ -68,6 +76,7 @@ describe("testing database queries...", () => {
       error: undefined,
       profile: getProfile(0),
       messages: getMessages(0),
+      deviceid: getDeviceid(0),
     },
     rowCount: {
       users: 1,
@@ -81,6 +90,7 @@ describe("testing database queries...", () => {
       error: undefined,
       profile: getProfile(2),
       messages: getMessages(2),
+      deviceid: getDeviceid(2),
     },
     rowCount: {
       users: 1,
@@ -94,6 +104,7 @@ describe("testing database queries...", () => {
       error: "databaseConflict.profileNotFound",
       profile: undefined,
       messages: undefined,
+      deviceid: undefined,
     },
     rowCount: {
       users: 0,
@@ -107,6 +118,7 @@ describe("testing database queries...", () => {
       error: "databaseConflict.profileNotFound",
       profile: undefined,
       messages: undefined,
+      deviceid: undefined,
     },
     rowCount: {
       users: 0,
@@ -120,6 +132,7 @@ describe("testing database queries...", () => {
       error: "databaseError.getProfile",
       profile: undefined,
       messages: undefined,
+      deviceid: undefined,
     },
     rowCount: {
       users: 0,

@@ -1,9 +1,10 @@
 import supertest from "supertest"
 import httpServer from "../../../http-server"
-import { pool, schema } from "../../../lib/database/conn"
+import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
+import { getReports } from "../../../lib/redis/tests"
 import env from "../../../lib/env"
 
 beforeAll(async () => {
@@ -32,13 +33,15 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: undefined,
         status: 201,
       },
     }],
+    reports: [examples.sessionid[0]],
+    rowCount: 1,
   }, {
     tag: 2,
     calls: [{
@@ -48,13 +51,15 @@ describe("testing endpoints...", () => {
         login: examples.login.maxLen,
         password: examples.password.maxLen,
         name: examples.name.maxLen,
-        identifier: examples.sessionid[1],
+        deviceid: examples.sessionid[1],
       },
       expres: {
         error: undefined,
         status: 201,
       },
     }],
+    reports: [examples.sessionid[1]],
+    rowCount: 1,
   }, {
     tag: 3,
     calls: [{
@@ -64,13 +69,15 @@ describe("testing endpoints...", () => {
         login: examples.login.regLen,
         password: examples.password.regLen,
         name: examples.name.regLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[2],
       },
       expres: {
         error: undefined,
         status: 201,
       },
     }],
+    reports: [examples.sessionid[2]],
+    rowCount: 1,
   }, {
     tag: 4,
     calls: [{
@@ -80,13 +87,15 @@ describe("testing endpoints...", () => {
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.login",
         status: 400,
       },
     }],
+    reports: [],
+    rowCount: 0,
   }, {
     tag: 5,
     calls: [{
@@ -96,13 +105,15 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.tooLong,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.password",
         status: 400,
       },
     }],
+    reports: [],
+    rowCount: 0,
   }, {
     tag: 6,
     calls: [{
@@ -112,13 +123,15 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.tooShort,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.name",
         status: 400,
       },
     }],
+    reports: [],
+    rowCount: 0,
   }, {
     tag: 7,
     calls: [{
@@ -128,13 +141,15 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: "abcd",
+        deviceid: "abcd",
       },
       expres: {
-        error: "wrongValue.user.identifier",
+        error: "wrongValue.user.deviceid",
         status: 400,
       },
     }],
+    reports: [],
+    rowCount: 0,
   }, {
     tag: 8,
     calls: [{
@@ -144,7 +159,7 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -157,13 +172,15 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[0],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
-        identifier: examples.sessionid[1],
+        deviceid: examples.sessionid[1],
       },
       expres: {
         error: "databaseConflict.loginTaken",
         status: 409,
       },
     }],
+    reports: [examples.sessionid[0]],
+    rowCount: 1,
   }, {
     tag: 9,
     calls: [{
@@ -173,7 +190,7 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[0],
         password: examples.password.correct[0],
         name: examples.name.correct[0],
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: undefined,
@@ -186,13 +203,18 @@ describe("testing endpoints...", () => {
         login: examples.login.correct[1],
         password: examples.password.correct[1],
         name: examples.name.correct[1],
-        identifier: examples.sessionid[1],
+        deviceid: examples.sessionid[1],
       },
       expres: {
         error: undefined,
         status: 201,
       },
     }],
+    reports: [
+      examples.sessionid[0],
+      examples.sessionid[1],
+    ],
+    rowCount: 2,
   }, {
     tag: 10,
     calls: [{
@@ -202,7 +224,7 @@ describe("testing endpoints...", () => {
         login: examples.login.tooShort,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.user.region",
@@ -215,13 +237,15 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: undefined,
         status: 201,
       },
     }],
+    reports: [examples.sessionid[0]],
+    rowCount: 1,
   }, {
     tag: 11,
     calls: [{
@@ -231,17 +255,20 @@ describe("testing endpoints...", () => {
         login: examples.login.minLen,
         password: examples.password.minLen,
         name: examples.name.minLen,
-        identifier: examples.sessionid[0],
+        deviceid: examples.sessionid[0],
       },
       expres: {
         error: "wrongValue.auth.serviceid",
         status: 401,
       },
     }],
+    reports: [],
+    rowCount: 0,
   }]
   for ( let testcase of testcases ) {
-    let { calls, tag } = testcase
+    let { calls, reports, rowCount, tag } = testcase
     test(`POST /profiles. Test #${tag}`, async () => {
+      let reportsPromise = getReports("sessions:created", reports.length)
       for ( let call of calls ) {
         let { args, auth, expres } = call
         let result = await testServer.post("/api/v1/profiles")
@@ -263,6 +290,19 @@ describe("testing endpoints...", () => {
           expect(result.body.sessionid).toBeUndefined()
           expect(result.body.profile).toBeUndefined()
         }
+      }
+      let usersTable = await queryDatabase("SELECT * FROM users")
+      let sessionsTable = await queryDatabase("SELECT * FROM sessions")
+      expect(usersTable).toBeDefined()
+      expect(sessionsTable).toBeDefined()
+      expect(usersTable.rows).toHaveLength(rowCount)
+      expect(sessionsTable.rows).toHaveLength(rowCount)
+      let reportsResult = await reportsPromise
+      expect(reportsResult).toHaveLength(reports.length)
+      for ( let i=0; i < reportsResult.length; i++ ) {
+        expect(reportsResult[i].deviceids).toBeDefined()
+        expect(reportsResult[i].deviceids).toHaveLength(1)
+        expect(reportsResult[i].deviceids[0]).toBe(reports[i])
       }
     })
   }

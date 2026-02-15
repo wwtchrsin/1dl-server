@@ -96,7 +96,7 @@ export const checkUserData = (req: any): string | undefined => {
 }
 
 export const checkUserCredentials = (req: any): string | undefined => {
-  let { region, login, password, identifier } = req ?? {}
+  let { region, login, password } = req ?? {}
   if ( typeof region !== "string" ) {
     return "wrongValue.auth.region"
   }
@@ -123,9 +123,9 @@ export const checkSessionid = (sessionid: any): string | undefined => {
   return undefined
 }
 
-export const checkIdentifier = (identifier: string | undefined): string | undefined => {
-  if ( typeof identifier !== "string" || !patterns.sessionid.test(identifier) ) {
-    return "wrongValue.user.identifier"
+export const checkDeviceid = (deviceid: string | undefined): string | undefined => {
+  if ( typeof deviceid !== "string" || !patterns.sessionid.test(deviceid) ) {
+    return "wrongValue.user.deviceid"
   }
   return undefined
 }

@@ -2,7 +2,7 @@ import { Router } from "express"
 import { verifyRequest } from "./middleware"
 import { verifyCredentials, createSession, deleteSession, getProfile } 
   from "../lib/database/users"
-import { checkUserCredentials, checkIdentifier } from "../lib/database/checkers"
+import { checkUserCredentials, checkDeviceid } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
@@ -15,8 +15,8 @@ const createSessionAction = async (req: Request, res: Response) => {
   let TAG = "routes/sessions/createSession"
   let args = { args: redactPassword(req.body) }
   let credentialsError = checkUserCredentials(req.body)
-  let identifierError = checkIdentifier(req.body?.identifier)
-  let checkError = credentialsError || identifierError
+  let deviceidError = checkDeviceid(req.body?.deviceid)
+  let checkError = credentialsError || deviceidError
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
     logger.info(args, `${TAG}#ERROR_WRONG_ARGS`)
@@ -38,7 +38,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let session = await createSession(user.userid!, req.body.identifier!)
+  let session = await createSession(user.userid!, req.body.deviceid!)
   if ( session.error !== undefined ) {
     let status = getStatusCode(session.error)
     logger.info(args, `${TAG}#ERROR_DB_QUERY`)    
@@ -49,7 +49,11 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
+  if ( session.deviceid ) {
+    await publish("sessions:deleted", { deviceids: [session.deviceid] })
+  }
   if ( req.body.profile !== true ) {
+    await publish("sessions:created", { deviceids: [req.body.deviceid!] })
     logger.debug(args, `${TAG}#DONE`)
     res.status(201).json({
       error: undefined,
@@ -69,6 +73,7 @@ const createSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
+  await publish("sessions:created", { deviceids: [req.body.deviceid!] })
   logger.debug(args, `${TAG}#PROFILE_SENT`)
   res.status(201).json({
     error: undefined,
@@ -88,14 +93,16 @@ const deleteSessionAction = async (req: Request, res: Response) => {
     })
     return
   }
-  let error = await deleteSession(userid.data)
-  if ( error !== undefined ) {
-    let status = getStatusCode(error)
+  let session = await deleteSession(userid.data)
+  if ( session.error !== undefined ) {
+    let status = getStatusCode(session.error)
     logger.info(`${TAG}#ERROR_DB_QUERY`)
-    res.status(status).json({ error })
+    res.status(status).json({ 
+      error: session.error
+    })
     return
   }
-  await publish("sessions:deleted", { userids: [userid.data] })
+  await publish("sessions:deleted", { deviceids: [session.deviceid] })
   logger.debug(`${TAG}#DONE`)
   res.status(200).json({
     error: undefined

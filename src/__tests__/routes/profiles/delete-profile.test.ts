@@ -46,9 +46,9 @@ let profile = (uIndex: number) => {
   }
 }
 
-let userid = (uIndex: number) => {
+let deviceid = (uIndex: number) => {
   let userIndex = databaseCompleteUsers[uIndex]
-  return databaseUsers[userIndex].userid
+  return databaseSessions[sessionByUser[userIndex]].deviceid
 }
 
 let sortMessages = (messages: any[]) => {
@@ -88,7 +88,7 @@ describe("testing endpoints...", () => {
       error: undefined,
       profile: profile(1),
       messages: messages(1),
-      userid: userid(1),
+      deviceid: deviceid(1),
     },
   }, {
     tag: 2,
@@ -98,7 +98,7 @@ describe("testing endpoints...", () => {
       error: undefined,
       profile: profile(3),
       messages: messages(3),
-      userid: userid(3),
+      deviceid: deviceid(3),
     },
   }, {
     tag: 3,
@@ -108,7 +108,7 @@ describe("testing endpoints...", () => {
       error: "databaseConflict.sessionNotFound",
       profile: undefined,
       messages: undefined,
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 4,
@@ -118,7 +118,7 @@ describe("testing endpoints...", () => {
       error: "wrongValue.auth.sessionid",
       profile: undefined,
       messages: undefined,
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 5,
@@ -128,7 +128,7 @@ describe("testing endpoints...", () => {
       error: "wrongValue.auth.serviceid",
       profile: undefined,
       messages: undefined,
-      userid: undefined,
+      deviceid: undefined,
     },
   }, {
     tag: 6,
@@ -138,7 +138,7 @@ describe("testing endpoints...", () => {
       error: "wrongValue.auth.header",
       profile: undefined,
       messages: undefined,
-      userid: undefined,
+      deviceid: undefined,
     },
   }]
   for ( let testcase of testcases ) {
@@ -146,7 +146,7 @@ describe("testing endpoints...", () => {
     test(`DELETE /profiles. Test #${tag}`, async () => {
       let userCount = expres.profile === undefined ? 0 : 1
       let msgCount = expres.messages?.length ?? 0
-      let mReportsPromise = getReports("messages:deleted", userCount)
+      let mReportsPromise = getReports("messages:deleted", Math.min(userCount, msgCount))
       let sReportsPromise = getReports("sessions:deleted", userCount)
       let result = await testServer.delete("/api/v1/profiles")
         .set("Authorization", args)
@@ -176,25 +176,25 @@ describe("testing endpoints...", () => {
       expect(userTable.rows).toHaveLength(rowCount.users)
       expect(sessionTable.rows).toHaveLength(rowCount.sessions)
       expect(messageTable.rows).toHaveLength(rowCount.messages)
-      let mReports = await mReportsPromise
-      expect(mReports).toHaveLength(userCount)
-      for ( let i=0; i < mReports.length; i++ ) {
-        expect(mReports[i].messageids).toBeDefined()
-        expect(mReports[i].messageids).toHaveLength(msgCount)
+      let mReportsResult = await mReportsPromise
+      expect(mReportsResult).toHaveLength(Math.min(userCount, msgCount))
+      for ( let i=0; i < mReportsResult.length; i++ ) {
+        expect(mReportsResult[i].messageids).toBeDefined()
+        expect(mReportsResult[i].messageids).toHaveLength(msgCount)
         for ( let j=0; j < msgCount; j++ ) {
-          expect(mReports[i].messageids[j].region).toBeDefined()
-          expect(mReports[i].messageids[j].district).toBeDefined()
-          expect(mReports[i].messageids[j].zone).toBeDefined()
-          expect(mReports[i].messageids[j].index).toBeDefined()
-          expect(mReports[i].messageids[j].text).toBeUndefined()
+          expect(mReportsResult[i].messageids[j].region).toBeDefined()
+          expect(mReportsResult[i].messageids[j].district).toBeDefined()
+          expect(mReportsResult[i].messageids[j].zone).toBeDefined()
+          expect(mReportsResult[i].messageids[j].index).toBeDefined()
+          expect(mReportsResult[i].messageids[j].text).toBeUndefined()
         }
       }
-      let sReports = await sReportsPromise
-      expect(sReports).toHaveLength(userCount)
-      for ( let i=0; i < sReports.length; i++ ) {
-        expect(sReports[i].userids).toBeDefined()
-        expect(sReports[i].userids).toHaveLength(1)
-        expect(sReports[i].userids[0]).toBe(expres.userid)
+      let sReportsResult = await sReportsPromise
+      expect(sReportsResult).toHaveLength(userCount)
+      for ( let i=0; i < sReportsResult.length; i++ ) {
+        expect(sReportsResult[i].deviceids).toBeDefined()
+        expect(sReportsResult[i].deviceids).toHaveLength(1)
+        expect(sReportsResult[i].deviceids[0]).toBe(expres.deviceid)
       }
     })
   }

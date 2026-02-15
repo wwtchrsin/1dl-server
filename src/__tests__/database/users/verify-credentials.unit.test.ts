@@ -115,7 +115,7 @@ describe("testing database queries...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, mocks, expres, tag } = testcase
-    test(`Function createSession. Unit Test #${tag}`, async () => {
+    test(`Function verifyCredentials. Unit Test #${tag}`, async () => {
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await users.verifyCredentials(args)
       if ( expres === "success" ) {
