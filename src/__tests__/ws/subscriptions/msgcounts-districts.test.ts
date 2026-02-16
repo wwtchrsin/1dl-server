@@ -1,56 +1,63 @@
 import { listeners } from "../../../lib/ws/subscriptions"
 import * as serverMessages from "../../../lib/ws/server-messages"
 
+let onMsgcountUpdate = listeners.get("msgcounts:districts")!
+
 describe("testing ws subscriptions...", () => {
   afterEach(() => {
     jest.restoreAllMocks()
   })
-  let testcases = [{
-    tag: 1,
-    args: JSON.stringify({
+  test('Function listeners["msgcounts:districts"]. Test #1', () => {
+    let report = {
       region: "foo",
-      msgcounts: {},
-    }),
-    calls: {
-      update: [{
-        region: "foo",
-        msgcounts: {},
-      }]
+      msgcounts: { "1": 1 }
     }
-  }, {
-    tag: 2,
-    args: JSON.stringify({
-      region: "foo",
-    }),
-    calls: {
-      update: [],
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(1)
+    expect(updateMsgcounts).toHaveBeenNthCalledWith(1, report)
+  })
+  test('Function listeners["msgcounts:districts"]. Test #2', () => {
+    let report = {
+      region: "bar",
+      msgcounts: { "1": 1, "2": 3 }
     }
-  }, {
-    tag: 3,
-    args: JSON.stringify({
-      msgcounts: {},
-    }),
-    calls: {
-      update: []
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(1)
+    expect(updateMsgcounts).toHaveBeenNthCalledWith(1, report)
+  })
+  test('Function listeners["msgcounts:districts"]. Test #3', () => {
+    let report = {
+      region: "bar",
+      msgcount: { "1": 1 }
     }
-  }, {
-    tag: 4,
-    args: "{{{+++",
-    calls: {
-      update: [],
-    },
-  }]
-  for ( let testcase of testcases ) {
-    let { tag, args, calls } = testcase
-    test(`Function listeners["msgcounts:districts"]. Test #${tag}`, () => {
-      let update = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
-        .mockImplementation(() => undefined)
-      let listener = listeners.get("msgcounts:districts")
-      listener(args)
-      expect(update).toHaveBeenCalledTimes(calls.update.length)
-      for ( let [ index, args ] of calls.update.entries() ) {
-        expect(update).toHaveBeenNthCalledWith(index + 1, args)
-      }
-    })
-  }
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
+  test('Function listeners["msgcounts:districts"]. Test #4', () => {
+    let report = {
+      regions: "bar",
+      msgcounts: { "1": 1 }
+    }
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
+  test('Function listeners["msgcounts:districts"]. Test #5', () => {
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateDistrictMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate("++}{++")
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
 })
+

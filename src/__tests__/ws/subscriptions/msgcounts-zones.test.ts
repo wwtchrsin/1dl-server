@@ -1,65 +1,75 @@
 import { listeners } from "../../../lib/ws/subscriptions"
 import * as serverMessages from "../../../lib/ws/server-messages"
 
+let onMsgcountUpdate = listeners.get("msgcounts:zones")!
+
 describe("testing ws subscriptions...", () => {
   afterEach(() => {
     jest.restoreAllMocks()
   })
-  let testcases = [{
-    tag: 1,
-    args: JSON.stringify({
-      districtid: { 
+  test('Function listeners["msgcounts:zones"]. Test #1', () => {
+    let report = {
+      districtid: {
         region: "foo",
         district: 1,
       },
-      msgcounts: {},
-    }),
-    calls: {
-      update: [{
-        districtid: { 
-          region: "foo",
-          district: 1,
-        },
-        msgcounts: {},
-      }]
+      msgcounts: { "1": 1 }
     }
-  }, {
-    tag: 2,
-    args: JSON.stringify({
-      districtid: { 
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateZoneMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(1)
+    expect(updateMsgcounts).toHaveBeenNthCalledWith(1, report)
+  })
+  test('Function listeners["msgcounts:zones"]. Test #2', () => {
+    let report = {
+      districtid: {
+        region: "bar",
+        district: 2,
+      },
+      msgcounts: { "1": 1, "2": 3 }
+    }
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateZoneMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(1)
+    expect(updateMsgcounts).toHaveBeenNthCalledWith(1, report)
+  })
+  test('Function listeners["msgcounts:zones"]. Test #3', () => {
+    let report = {
+      districtid: {
         region: "foo",
         district: 1,
       },
-    }),
-    calls: {
-      update: [],
+      msgcount: { "1": 1 }
     }
-  }, {
-    tag: 3,
-    args: JSON.stringify({
-      msgcounts: {},
-    }),
-    calls: {
-      update: []
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateZoneMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
+  test('Function listeners["msgcounts:zones"]. Test #4', () => {
+    let report = {
+      districtids: {
+        region: "foo",
+        district: 1,
+      },
+      msgcounts: { "1": 1 }
     }
-  }, {
-    tag: 4,
-    args: "{{{+++",
-    calls: {
-      update: [],
-    },
-  }]
-  for ( let testcase of testcases ) {
-    let { tag, args, calls } = testcase
-    test(`Function listeners["msgcounts:zones"]. Test #${tag}`, () => {
-      let update = jest.spyOn(serverMessages, "updateZoneMsgcounts")
-        .mockImplementation(() => undefined)
-      let listener = listeners.get("msgcounts:zones")
-      listener(args)
-      expect(update).toHaveBeenCalledTimes(calls.update.length)
-      for ( let [ index, args ] of calls.update.entries() ) {
-        expect(update).toHaveBeenNthCalledWith(index + 1, args)
-      }
-    })
-  }
+    let reportJSON = JSON.stringify(report)
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateZoneMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate(reportJSON)
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
+  test('Function listeners["msgcounts:zones"]. Test #5', () => {
+    let updateMsgcounts = jest.spyOn(serverMessages, "updateZoneMsgcounts")
+    updateMsgcounts.mockImplementation(() => undefined)
+    onMsgcountUpdate("++}{++")
+    expect(updateMsgcounts).toHaveBeenCalledTimes(0)
+  })
 })
+

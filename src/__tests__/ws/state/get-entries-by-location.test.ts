@@ -49,7 +49,7 @@ describe("testing ws state handlers...", () => {
     expect(result).toHaveLength(1)
     expect(result[0]).toStrictEqual(conns[2].client)
   })
-  test("Function getClientsByLocation. Test #2", () => {
+  test("Function getClientsByLocation. Test #3", () => {
     let location = "/baz"
     let result = getClientsByLocation(location)
     expect(result).toHaveLength(0)
@@ -57,14 +57,21 @@ describe("testing ws state handlers...", () => {
   test("Function getConnidsByLocation. Test #1", () => {
     let location = "/foo"
     let result = getConnidsByLocation(location)
+    expect(result).toBeDefined()
     expect(result.size).toBe(2)
     expect(result.has(conns[0].connid)).toBe(true)
     expect(result.has(conns[1].connid)).toBe(true)
   })
-  test("Function getConnidsByLocation. Test #1", () => {
+  test("Function getConnidsByLocation. Test #2", () => {
     let location = "/bar"
     let result = getConnidsByLocation(location)
+    expect(result).toBeDefined()
     expect(result.size).toBe(1)
     expect(result.has(conns[2].connid)).toBe(true)
+  })
+  test("Function getConnidsByLocation. Test #3", () => {
+    let location = "/baz"
+    let result = getConnidsByLocation(location)
+    expect(result).toBeUndefined()
   })
 })

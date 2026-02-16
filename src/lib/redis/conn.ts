@@ -16,6 +16,15 @@ let publisher: ReturnType<typeof createClient> | undefined = undefined
 
 let subscriber: ReturnType<typeof createClient> | undefined = undefined
 
+let knownChannels = new Set<string>([
+  "messages:created",
+  "messages:deleted",
+  "msgcounts:districts",
+  "msgcounts:zones",
+  "sessions:created",
+  "sessions:deleted",
+])
+
 export const getClient = async () => {
   if ( client === undefined ) {
     try {
@@ -33,7 +42,7 @@ export const getClient = async () => {
           stack: err.stack,
           message: err.message,
         }
-        logger.error(errmsg, "redis/client#Error")
+        logger.error(errmsg, "redis/client#ERROR")
       })
       .connect()
     } catch (err) {
@@ -41,7 +50,7 @@ export const getClient = async () => {
         stack: err.stack,
         message: err.message,
       }
-      logger.fatal(errmsg, "redis/getClient#Conn_Error")
+      logger.fatal(errmsg, "redis/getClient#CONN_ERROR")
       process.exit(1)
     }
   }
@@ -65,7 +74,7 @@ export const getPublisher = async () => {
           stack: err.stack,
           message: err.message,
         }
-        logger.error(errmsg, "redis/getPublisher#Error")
+        logger.error(errmsg, "redis/getPublisher#ERROR")
       })
       .connect()
     } catch (err) {
@@ -73,7 +82,7 @@ export const getPublisher = async () => {
         stack: err.stack,
         message: err.message,
       }
-      logger.fatal(errmsg, "redis/getPublisher#Conn_Error")
+      logger.fatal(errmsg, "redis/getPublisher#CONN_ERROR")
       process.exit(1)
     }
   }
@@ -97,7 +106,7 @@ export const getSubscriber = async () => {
           stack: err.stack,
           message: err.message,
         }
-        logger.error(errmsg, "redis/getSubscriber#Error")
+        logger.error(errmsg, "redis/getSubscriber#ERROR")
       })
       .connect()
     } catch (err) {
@@ -105,7 +114,7 @@ export const getSubscriber = async () => {
         stack: err.stack,
         message: err.message,
       }
-      logger.fatal(errmsg, "redis/getSubscriber#Conn_Error")
+      logger.fatal(errmsg, "redis/getSubscriber#CONN_ERROR")
       process.exit(1)
     }
   }
@@ -122,6 +131,10 @@ export const closeConns = async () => {
 }
 
 export const publish = async (channel: string, message: Object): Promise<boolean> => {
+  if ( !knownChannels.has(channel) ) {
+    logger.error({ channel }, "redis/publish#UNKNOWN_CHANNEL")
+    return false
+  }
   try {
     let publisher = await getPublisher()
     let messageString = JSON.stringify(message)
@@ -133,17 +146,25 @@ export const publish = async (channel: string, message: Object): Promise<boolean
       stack: err.stack,
       message: err.message,
     }
-    logger.error(errmsg, "redis/publish#Error")
+    logger.error(errmsg, "redis/publish#ERROR")
     return false
   }
 }
 
 export const subscribe = async (channel: string, listener: ChannelListener) => {
+  if ( !knownChannels.has(channel) ) {
+    logger.error({ channel }, "redis/subscribe#UNKNOWN_CHANNEL")
+    return
+  }
   let subscriber = await getSubscriber()
   await subscriber.subscribe(`${redisns}:${channel}`, listener)
 }
 
 export const unsubscribe = async (channel: string) => {
+  if ( !knownChannels.has(channel) ) {
+    logger.error({ channel }, "redis/unsubscribe#UNKNOWN_CHANNEL")
+    return
+  }
   let subscriber = await getSubscriber()
   await subscriber.unsubscribe(`${redisns}:${channel}`)
 }

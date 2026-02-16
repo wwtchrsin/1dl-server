@@ -3,6 +3,7 @@ import * as wsState from "./state"
 import { reportError } from "./server-messages"
 import { getLocation } from "./miscs"
 import { parseJSON } from "../miscs"
+import { checkDeviceid } from "../database/checkers"
 import logger from "../logger"
 import type { WebSocket } from "ws"
 
@@ -25,6 +26,16 @@ export const onMessage = (connid: string) =>
           return
         }
         wsState.setConnLocation(connid, location)
+        return
+      }
+      case "set-deviceid": {
+        let deviceid = message.data?.deviceid
+        if ( checkDeviceid(deviceid) !== undefined ) {
+          reportError(connid, "wrongValue.wsMessage.deviceid")
+          logger.info({ message: messageJSON }, `${TAG}#WRONG_DEVICEID`)
+          return
+        }
+        wsState.setConnDeviceid(connid, deviceid)
         return
       }
       default: {

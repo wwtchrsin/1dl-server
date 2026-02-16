@@ -1,9 +1,8 @@
-import * as wsState from "./state"
 import * as serverMessages from "./server-messages"
 import { subscribe } from "../redis/conn"
 import { parseJSON } from "../miscs"
 import logger from "../logger"
-import type * as RedisTypes from "../redis/interfaces"
+import type * as RI from "../redis/interfaces"
 
 export const listeners = new Map([
   ["messages:created", (messageJSON: string) => {
@@ -17,7 +16,7 @@ export const listeners = new Map([
       logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
       return
     }
-    let report = message.data as RedisTypes.CreatedMessages
+    let report = message.data as RI.CreatedMessages
     serverMessages.insertMessages(report.messages)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
@@ -32,23 +31,8 @@ export const listeners = new Map([
       logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
       return
     }
-    let report = message.data as RedisTypes.DeletedMessages
+    let report = message.data as RI.DeletedMessages
     serverMessages.deleteMessages(report.messageids)
-    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
-  }],
-  ["msgcounts:zones", (messageJSON: string) => {
-    let TAG = "ws/channels/msgcounts:zones"
-    let message = parseJSON(messageJSON)
-    if ( message.error ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
-      return
-    }
-    if ( !message.data.districtid || !message.data.msgcounts ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
-      return
-    }
-    let report = message.data as RedisTypes.ZoneMsgcountsUpdate
-    serverMessages.updateZoneMsgcounts(report)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
   ["msgcounts:districts", (messageJSON: string) => {
@@ -62,8 +46,53 @@ export const listeners = new Map([
       logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
       return
     }
-    let report  = message.data as RedisTypes.DistrictMsgcountsUpdate
+    let report  = message.data as RI.DistrictMsgcountsUpdate
     serverMessages.updateDistrictMsgcounts(report)
+    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
+  }],
+  ["msgcounts:zones", (messageJSON: string) => {
+    let TAG = "ws/channels/msgcounts:zones"
+    let message = parseJSON(messageJSON)
+    if ( message.error ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
+      return
+    }
+    if ( !message.data.districtid || !message.data.msgcounts ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
+      return
+    }
+    let report = message.data as RI.ZoneMsgcountsUpdate
+    serverMessages.updateZoneMsgcounts(report)
+    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
+  }],
+  ["sessions:created", (messageJSON: string) => {
+    let TAG = "ws/channels/sessions:created"
+    let message = parseJSON(messageJSON)
+    if ( message.error ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
+      return
+    }
+    if ( !message.data.deviceids ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
+      return
+    }
+    let { deviceids } = message.data as RI.CreatedSessions
+    serverMessages.reportLogin(deviceids)
+    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
+  }],
+  ["sessions:deleted", (messageJSON: string) => {
+    let TAG = "ws/channels/sessions:deleted"
+    let message = parseJSON(messageJSON)
+    if ( message.error ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
+      return
+    }
+    if ( !message.data.deviceids ) {
+      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
+      return
+    }
+    let { deviceids } = message.data as RI.DeletedSessions
+    serverMessages.reportLogout(deviceids)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
 ])

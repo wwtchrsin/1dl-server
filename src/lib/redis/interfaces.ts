@@ -18,3 +18,11 @@ export type DistrictMsgcountsUpdate = {
   msgcounts: Record<string | number, number>,
 }
 
+export type CreatedSessions = {
+  deviceids: string[]
+}
+
+export type DeletedSessions = {
+  deviceids: string[]
+}
+

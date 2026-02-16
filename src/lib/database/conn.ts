@@ -42,7 +42,7 @@ export const queryDatabase = async (queryString: string, queryParams: (string | 
         stack: err.stack,
         message: err.message,
       }
-      logger.error(errmsg, "db/conn/queryDatabase#Error")
+      logger.error(errmsg, "db/conn/queryDatabase#ERROR")
       return undefined
     }
   }
@@ -64,14 +64,14 @@ export const executeTransaction = async (queryString: string): Promise<boolean> 
           stack: err.stack,
           message: err.message,
         }
-        logger.error(errmsg, "db/conn/executeTransaction#CatchBlockError")
+        logger.error(errmsg, "db/conn/executeTransaction#ROLLBACK_ERROR")
       }
     }
     let errmsg = {
       stack: err.stack,
       message: err.message,
     }
-    logger.error(errmsg, "db/conn/executeTransaction#Error")
+    logger.error(errmsg, "db/conn/executeTransaction#ERROR")
     return false
   } finally {
     client?.release()
