@@ -3,13 +3,6 @@ import type { TextResource } from "./langs"
 
 const passwordSymbols = specialSymbols.split("").map(r => `"${r}"`).join(", ")
 
-const getErrorCause = (lang: string, parameter: string) => {
-  if ( lang === "ru" ) {
-    return `Неверное значение для ${parameter}.`
-  }
-  return `An incorrect value for ${parameter}.`
-}
-
 const getCorrectRange = (lang: string, min: number, max: number) => {
   if ( lang === "ru" ) {
     return `Значение должно быть целым числов находящимся в интервале [${min}, ${max}].`
@@ -26,38 +19,38 @@ type WrongValues = {
 export const wrongValues: WrongValues = {
   message: {
     region: {
-      en: getErrorCause("en", "region") + " Valid values: " + 
+      en: "An incorrect value for region. Valid values: " + 
         limits.message.region.values.join(", ") + ".",
-      ru: getErrorCause("ru", "region") + " Корректные значения: " +
+      ru: "Неверное значение для региона. Корректные значения: " +
         limits.message.region.values.join(", ") + ".",
     },
     district: {
-      en: getErrorCause("en", "district") + " " +
+      en: "An incorrect value for district. " +
         getCorrectRange("en", limits.message.district.min, limits.message.district.max),
-      ru: getErrorCause("ru", "district") + " " + 
+      ru: "Неверное значение для района. " + 
         getCorrectRange("ru", limits.message.district.min, limits.message.district.max),
     },
     zone: {
-      en: getErrorCause("en", "zone") + " " + 
+      en: "An incorrect value for zone. " + 
         getCorrectRange("en", limits.message.zone.min, limits.message.zone.max),
-      ru: getErrorCause("ru", "zone") + " " + 
+      ru: "Неверное значение для зоны. " +
         getCorrectRange("ru", limits.message.zone.min, limits.message.zone.max),
     },
     index: {
-      en: getErrorCause("en", "index") + " " + 
+      en: "An incorrect value for index. " + 
         getCorrectRange("en", limits.message.index.min, limits.message.index.max),
-      ru: getErrorCause("ru", "index") + " " + 
+      ru: "Неверное значение для индекса. " + 
         getCorrectRange("ru", limits.message.index.min, limits.message.index.max),
     },
     text: {
-      en: getErrorCause("en", "text") +
+      en: "An incorrect value for text. " +
         " The message text can only contain printable ASCII characters " +
         "(latin letters, digits, spaces, punctuation marks and some other characters " +
         'like "#" or "@") and cannot have trailing or leading spaces ' +
         "nor have more than one space in a row. " +
         "The message length must be within the range of " +
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
-      ru: getErrorCause("ru", "text") +
+      ru: "Неверное значение для теста. " +
         " Текст сообщения может содержать только печатные символы таблицы ASCII " +
         "(латинские буквы, цифры, пробелы, знаки препинания и некоторые другие " +
         'символы как "@" или "#") и не может начинаться или заканчиваться пробелом ' +
@@ -66,37 +59,37 @@ export const wrongValues: WrongValues = {
         `[${limits.message.text.minLen}, ${limits.message.text.maxLen}]`,
     },
     color: {
-      en: getErrorCause("en", "color") + " Valid values: " + 
+      en: "An incorrect value for color. Valid values: " + 
         limits.message.color.values.join(", ") + ".",
-      ru: getErrorCause("ru", "color") + " Корректные значения: " +
+      ru: "Неверное значение для цвета. Корректные значения: " +
         limits.message.color.values.join(", ") + ".",
     },
   },
   user: {
     region: {
-      en: getErrorCause("en", "region") + " Valid values: " + 
+      en: "An incorrect value for region. Valid values: " + 
         limits.message.region.values.join(", ") + ".",
-      ru: getErrorCause("ru", "region") + " Корректные значения: " +
+      ru: "Неверное значение для региона. Корректные значения: " +
         limits.message.region.values.join(", ") + ".",
     },
     login: {
-      en: getErrorCause("en", "login") +
+      en: "An incorrect value for login. " +
         " The login can only contain latin letters, digits, " +
         'and symbols "-" and "_". The login length must be within the range of ' +
         `[${limits.user.login.minLen}, ${limits.user.login.maxLen}].`,
-      ru: getErrorCause("ru", "login") +
+      ru: "Неверное значение для логина. " +
         " Логин может содержать только латинские буквы, цифры, " +
         'и символы "-" и "_". Длина логина должна находиться в интервале ' +
         `[${limits.user.login.minLen}, ${limits.user.login.maxLen}].`,
     },
     password: {
-      en: getErrorCause("en", "password") +
+      en: "An incorrect value for password. " +
         " The password can only contain latin letters, " +
         `digits and special symbols (${passwordSymbols}), ` +
         "and must contain at least one lowercase letter, one uppercase letter, " +
         "one digit and one special symbol. The password length must be within the range of " +
         `[${limits.user.password.minLen}, ${limits.user.password.maxLen}].`,
-      ru: getErrorCause("ru", "password") +
+      ru: "Неверное значение для пароля. " +
         " Пароль может содержать только латинские буквы, цифры, " +
         `и специальные символы (${passwordSymbols}), ` +
         "и должен содержать хотя бы одну строчную букву, одну заглавную букву, " +
@@ -104,11 +97,11 @@ export const wrongValues: WrongValues = {
         `[${limits.user.password.minLen}, ${limits.user.password.maxLen}].`
     },
     name: {
-      en: getErrorCause("en", "name") +
+      en: "An incorrect value for name. " +
         " The user name can only contain latin letters, digits, " +
         'and symbols "-" and "_". The name length must be within the range of ' +
         `[${limits.user.name.minLen}, ${limits.user.name.maxLen}].`,
-      ru: getErrorCause("ru", "name") +
+      ru: "Неверное значение для имени. " +
         " Имя пользователя может содержать только латинские буквы, цифры, " +
         'и символы "-" и "_". Длина имени должна находиться в интервале ' +
         `[${limits.user.name.minLen}, ${limits.user.name.maxLen}].`,
@@ -155,6 +148,14 @@ export const appErrors: Record<string, TextResource> = {
     en: "Action not allowed",
     ru: "Действие запрещено",
   },
+  unhandledError: {
+    en: "Unknown unhandled error occurred",
+    ru: "Произошла неизвестая необработанная ошибка",
+  },
+  wrongUrl: {
+    en: "Wrong request URL",
+    ru: "Неверный URL запроса",
+  }
 }
 
 export const databaseErrors: Record<string, TextResource> = {
@@ -251,6 +252,25 @@ export const databaseConflicts: Record<string, TextResource> = {
   },
 }
 
+export const wsErrors: Record<string, TextResource> = {
+  wrongLocation: {
+    en: "WebSocket server: an incorrect value for location",
+    ru: "Websocket сервер: неверное значение для локации",
+  },
+  wrongDeviceid: {
+    en: "WebSocket server: an incorrect value for device identifier",
+    ru: "Websocket сервер: неверное значение для идентификатора устройства",
+  },
+  wrongMessageType: {
+    en: "WebSocket server: an incorrect value for message type",
+    ru: "Websocket сервер: неверное значение для типа сообщения",
+  },
+  wrongJson: {
+    en: "WebSocket server: impossible to decode the message",
+    ru: "Websocket сервер: невозможно декодировать сообщение",
+  },
+}
+
 export const errorMessages = (() => {
   let errmsgs: Record<string, TextResource> = {}
   for ( let group of ["message", "user", "auth"] ) { 
@@ -270,6 +290,10 @@ export const errorMessages = (() => {
   for ( let item in databaseConflicts ) {
     let tag = `databaseConflict.${item}`
     errmsgs[tag] = databaseConflicts[item]
+  }
+  for ( let item in wsErrors ) {
+    let tag = `wsError.${item}`
+    errmsgs[tag] = wsErrors[item]
   }
   return errmsgs
 })()

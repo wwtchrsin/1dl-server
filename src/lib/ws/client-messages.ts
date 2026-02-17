@@ -12,7 +12,7 @@ export const onMessage = (connid: string) =>
     let TAG = "ws/client-messages"
     let message = parseJSON(messageJSON)
     if ( message.error ) {
-      reportError(connid, "wrongValue.wsMessage.json")
+      reportError(connid, "wsError.wrongJson")
       logger.info({ message: messageJSON }, `${TAG}#WRONG_JSON`)
       return
     }
@@ -21,7 +21,7 @@ export const onMessage = (connid: string) =>
         let location = getLocation(message.data?.location)
         if ( !location ) {
           wsState.deleteConnLocation(connid)
-          reportError(connid, "wrongValue.wsMessage.location")
+          reportError(connid, "wsError.wrongLocation")
           logger.info({ message: messageJSON }, `${TAG}#WRONG_LOCATION`)
           return
         }
@@ -31,7 +31,7 @@ export const onMessage = (connid: string) =>
       case "set-deviceid": {
         let deviceid = message.data?.deviceid
         if ( checkDeviceid(deviceid) !== undefined ) {
-          reportError(connid, "wrongValue.wsMessage.deviceid")
+          reportError(connid, "wsError.wrongDeviceid")
           logger.info({ message: messageJSON }, `${TAG}#WRONG_DEVICEID`)
           return
         }
@@ -39,7 +39,7 @@ export const onMessage = (connid: string) =>
         return
       }
       default: {
-        reportError(connid, "wrongValue.wsMessage.type")
+        reportError(connid, "wsError.wrongMessageType")
         logger.info({ message: messageJSON }, `${TAG}#WRONG_MSG_TYPE`)
       }
     }

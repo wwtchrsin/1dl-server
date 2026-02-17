@@ -4,6 +4,7 @@ import profilesRouter from "./routes/profiles"
 import sessionsRouter from "./routes/sessions"
 import messagesRouter from "./routes/messages"
 import appDataRouter from "./routes/app"
+import { notFound, errorHandler } from "./routes/middleware"
 
 const httpServer = express()
 
@@ -15,5 +16,8 @@ httpServer.use("/api/v1/profiles", profilesRouter)
 httpServer.use("/api/v1/sessions", sessionsRouter)
 httpServer.use("/api/v1/messages", messagesRouter)
 httpServer.use("/api/v1/app", appDataRouter)
+
+httpServer.use(notFound)
+httpServer.use(errorHandler)
 
 export default httpServer
