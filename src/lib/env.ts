@@ -2,12 +2,10 @@ const env = {
   mode: process.env.NODE_ENV ?? "dev",
   http: {
     port: Number(process.env.HTTP_PORT ?? "3000"),
-    instance: Number(process.env.HTTP_INSTANCE ?? "0"),
   },
   ws: {
     port: Number(process.env.WS_PORT ?? "8080"),
     pingInterval: Number(process.env.WS_PING_INTERVAL ?? "30000"),
-    instance: Number(process.env.WS_INSTANCE ?? "0"),
   },
   pg: {
     user: process.env.PG_USER ?? "admin",
@@ -18,7 +16,6 @@ const env = {
     schema: process.env.PG_SCHEMA ?? "public",
   },
   redis: {
-    username: process.env.REDIS_USERNAME ?? "default",
     password: process.env.REDIS_PASSWORD,
     host: process.env.REDIS_HOST ?? "localhost",
     port: Number(process.env.REDIS_PORT ?? "6379"),
@@ -33,8 +30,8 @@ const env = {
   }
 }
 
-if ( isNaN(env.http.port) || isNaN(env.http.instance) || isNaN(env.ws.port) ||
-  isNaN(env.ws.instance) || isNaN(env.pg.port) || isNaN(env.redis.port) ) {
+if ( isNaN(env.http.port) || isNaN(env.ws.port) ||
+  isNaN(env.pg.port) || isNaN(env.redis.port) ) {
     console.error("Error: Incorrect environment variables. Exit.")
     process.exit(1)
   }

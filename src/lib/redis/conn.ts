@@ -33,7 +33,6 @@ export const getClient = async () => {
           host: env.redis.host,
           port: env.redis.port,
         },
-        username: env.redis.username,
         password: env.redis.password,
         database: env.redis.database,
       })
@@ -65,7 +64,6 @@ export const getPublisher = async () => {
           host: env.redis.host,
           port: env.redis.port,
         },
-        username: env.redis.username,
         password: env.redis.password,
         database: env.redis.database,
       })
@@ -97,7 +95,6 @@ export const getSubscriber = async () => {
           host: env.redis.host,
           port: env.redis.port,
         },
-        username: env.redis.username,
         password: env.redis.password,
         database: env.redis.database,
       })
