@@ -19,8 +19,6 @@ let subscriber: ReturnType<typeof createClient> | undefined = undefined
 let knownChannels = new Set<string>([
   "messages:created",
   "messages:deleted",
-  "msgcounts:districts",
-  "msgcounts:zones",
   "sessions:created",
   "sessions:deleted",
 ])

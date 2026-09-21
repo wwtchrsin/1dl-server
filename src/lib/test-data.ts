@@ -69,6 +69,20 @@ export const examples = {
       "__1234567890",
     ],
   },
+  tag: {
+    minLen: "a",
+    maxLen: "abcdef",
+    regLen: "abc",
+    tooShort: "",
+    tooLong: "abcdefg",
+    wrongSymbols: "aBc",
+    correct: [
+      "xyz",
+      "pppqqq",
+      "hahaha",
+      "t"
+    ]
+  },
   text: {
     minLen: "Aacd 1234 #$ <.'",
     maxLen: "Aacd 1234 #$ <.'".repeat(8),
@@ -316,128 +330,41 @@ export const completeUsersByRegion = (() => {
   return result
 })()
 
-export const databaseDistricts = [
+export const databaseLocations = [
   /*[0]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.min + 4,
+    tag: examples.tag.minLen,
   },
   /*[1]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.min + 8,
+    tag: examples.tag.maxLen,
   },
   /*[2]*/ {
     region: limits.message.region.values[1],
-    district: limits.message.district.max - 4,
+    tag: examples.tag.regLen,
   },
 ]
 
-export const databaseZones = [
+export const databaseEmptyLocations = [
   /*[0]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.min + 4,
-    zone: limits.message.zone.min + 4,
+    tag: examples.tag.correct[0],
   },
   /*[1]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.min + 4,
-    zone: limits.message.zone.min + 8,
+    tag: examples.tag.correct[1],
   },
   /*[2]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.min + 8,
-    zone: limits.message.zone.max - 4,
-  },
-  /*[3]*/ {
-    region: limits.message.region.values[1],
-    district: limits.message.district.max - 4,
-    zone: limits.message.zone.min + 4,
-  },
-  /*[4]*/ {
-    region: limits.message.region.values[1],
-    district: limits.message.district.max - 4,
-    zone: limits.message.zone.max - 4,
-  },
-]
-
-export const databaseEmptyDistricts = [
-  /*[0]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.min,
-  },
-  /*[1]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.max,
-  },
-  /*[2]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.min + 1,
+    tag: examples.tag.correct[2],
   },
   /*[3]*/ {
     region: limits.message.region.values[0],
-    district: limits.message.district.max - 1,
+    tag: examples.tag.correct[3],
   },
 ]
 
-export const databaseEmptyZones = [
-  /*[0]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.min,
-    zone: limits.message.zone.min,
-  },
-  /*[1]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.max,
-    zone: limits.message.zone.max,
-  },
-  /*[2]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.min + 1,
-    zone: limits.message.zone.min + 1,
-  },
-  /*[3]*/ {
-    region: limits.message.region.values[0],
-    district: limits.message.district.max - 1,
-    zone: limits.message.zone.max - 1,
-  },
-]
-
-export const zoneByMessage = [
-  /**(REG#0)**/
-  /*[0]*/ 0,
-  /*[1]*/ 0,
-  /*[2]*/ 0,
-  /*[3]*/ 0,
-  /*[4]*/ 0,
-  /*[5]*/ 0,
-  /*[6]*/ 1,
-  /*[7]*/ 1,
-  /*[8]*/ 1,
-  /*[9]*/ 1,
-  /*[10]*/ 2,
-  /*[11]*/ 2,
-  /*[12]*/ 2,
-  /*[13]*/ 2,
-  /*[14]*/ 2,
-
-  /**(REG#1)**/
-  /*[15]*/ 3,
-  /*[16]*/ 3,
-  /*[17]*/ 3,
-  /*[18]*/ 3,
-  /*[19]*/ 3,
-  /*[20]*/ 3,
-  /*[21]*/ 3,
-  /*[22]*/ 4,
-  /*[23]*/ 4,
-  /*[24]*/ 4,
-  /*[25]*/ 4,
-  /*[26]*/ 4,
-  /*[27]*/ 4,
-  /*[28]*/ 4,
-  /*[29]*/ 4,
-]
-
-export const districtByMessage = [
+export const locationByMessage = [
   /**(REG#0)**/
   /*[0]*/ 0,
   /*[1]*/ 0,
@@ -506,24 +433,13 @@ export const regionByMessage = [
   /*[29]*/ 1,
 ]
 
-export const messagesByZone = (() => {
+export const messagesByLocation = (() => {
   let result = []
-  for ( let i=0; i < zoneByMessage.length; i++ ) {
-    if ( result[zoneByMessage[i]] === undefined ) {
-      result[zoneByMessage[i]] = []
+  for ( let i=0; i < locationByMessage.length; i++ ) {
+    if ( result[locationByMessage[i]] === undefined ) {
+      result[locationByMessage[i]] = []
     }
-    result[zoneByMessage[i]].push(i)
-  }
-  return result
-})()
-
-export const messagesByDistrict = (() => {
-  let result = []
-  for ( let i=0; i < districtByMessage.length; i++ ) {
-    if ( result[districtByMessage[i]] === undefined ) {
-      result[districtByMessage[i]] = []
-    }
-    result[districtByMessage[i]].push(i)
+    result[locationByMessage[i]].push(i)
   }
   return result
 })()
@@ -541,16 +457,15 @@ export const messagesByRegion = (() => {
 
 export const databaseMessages = (() => {
   let result = []
-  for ( let i=0; i < zoneByMessage.length; i++ ) {
-    let zoneid = databaseZones[zoneByMessage[i]]
+  for ( let i=0; i < locationByMessage.length; i++ ) {
+    let location = databaseLocations[locationByMessage[i]]
     let user = databaseUsers[userByMessage[i]]
     let text = examples.text.correct[i % examples.text.correct.length] + " " + i
     let color = limits.message.color.values[i % limits.message.color.values.length]
     let timestamp = "12345672" + ("0" + i).slice(-2)
     result.push({
-      region: zoneid.region,
-      district: zoneid.district,
-      zone: zoneid.zone,
+      region: location.region,
+      tag: location.tag,
       index: i,
       text: text,
       color: color,
@@ -586,8 +501,8 @@ export const populateDatabase = (() => {
   for ( let message of databaseMessages ) {
     let entry = `
       INSERT INTO messages VALUES
-        ('${message.region}', ${message.district}, ${message.zone},
-        ${message.index}, '${message.text}', '${message.color}',
+        ('${message.region}', '${message.tag}', ${message.index}, 
+        '${message.text}', '${message.color}',
         '${message.userid}', ${message.timestamp});
     `
     addMessages += entry
@@ -598,41 +513,3 @@ export const populateDatabase = (() => {
     addMessages,
   }
 })()
-
-export const zoneMsgcounts = (() => {
-  let result = {}
-  for ( let i=0; i < zoneByMessage.length; i++ ) {
-    let zoneid = databaseZones[zoneByMessage[i]]
-    let { region, district, zone } = zoneid
-    if ( result[region] === undefined ) {
-      result[region] = {}
-    }
-    if ( result[region][district] === undefined ) {
-      result[region][district] = {}
-    }
-    if ( result[region][district][zone] === undefined ) {
-      result[region][district][zone] = 0
-    }
-    result[region][district][zone]++
-  }
-  return result
-})()
-
-export const districtMsgcounts = (() => {
-  let result = {}
-  for ( let i=0; i < districtByMessage.length; i++ ) {
-    let districtid = databaseDistricts[districtByMessage[i]]
-    let { region, district } = districtid
-    if ( result[region] === undefined ) {
-      result[region] = {}
-    }
-    if ( result[region][district] === undefined ) {
-      result[region][district] = 0
-    }
-    result[region][district]++
-  }
-  return result
-})()
-
-    
-

@@ -7,35 +7,18 @@ export const checkRegion = (region: string | undefined): string | undefined => {
   return undefined
 }
 
-export const checkDistrictid = (req: any): string | undefined => {
+export const checkLocation = (req: any): string | undefined => {
   if ( !limits.message.region.values.includes(req?.region) ) {
     return "wrongValue.message.region"
   }
-  let district = Number(req?.district)
-  if ( isNaN(district) || district < limits.message.district.min ||
-    district > limits.message.district.max || 
-    Math.round(district) !== district ) {
-      return "wrongValue.message.district"
-    }
-  return undefined
-}
-
-export const checkZoneid = (req: any): string | undefined => {
-  let errorMessage = checkDistrictid(req)
-  if ( errorMessage !== undefined ) {
-    return errorMessage
+  if ( typeof req?.tag !== "string" || !patterns.tag.test(req?.tag) ) {
+    return "wrongValue.message.tag"
   }
-  let zone = Number(req?.zone)
-  if ( isNaN(zone) || zone < limits.message.zone.min || 
-    zone > limits.message.zone.max ||
-    Math.round(zone) !== zone ) {
-      return "wrongValue.message.zone"
-    }
   return undefined
 }
 
 export const checkMessageid = (req: any): string | undefined => {
-  let errorMessage = checkZoneid(req)
+  let errorMessage = checkLocation(req)
   if ( errorMessage !== undefined ) {
     return errorMessage
   }

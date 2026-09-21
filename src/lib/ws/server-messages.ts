@@ -2,7 +2,6 @@ import * as wsState from "./state"
 import * as wsTools from "./miscs"
 import logger from "../logger"
 import type * as DBI from "../database/interfaces"
-import * as RI from "../redis/interfaces"
 
 export const reportError = (connid: string, error: string) => {
   let client = wsState.getClient(connid)
@@ -36,36 +35,14 @@ export const enableConnCheck = (interval: number) => {
 
 export const insertMessages = (messages: DBI.Message[]) => {
   let TAG = "ws/server-messages/insertMessages"
-  let zoneGroups = wsTools.groupMessagesByZone(messages)
-  for ( let { zoneid, messages } of zoneGroups ) {
-    let location = wsTools.getZoneLocation(zoneid)
-    let clients = wsState.getClientsByLocation(location)
+  let messageGroups = wsTools.groupMessagesByLocation(messages)
+  for ( let { location, messages } of messageGroups ) {
+    let locationString = wsTools.getLocation(location)
+    let clients = wsState.getClientsByLocation(locationString)
     for ( let client of clients ) {
       client.send(JSON.stringify({
         type: "insert-messages",
         messages: messages,
-      }))
-    }
-  }
-  let districtGroups = wsTools.groupZonesByDistrict(messages)
-  for ( let { districtid, msgcounts } of districtGroups ) {
-    let location = wsTools.getDistrictLocation(districtid)
-    let clients = wsState.getClientsByLocation(location)
-    for ( let client of clients ) {
-      client.send(JSON.stringify({
-        type: "change-zone-msgcounts",
-        msgcounts: msgcounts,
-      }))
-    }
-  }
-  let regionGroups = wsTools.groupDistrictsByRegion(messages)
-  for ( let { region, msgcounts } of regionGroups ) {
-    let location = wsTools.getRegionLocation({ region })
-    let clients = wsState.getClientsByLocation(location)
-    for ( let client of clients ) {
-      client.send(JSON.stringify({
-        type: "change-district-msgcounts",
-        msgcounts: msgcounts,
       }))
     }
   }
@@ -74,66 +51,16 @@ export const insertMessages = (messages: DBI.Message[]) => {
 
 export const deleteMessages = (messageids: DBI.Messageid[]) => {
   let TAG = "ws/server-messages/deleteMessages"
-  let zoneGroups = wsTools.groupMessageidsByZone(messageids)
-  for ( let { zoneid, indices } of zoneGroups ) {
-    let location = wsTools.getZoneLocation(zoneid)
-    let clients = wsState.getClientsByLocation(location)
+  let messageGroups = wsTools.groupMessageidsByLocation(messageids)
+  for ( let { location, indices } of messageGroups ) {
+    let locationString = wsTools.getLocation(location)
+    let clients = wsState.getClientsByLocation(locationString)
     for ( let client of clients ) {
       client.send(JSON.stringify({
         type: "delete-messages",
         indices: indices,
       }))
     }
-  }
-  let districtGroups = wsTools.groupZonesByDistrict(messageids)
-  wsTools.modifyMsgcounts(districtGroups, x => -x)
-  for ( let { districtid, msgcounts } of districtGroups ) {
-    let location = wsTools.getDistrictLocation(districtid)
-    let clients = wsState.getClientsByLocation(location)
-    for ( let client of clients ) {
-      client.send(JSON.stringify({
-        type: "change-zone-msgcounts",
-        msgcounts: msgcounts,
-      }))
-    }
-  }
-  let regionGroups = wsTools.groupDistrictsByRegion(messageids)
-  wsTools.modifyMsgcounts(regionGroups, x => -x)
-  for ( let { region, msgcounts } of regionGroups ) {
-    let location = wsTools.getRegionLocation({ region })
-    let clients = wsState.getClientsByLocation(location)
-    for ( let client of clients ) {
-      client.send(JSON.stringify({
-        type: "change-district-msgcounts",
-        msgcounts: msgcounts,
-      }))
-    }
-  }
-  logger.debug(`${TAG}#MESSAGES_SENT`)
-}
-
-export const updateZoneMsgcounts = ({ districtid, msgcounts }: RI.ZoneMsgcountsUpdate) => {
-  let TAG = "ws/server-messages/deleteMessages"
-  let location = wsTools.getDistrictLocation(districtid)
-  let clients = wsState.getClientsByLocation(location)
-  for ( let client of clients ) {
-    client.send(JSON.stringify({
-      type: "update-zone-msgcounts",
-      msgcounts: msgcounts,
-    }))
-  }
-  logger.debug(`${TAG}#MESSAGES_SENT`)
-}
-
-export const updateDistrictMsgcounts = ({ region, msgcounts }: RI.DistrictMsgcountsUpdate) => {
-  let TAG = "ws/server-messages/updateDistrictMsgcounts"
-  let location = wsTools.getRegionLocation({ region })
-  let clients = wsState.getClientsByLocation(location)
-  for ( let client of clients ) {
-    client.send(JSON.stringify({
-      type: "update-district-msgcounts",
-      msgcounts: msgcounts,
-    }))
   }
   logger.debug(`${TAG}#MESSAGES_SENT`)
 }

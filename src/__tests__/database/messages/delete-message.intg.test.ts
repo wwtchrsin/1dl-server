@@ -2,7 +2,7 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { deleteMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseMessages, databaseEmptyZones } 
+import { examples, populateDatabase, databaseMessages, databaseEmptyLocations } 
   from "../../../lib/test-data"
 
 beforeAll(async () => {
@@ -19,8 +19,7 @@ afterAll(async () => {
 
 let toMessage = (message: any) => ({
   region: message.region,
-  district: message.district,
-  zone: message.zone,
+  tag: message.tag,
   index: message.index,
   text: message.text,
   color: message.color,
@@ -34,8 +33,7 @@ describe("testing database queries...", () => {
       userid: databaseMessages[2].userid,
       messageid: {
         region: databaseMessages[2].region,
-        district: databaseMessages[2].district,
-        zone: databaseMessages[2].zone,
+        tag: databaseMessages[2].tag,
         index: databaseMessages[2].index,
       },
     },
@@ -50,8 +48,7 @@ describe("testing database queries...", () => {
       userid: databaseMessages[6].userid,
       messageid: {
         region: databaseMessages[6].region,
-        district: databaseMessages[6].district,
-        zone: databaseMessages[6].zone,
+        tag: databaseMessages[6].tag,
         index: databaseMessages[6].index,
       },
     },
@@ -66,8 +63,7 @@ describe("testing database queries...", () => {
       userid: databaseMessages[2].userid,
       messageid: {
         region: databaseMessages[2].region,
-        district: databaseMessages[2].district,
-        zone: databaseMessages[2].zone,
+        tag: databaseMessages[2].tag,
         index: databaseMessages[2].index,
       },
     },
@@ -82,8 +78,7 @@ describe("testing database queries...", () => {
       userid: examples.uuid[0],
       messageid: {
         region: databaseMessages[0].region,
-        district: databaseMessages[0].district,
-        zone: databaseMessages[0].zone,
+        tag: databaseMessages[0].tag,
         index: databaseMessages[0].index,
       },
     },
@@ -97,9 +92,8 @@ describe("testing database queries...", () => {
     args: {
       userid: databaseMessages[0].userid,
       messageid: {
-        region: databaseEmptyZones[0].region,
-        district: databaseEmptyZones[0].district,
-        zone: databaseEmptyZones[0].zone,
+        region: databaseEmptyLocations[0].region,
+        tag: databaseEmptyLocations[0].tag,
         index: limits.message.index.min,
       },
     },
@@ -114,8 +108,7 @@ describe("testing database queries...", () => {
       userid: databaseMessages[1].userid,
       messageid: {
         region: databaseMessages[1].region,
-        district: databaseMessages[1].district,
-        zone: limits.message.zone.max + 1,
+        tag: examples.tag.tooLong,
         index: databaseMessages[1].index,
       },
     },
@@ -130,8 +123,7 @@ describe("testing database queries...", () => {
       userid: "abcd",
       messageid: {
         region: databaseMessages[1].region,
-        district: databaseMessages[1].district,
-        zone: limits.message.zone.max + 1,
+        tag: databaseMessages[1].tag,
         index: databaseMessages[1].index,
       },
     },
@@ -146,8 +138,7 @@ describe("testing database queries...", () => {
       userid: databaseMessages[0].userid,
       messageid: {
         region: databaseMessages[0].region,
-        district: databaseMessages[0].district,
-        zone: databaseMessages[0].zone,
+        tag: databaseMessages[0].tag,
         index: databaseMessages[0].index,
       },
     },

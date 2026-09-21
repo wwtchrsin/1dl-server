@@ -6,13 +6,10 @@ export const limits = {
       values: ["en", "ru"],
       pattern: "^(en|ru)$",
     },
-    district: {
-      min: 0,
-      max: 299,
-    },
-    zone: {
-      min: 0,
-      max: 299,
+    tag: {
+      minLen: 1,
+      maxLen: 6,
+      pattern: "^[a-z]{1,6}$",
     },
     index: {
       min: 0,
@@ -84,6 +81,7 @@ export const patterns = {
   password: new RegExp(limits.user.password.pattern),
   name: new RegExp(limits.user.name.pattern),
   region: new RegExp(limits.message.region.pattern),
+  tag: new RegExp(limits.message.tag.pattern),
   text: new RegExp(limits.message.text.pattern),
 }
        

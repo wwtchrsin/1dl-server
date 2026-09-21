@@ -60,8 +60,7 @@ let messages = (uIndex: number) => {
   let messageIndices = messagesByUser[userIndex]
   return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
-    district: databaseMessages[messageIndex].district,
-    zone: databaseMessages[messageIndex].zone,
+    tag: databaseMessages[messageIndex].tag,
     index: databaseMessages[messageIndex].index,
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,
@@ -183,8 +182,7 @@ describe("testing endpoints...", () => {
         expect(mReportsResult[i].messageids).toHaveLength(msgCount)
         for ( let j=0; j < msgCount; j++ ) {
           expect(mReportsResult[i].messageids[j].region).toBeDefined()
-          expect(mReportsResult[i].messageids[j].district).toBeDefined()
-          expect(mReportsResult[i].messageids[j].zone).toBeDefined()
+          expect(mReportsResult[i].messageids[j].tag).toBeDefined()
           expect(mReportsResult[i].messageids[j].index).toBeDefined()
           expect(mReportsResult[i].messageids[j].text).toBeUndefined()
         }

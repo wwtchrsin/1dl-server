@@ -7,11 +7,10 @@ let timestamp = 123456789
 let userid = examples.uuid[0]
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
-  let [region, district, zone, index, text, color, userid] = queryParams
+  let [region, tag, index, text, color, userid] = queryParams
   let message = {
     region: region, 
-    district: Number(district),
-    zone: Number(zone),
+    tag: tag,
     index: Number(index),
     text: text,
     color: color,
@@ -34,8 +33,7 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       }, 
       content: {
@@ -57,12 +55,11 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.last,
-        district: `${limits.message.district.max}`,
-        zone: `${limits.message.zone.max}`,
+        tag: examples.tag.maxLen,
         index: `${limits.message.index.max}`,
       },
       content: {
-        text: "1".repeat(limits.message.text.maxLen),
+        text: examples.text.maxLen,
         color: examples.color.last,
       },
     },
@@ -80,12 +77,11 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: "12345678",
-        district: `${limits.message.district.max}`,
-        zone: `${limits.message.zone.max}`,
+        tag: examples.tag.maxLen,
         index: `${limits.message.index.max}`,
       },
       content: {
-        text: "1".repeat(limits.message.text.maxLen),
+        text: examples.text.maxLen,
         color: examples.color.last,
       },
     },
@@ -103,8 +99,7 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -118,8 +113,7 @@ describe("testing database queries...", () => {
         data: {
           rows: [{
             region: examples.region.first,
-            district: limits.message.district.min,
-            zone: limits.message.zone.min,
+            tag: examples.tag.minLen,
             index: limits.message.index.min,
             text: examples.text.minLen,
             color: examples.color.first,
@@ -136,8 +130,7 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -159,8 +152,7 @@ describe("testing database queries...", () => {
       userid: userid,
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -188,8 +180,7 @@ describe("testing database queries...", () => {
         expect(result.error).toBeUndefined()
         expect(result.data).toBeDefined()
         expect(result.data.region).toBe(messageid.region)
-        expect(`${result.data.district}`).toBe(messageid.district)
-        expect(`${result.data.zone}`).toBe(messageid.zone)
+        expect(result.data.tag).toBe(messageid.tag)
         expect(`${result.data.index}`).toBe(messageid.index)
         expect(result.data.text).toBe(content.text)
         expect(result.data.color).toBe(content.color)

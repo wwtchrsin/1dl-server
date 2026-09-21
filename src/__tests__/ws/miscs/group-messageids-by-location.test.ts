@@ -1,14 +1,15 @@
-import { groupMessageidsByZone } from "../../../lib/ws/miscs"
+import { groupMessageidsByLocation } from "../../../lib/ws/miscs"
 import { limits } from "../../../lib/database/limits"
-import type { MessageidsByZone } from "../../../lib/ws/miscs"
+import { examples } from "../../../lib/test-data"
+import type { MessageidsByLocation } from "../../../lib/ws/miscs"
 
-let sortGroups = (groups: MessageidsByZone): MessageidsByZone => {
+let sortGroups = (groups: MessageidsByLocation): MessageidsByLocation => {
   groups.sort((a, b) => {
-    for ( let param of ["region", "district", "zone"] ) {
-      if ( a.zoneid[param] > b.zoneid[param] ) {
+    for ( let param of ["region", "tag"] ) {
+      if ( a.location[param] > b.location[param] ) {
         return 1
       }
-      if ( a.zoneid[param] < b.zoneid[param] ) {
+      if ( a.location[param] < b.location[param] ) {
         return -1
       }
     }
@@ -25,15 +26,13 @@ describe("testing auxilliary functions...", () => {
     tag: 1,
     args: [{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }],
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min
@@ -43,20 +42,17 @@ describe("testing auxilliary functions...", () => {
     tag: 2,
     args: [{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min + 1,
     }],
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min,
@@ -67,29 +63,25 @@ describe("testing auxilliary functions...", () => {
     tag: 3,
     args: [{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min + 4,
     }],
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min,
       ],
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
       },
       indices: [
         limits.message.index.min + 4,
@@ -99,40 +91,34 @@ describe("testing auxilliary functions...", () => {
     tag: 4,
     args: [{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min + 2,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min + 2,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min + 4,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }],
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min,
         limits.message.index.min + 2,
       ],
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
       },
       indices: [
         limits.message.index.min + 2,
@@ -143,57 +129,49 @@ describe("testing auxilliary functions...", () => {
     tag: 5,
     args: [{
       region: limits.message.region.values[0],
-      district: limits.message.district.min + 1,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
-      district: limits.message.district.min + 1,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }],
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min,
       ],
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
       },
       indices: [
         limits.message.index.min,
       ],
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[1],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       indices: [
         limits.message.index.min,
       ],
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[1],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
       },
       indices: [
         limits.message.index.min,
@@ -202,8 +180,8 @@ describe("testing auxilliary functions...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function groupMessagidsByZone. Test #${tag}`, () => {
-      let result = groupMessageidsByZone(args)
+    test(`Function groupMessageidsByLocation. Test #${tag}`, () => {
+      let result = groupMessageidsByLocation(args)
       expect(sortGroups(result)).toStrictEqual(sortGroups(expres))
     })
   }

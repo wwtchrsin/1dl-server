@@ -12,11 +12,10 @@ let msgData = {
 }
 
 let returnOneMessage = (queryString: string, queryParams: string[]) => {
-  let [region, district, zone, index] = queryParams
+  let [region, tag, index] = queryParams
   let message = {
     region: region, 
-    district: Number(district),
-    zone: Number(zone),
+    tag: tag,
     index: Number(index),
     text: msgData.text,
     color: msgData.color,
@@ -28,11 +27,10 @@ let returnOneMessage = (queryString: string, queryParams: string[]) => {
 }
 
 let returnTwoMessages = (queryString: string, queryParams: string[]) => {
-  let [region, district, zone, index] = queryParams
+  let [region, tag, index] = queryParams
   let message = {
     region: region, 
-    district: Number(district),
-    zone: Number(zone),
+    tag: tag,
     index: Number(index),
     text: msgData.text,
     color: msgData.color,
@@ -49,8 +47,7 @@ let returnError = () => Promise.resolve(undefined)
 
 let toMessage = (args: any) => ({
   region: args.region,
-  district: Number(args.district),
-  zone: Number(args.zone),
+  tag: args.tag,
   index: Number(args.index),
   text: msgData.text, 
   color: msgData.color,
@@ -67,8 +64,7 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       region: examples.region.first,
-      district: `${limits.message.district.min}`,
-      zone: `${limits.message.zone.min}`,
+      tag: examples.tag.minLen,
       index: `${limits.message.index.min}`,
     },
     mocks: {
@@ -79,8 +75,7 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       region: examples.region.first,
-      district: `${limits.message.district.min}`,
-      zone: `${limits.message.zone.min}`,
+      tag: examples.tag.minLen,
       index: `${limits.message.index.min}`,
     },
     mocks: {
@@ -91,8 +86,7 @@ describe("testing database queries...", () => {
     tag: 3,
     args: {
       region: examples.region.first,
-      district: `${limits.message.district.min}`,
-      zone: `${limits.message.zone.min}`,
+      tag: examples.tag.minLen,
       index: `${limits.message.index.min}`,
     },
     mocks: {
@@ -103,8 +97,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: examples.region.first,
-      district: `${limits.message.district.min}`,
-      zone: `${limits.message.zone.min}`,
+      tag: examples.tag.minLen,
       index: `${limits.message.index.min}`,
     },
     mocks: {
@@ -115,8 +108,7 @@ describe("testing database queries...", () => {
     tag: 5,
     args: {
       region: "abcdefg",
-      district: `${limits.message.district.min}`,
-      zone: `${limits.message.zone.min}`,
+      tag: examples.tag.minLen,
       index: `${limits.message.index.min}`,
     },
     mocks: {

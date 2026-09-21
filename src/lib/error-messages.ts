@@ -3,13 +3,6 @@ import type { TextResource } from "./langs"
 
 const passwordSymbols = specialSymbols.split("").map(r => `"${r}"`).join(", ")
 
-const getCorrectRange = (lang: string, min: number, max: number) => {
-  if ( lang === "ru" ) {
-    return `Значение должно быть целым числов находящимся в интервале [${min}, ${max}].`
-  }
-  return `The value must be an integer within the range of [${min}, ${max}].`
-}
-
 type WrongValues = {
   message: Record<string, TextResource>,
   user: Record<string, TextResource>,
@@ -24,23 +17,21 @@ export const wrongValues: WrongValues = {
       ru: "Неверное значение для региона. Корректные значения: " +
         limits.message.region.values.join(", ") + ".",
     },
-    district: {
-      en: "An incorrect value for district. " +
-        getCorrectRange("en", limits.message.district.min, limits.message.district.max),
-      ru: "Неверное значение для района. " + 
-        getCorrectRange("ru", limits.message.district.min, limits.message.district.max),
-    },
-    zone: {
-      en: "An incorrect value for zone. " + 
-        getCorrectRange("en", limits.message.zone.min, limits.message.zone.max),
-      ru: "Неверное значение для зоны. " +
-        getCorrectRange("ru", limits.message.zone.min, limits.message.zone.max),
+    tag: {
+      en: "An incorrect value for tag. The message tag must be a string " +
+        "containing lowercase latin letters only, between " + 
+        `${limits.message.tag.minLen} and ${limits.message.tag.maxLen} characters in length.`,
+      ru: "Метке сообщения задано неверное значение. Метка должна быть строкой " +
+        "содержащей только строчные латинские буквы и имеющей длину от " +
+        `${limits.message.tag.minLen} до ${limits.message.tag.maxLen} символов.`,
     },
     index: {
       en: "An incorrect value for index. " + 
-        getCorrectRange("en", limits.message.index.min, limits.message.index.max),
+        "The value must be an integer within the range of " +
+        `[${limits.message.index.min}, ${limits.message.index.max}]`,
       ru: "Неверное значение для индекса. " + 
-        getCorrectRange("ru", limits.message.index.min, limits.message.index.max),
+        "Значение должно быть целым числов находящимся в интервале " +
+        `[${limits.message.index.min}, ${limits.message.index.max}]`,
     },
     text: {
       en: "An incorrect value for text. " +
@@ -218,14 +209,6 @@ export const databaseErrors: Record<string, TextResource> = {
   deleteMessage: {
     en: "Impossible to delete message",
     ru: "Невозможно удалить сообщение",
-  },
-  countDistrictMessages: {
-    en: "Impossible to count messages",
-    ru: "Невозможно посчитать сообщения",
-  },
-  countRegionMessages: {
-    en: "Impossible to count messages",
-    ru: "Невозможно посчитать сообщения",
   },
 }
 

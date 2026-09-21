@@ -3,7 +3,6 @@ import { verifyRequest } from "./middleware"
 import { createProfile, createSession, deleteProfile } from "../lib/database/users"
 import { checkUserData, checkDeviceid } from "../lib/database/checkers"
 import { redactPassword } from "../lib/database/miscs"
-import * as redisCache from "../lib/redis/cache"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readProfile, readUserid, redactProfile, extractMessageids } from "./miscs"
@@ -95,8 +94,6 @@ const deleteProfileAction = async (req: Request, res: Response) => {
     return
   }
   let messageids = extractMessageids(result.messages)
-  await redisCache.changeZoneMsgcounts(result.messages, -1)
-  await redisCache.changeDistrictMsgcounts(result.messages, -1)
   if ( messageids.length ) { 
     await publish("messages:deleted", { messageids })
   }

@@ -1,26 +1,9 @@
-import { zoneMsgcounts, districtMsgcounts } from "../test-data"
 import { getClient, redisns, getSubscriber } from "./conn"
 
 export const clearRedis = async () => {
   let client = await getClient()
   let keys = await client.keys(`${redisns}:*`)
   if ( keys.length ) await client.del(keys)
-}
-
-export const initRedisCache = async () => {
-  let client = await getClient()  
-  for ( let region in zoneMsgcounts ) {
-    for ( let district in zoneMsgcounts[region] ) {
-      let key = `${redisns}:msgcounts:zones:${region}:${district}`
-      let msgcounts = zoneMsgcounts[region][district]
-      await client.hSet(key, msgcounts)
-    }
-  }
-  for ( let region in districtMsgcounts ) {
-    let key = `${redisns}:msgcounts:districts:${region}`    
-    let msgcounts = districtMsgcounts[region]
-    await client.hSet(key, msgcounts)
-  }
 }
 
 export const getReports = async (channel: string, reportsNum: number, timeout: number = 2000) => {

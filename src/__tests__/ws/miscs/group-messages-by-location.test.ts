@@ -1,16 +1,15 @@
-import { groupMessagesByZone } from "../../../lib/ws/miscs"
+import { groupMessagesByLocation } from "../../../lib/ws/miscs"
 import { limits } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 import type { Messageid, Message } from "../../../lib/database/interfaces"
-import type { MessagesByZone } from "../../../lib/ws/miscs"
+import type { MessagesByLocation } from "../../../lib/ws/miscs"
 
 let toMessages = (messageids: Messageid[]): Message[] => {
   let messages: Message[] = []
   for ( let messageid of messageids ) {
     messages.push({
       region: messageid.region,
-      district: +messageid.district,
-      zone: +messageid.zone,
+      tag: messageid.tag,
       index: +messageid.index,
       text: examples.text.correct[0],
       color: limits.message.color.values[0],
@@ -22,13 +21,13 @@ let toMessages = (messageids: Messageid[]): Message[] => {
   return messages
 }
 
-let sortGroups = (groups: MessagesByZone): MessagesByZone => {
+let sortGroups = (groups: MessagesByLocation): MessagesByLocation => {
   groups.sort((a, b) => {
-    for ( let param of ["region", "district", "zone"] ) {
-      if ( a.zoneid[param] > b.zoneid[param] ) {
+    for ( let param of ["region", "tag"] ) {
+      if ( a.location[param] > b.location[param] ) {
         return 1
       }
-      if ( a.zoneid[param] < b.zoneid[param] ) {
+      if ( a.location[param] < b.location[param] ) {
         return -1
       }
     }
@@ -45,20 +44,17 @@ describe("testing auxilliary functions...", () => {
     tag: 1,
     args: toMessages([{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }]),
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }]),
     }],
@@ -66,30 +62,25 @@ describe("testing auxilliary functions...", () => {
     tag: 2,
     args: toMessages([{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min + 1,
     }]),
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min + 1,
       }]),
     }],
@@ -97,37 +88,31 @@ describe("testing auxilliary functions...", () => {
     tag: 3,
     args: toMessages([{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min + 4,
     }]),
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }]),
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
         index: limits.message.index.min + 4,
       }]),
     }],
@@ -135,57 +120,47 @@ describe("testing auxilliary functions...", () => {
     tag: 4,
     args: toMessages([{
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min + 1,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min + 1,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min + 1,
     }]),
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min + 1,
       }]),
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
         index: limits.message.index.min,
       }, {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min + 1,
+        tag: examples.tag.correct[1],
         index: limits.message.index.min + 1,
       }]),
     }],
@@ -193,79 +168,67 @@ describe("testing auxilliary functions...", () => {
     tag: 5,
     args: toMessages([{
       region: limits.message.region.values[0],
-      district: limits.message.district.min + 1,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[0],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
-      district: limits.message.district.min + 1,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[1],
       index: limits.message.index.min,
     }, {
       region: limits.message.region.values[1],
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.correct[0],
       index: limits.message.index.min,
     }]),
     expres: [{
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }]),
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[0],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
       },
       messages: toMessages([{
         region: limits.message.region.values[0],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
         index: limits.message.index.min,
       }])
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[1],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
       },
       messages: toMessages([{
         region: limits.message.region.values[1],
-        district: limits.message.district.min,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[0],
         index: limits.message.index.min,
       }])
     }, {
-      zoneid: {
+      location: {
         region: limits.message.region.values[1],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
       },
       messages: toMessages([{
         region: limits.message.region.values[1],
-        district: limits.message.district.min + 1,
-        zone: limits.message.zone.min,
+        tag: examples.tag.correct[1],
         index: limits.message.index.min,
       }])
     }],
   }]
   for ( let testcase of testcases ) {
     let { args, expres, tag } = testcase
-    test(`Function groupMessagesByZone. Test #${tag}`, () => {
-      let result = groupMessagesByZone(args)
+    test(`Function groupMessagesByLocation. Test #${tag}`, () => {
+      let result = groupMessagesByLocation(args)
       expect(sortGroups(result)).toStrictEqual(sortGroups(expres))
     })
   }

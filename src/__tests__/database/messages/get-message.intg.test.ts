@@ -2,7 +2,7 @@ import { pool, schema } from "../../../lib/database/conn"
 import { getMessage } from "../../../lib/database/messages"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { examples, populateDatabase, databaseMessages } 
+import { examples, populateDatabase, databaseMessages, databaseEmptyLocations } 
   from "../../../lib/test-data"
 
 beforeAll(async () => {
@@ -19,8 +19,7 @@ afterAll(async () => {
 
 let toMessage = (message: any) => ({
   region: message.region,
-  district: message.district,
-  zone: message.zone,
+  tag: message.tag,
   index: message.index,
   text: message.text,
   color: message.color,
@@ -34,8 +33,7 @@ describe("testing database queries...", () => {
     tag: 1,
     args: {
       region: databaseMessages[0].region,
-      district: databaseMessages[0].district,
-      zone: databaseMessages[0].zone,
+      tag: databaseMessages[0].tag,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -46,8 +44,7 @@ describe("testing database queries...", () => {
     tag: 2,
     args: {
       region: databaseMessages[10].region,
-      district: databaseMessages[10].district,
-      zone: databaseMessages[10].zone,
+      tag: databaseMessages[10].tag,
       index: databaseMessages[10].index,
     },
     expres: {
@@ -57,9 +54,8 @@ describe("testing database queries...", () => {
   }, {
     tag: 3,
     args: {
-      region: examples.region.first,
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      region: databaseEmptyLocations[0].region,
+      tag: databaseEmptyLocations[0].tag,
       index: limits.message.index.min,
     },
     expres: {
@@ -70,8 +66,7 @@ describe("testing database queries...", () => {
     tag: 4,
     args: {
       region: "abcd",
-      district: limits.message.district.min,
-      zone: limits.message.zone.min,
+      tag: examples.tag.minLen,
       index: limits.message.index.min,
     },
     expres: {

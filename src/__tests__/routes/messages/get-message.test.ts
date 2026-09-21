@@ -3,7 +3,7 @@ import httpServer from "../../../http-server"
 import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { populateDatabase, databaseMessages, databaseEmptyZones } 
+import { populateDatabase, databaseMessages, databaseEmptyLocations, examples } 
   from "../../../lib/test-data"
 import env from "../../../lib/env"
 
@@ -25,8 +25,7 @@ let message = (messageIndex: number) => {
   let message = databaseMessages[messageIndex]
   return {
     region: message.region,
-    district: message.district,
-    zone: message.zone,
+    tag: message.tag,
     index: message.index,
     text: message.text,
     color: message.color,
@@ -42,8 +41,7 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
-      district: databaseMessages[0].district,
-      zone: databaseMessages[0].zone,
+      tag: databaseMessages[0].tag,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -56,8 +54,7 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[8].region,
-      district: databaseMessages[8].district,
-      zone: databaseMessages[8].zone,
+      tag: databaseMessages[8].tag,
       index: databaseMessages[8].index,
     },
     expres: {
@@ -69,9 +66,8 @@ describe("testing endpoints...", () => {
     tag: 3,
     auth: `Bearer ${env.serviceid}:`,
     args: {
-      region: databaseEmptyZones[2].region,
-      district: databaseEmptyZones[2].district,
-      zone: databaseEmptyZones[2].zone,
+      region: databaseEmptyLocations[2].region,
+      tag: databaseEmptyLocations[2].tag,
       index: limits.message.index.min,
     },
     expres: {
@@ -84,8 +80,7 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: "abcd",
-      district: databaseMessages[0].district,
-      zone: databaseMessages[0].zone,
+      tag: databaseMessages[0].tag,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -98,13 +93,12 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
-      district: limits.message.district.max + 1,
-      zone: databaseMessages[0].zone,
+      tag: examples.tag.tooLong,
       index: databaseMessages[0].index,
     },
     expres: {
       status: 400,
-      error: "wrongValue.message.district",
+      error: "wrongValue.message.tag",
       message: undefined,
     },
   }, {
@@ -112,22 +106,7 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: databaseMessages[0].region,
-      district: databaseMessages[0].district,
-      zone: limits.message.zone.max + 1,
-      index: databaseMessages[0].index,
-    },
-    expres: {
-      status: 400,
-      error: "wrongValue.message.zone",
-      message: undefined,
-    },
-  }, {
-    tag: 7,
-    auth: `Bearer ${env.serviceid}:`,
-    args: {
-      region: databaseMessages[0].region,
-      district: databaseMessages[0].district,
-      zone: databaseMessages[0].district,
+      tag: databaseMessages[0].tag,
       index: limits.message.index.max + 1,
     },
     expres: {
@@ -136,12 +115,11 @@ describe("testing endpoints...", () => {
       message: undefined,
     },
   }, {
-    tag: 8,
+    tag: 7,
     auth: `Bearer abcd:`,
     args: {
       region: databaseMessages[0].region,
-      district: databaseMessages[0].district,
-      zone: databaseMessages[0].zone,
+      tag: databaseMessages[0].tag,
       index: databaseMessages[0].index,
     },
     expres: {
@@ -152,9 +130,9 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, auth, tag } = testcase
-    test(`GET /messages/r/d/zone/index. Test #${tag}`, async () => {
-      let { region, district, zone, index } = args
-      let url = `/api/v1/messages/${region}/${district}/${zone}/${index}`
+    test(`GET /messages/region/tag/index. Test #${tag}`, async () => {
+      let { region, tag, index } = args
+      let url = `/api/v1/messages/${region}/${tag}/${index}`
       let result = await testServer.get(url).set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()

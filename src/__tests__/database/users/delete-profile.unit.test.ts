@@ -6,24 +6,21 @@ import { examples } from "../../../lib/test-data"
 
 let msgs = [[{
   region: examples.region.first,
-  district: limits.message.district.min,
-  zone: limits.message.zone.min,
+  tag: examples.tag.minLen,
   index: limits.message.index.min,
   text: examples.text.correct[0],
   color: examples.color.first,
   timestamp: "123456780",
 }, {
   region: examples.region.first,
-  district: limits.message.district.min,
-  zone: limits.message.zone.min,
+  tag: examples.tag.minLen,
   index: limits.message.index.min + 1,
   text: examples.text.correct[1],
   color: examples.color.first,
   timestamp: "123456781",
 }], [{
   region: examples.region.first,
-  district: limits.message.district.min,
-  zone: limits.message.zone.min,
+  tag: examples.tag.minLen,
   index: limits.message.index.min,
   text: examples.text.correct[2],
   color: examples.color.last,

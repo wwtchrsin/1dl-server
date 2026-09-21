@@ -1,167 +1,62 @@
-import type { Message, Zoneid, Districtid, Messageid } 
+import type { Message, Location, Messageid } 
   from "../database/interfaces"
 
-export type MessagesByZone = ({
-  zoneid: Zoneid,
+export type MessagesByLocation = ({
+  location: Location,
   messages: Message[]
 })[]
 
-export type MessageidsByZone = ({
-  zoneid: Zoneid,
+export type MessageidsByLocation = ({
+  location: Location,
   indices: (number | string)[]
 })[]
 
-export type ZonesByDistrict = ({
-  districtid: Districtid,
-  msgcounts: Record<number | string, number>,
-})[]
-
-export type DistrictsByRegion = ({
-  region: string,
-  msgcounts: Record<number | string, number>,
-})[]
-
-export type MsgcountsGroups = ({
-  msgcounts: Record<number | string, number>
-})[]
-
-export type MsgcountsModifier = (value: number | string) => number
-
-export const groupMessagesByZone = (messages: Message[]): MessagesByZone => {
-  let regions = new Map<string, Map<number, Map<number, Message[]>>>()
+export const groupMessagesByLocation = (messages: Message[]): MessagesByLocation => {
+  let regions = new Map<string, Map<string, Message[]>>()
   for ( let message of messages ) {
-    let { region, district, zone } = message
+    let { region, tag } = message
     if ( !regions.has(region) ) {
       regions.set(region, new Map())
     }
-    if ( !regions.get(region).has(district) ) {
-      regions.get(region).set(district, new Map())
+    if ( !regions.get(region).has(tag) ) {
+      regions.get(region).set(tag, [])
     }
-    if ( !regions.get(region).get(district).has(zone) ) {
-      regions.get(region).get(district).set(zone, [])
-    }
-    regions.get(region).get(district).get(zone).push(message)
+    regions.get(region).get(tag).push(message)
   }
-  let groups: MessagesByZone = []
-  for ( let [region, districts] of regions ) {
-    for ( let [district, zones] of districts ) {
-      for ( let [zone, messages] of zones ) {
-        groups.push({
-          zoneid: { region, district, zone },
-          messages,
-        })
-      }
-    }
-  }
-  return groups
-}
-
-export const groupMessageidsByZone = (messageids: Messageid[]): MessageidsByZone => {
-  type Zones = Map<string | number, Set<number | string>>
-  let regions = new Map<string, Map<string | number, Zones>>()
-  for ( let messageid of messageids ) {
-    let { region, district, zone, index } = messageid
-    if ( !regions.has(region) ) {
-      regions.set(region, new Map())
-    }
-    if ( !regions.get(region).has(district) ) {
-      regions.get(region).set(district, new Map())
-    }
-    if ( !regions.get(region).get(district).has(zone) ) {
-      regions.get(region).get(district).set(zone, new Set())
-    }
-    regions.get(region).get(district).get(zone).add(index)
-  }
-  let groups: MessageidsByZone = []
-  for ( let [region, districts] of regions ) {
-    for ( let [district, zones] of districts ) {
-      for ( let [zone, indices] of zones ) {
-        groups.push({
-          zoneid: { region, district, zone },
-          indices: Array.from(indices),
-        })
-      }
-    }
-  }
-  return groups
-}
-
-export const groupZonesByDistrict = (zoneids: Zoneid[]): ZonesByDistrict => {
-  type Zone = Map<number | string, number>
-  let regions = new Map<string, Map<number | string, Zone>>()
-  for ( let zoneid of zoneids ) {
-    let { region, district, zone } = zoneid
-    if ( !regions.has(region) ) {
-      regions.set(region, new Map())
-    }
-    if ( !regions.get(region).has(district) ) {
-      regions.get(region).set(district, new Map())
-    }
-    if ( !regions.get(region).get(district).has(zone) ) {
-      regions.get(region).get(district).set(zone, 0)
-    }
-    let value = regions.get(region).get(district).get(zone)
-    regions.get(region).get(district).set(zone, value + 1)
-  }
-  let groups: ZonesByDistrict = []
-  for ( let [region, districts] of regions ) {
-    for ( let [district, zones] of districts ) {
-      let msgcounts: Record<number | string, number> = {}
-      for ( let [zone, count] of zones ) {
-        msgcounts[zone] = count
-      }
+  let groups: MessagesByLocation = []
+  for ( let [region, tags] of regions ) {
+    for ( let [tag, messages] of tags ) {
       groups.push({
-        districtid: { region, district },
-        msgcounts,
+        location: { region, tag },
+        messages,
       })
     }
   }
   return groups
 }
 
-export const groupDistrictsByRegion = (districtids: Districtid[]): DistrictsByRegion => {
-  let regions = new Map<string, Map<number | string, number>>()
-  for ( let districtid of districtids ) {
-    let { region, district } = districtid
+export const groupMessageidsByLocation = (messageids: Messageid[]): MessageidsByLocation => {
+  let regions = new Map<string, Map<string, Set<string | number>>>()
+  for ( let messageid of messageids ) {
+    let { region, tag, index } = messageid
     if ( !regions.has(region) ) {
       regions.set(region, new Map())
     }
-    if ( !regions.get(region).has(district) ) {
-      regions.get(region).set(district, 0)
+    if ( !regions.get(region).has(tag) ) {
+      regions.get(region).set(tag, new Set())
     }
-    let value = regions.get(region).get(district)
-    regions.get(region).set(district, value + 1)
+    regions.get(region).get(tag).add(index)
   }
-  let groups: DistrictsByRegion = []
-  for ( let [region, districts] of regions ) {
-    let msgcounts: Record<number | string, number> = {}
-    for ( let [district, count] of districts ) {
-      msgcounts[district] = count
+  let groups: MessageidsByLocation = []
+  for ( let [region, tags] of regions ) {
+    for ( let [tag, indices] of tags ) {
+      groups.push({
+        location: { region, tag },
+        indices: Array.from(indices),
+      })
     }
-    groups.push({ region, msgcounts })
   }
   return groups
-}
-
-export const modifyMsgcounts = (groups: MsgcountsGroups, modifier: MsgcountsModifier) => {
-    for ( let i=0; i < groups.length; i++ ) {
-      for ( let key in groups[i].msgcounts ) {
-        let value = modifier(+groups[i].msgcounts[key])
-        groups[i].msgcounts[key] = value
-      }
-    }
-  }
-
-export const getZoneLocation = (zoneid: Zoneid) => {
-  return `/${zoneid.region}/${zoneid.district}/${zoneid.zone}`
-}
-
-export const getDistrictLocation = (districtid: Districtid) => {
-  return `/${districtid.region}/${districtid.district}`
-}
-
-export const getRegionLocation = ({ region }: { region: string }) => {
-  return `/${region}`
 }
 
 export const getLocation = (data: any): string => {
@@ -169,7 +64,7 @@ export const getLocation = (data: any): string => {
     return ""
   }
   let location = ""
-  for ( let name of ["region", "district", "zone"] ) {
+  for ( let name of ["region", "tag"] ) {
     let value = data[name]
     if ( value === undefined ) {
       break

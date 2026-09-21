@@ -3,57 +3,41 @@ import * as wsStorage from "../../../lib/ws/state-storage"
 import type { WebSocket } from "ws"
 
 let conns = new Map([
-  ["/foo/1/2", [{
+  ["/foo/bar", [{
     connid: "01",
     client: { send: jest.fn(x => undefined) },
   }, {
     connid: "02",
     client: { send: jest.fn(x => undefined) },
   }]],
-  ["/foo/1", [{
+  ["/bar/foo", [{
     connid: "03",
     client: { send: jest.fn(x => undefined) },
   }]],
-  ["/foo", [{
+  ["/baz/bar", [{
     connid: "04",
     client: { send: jest.fn(x => undefined) },
   }]],
-  ["/bar/4/3", [{
-    connid: "05",
-    client: { send: jest.fn(x => undefined) },
-  }]],
-  ["/bar", [{
-    connid: "06",
-    client: { send: jest.fn(x => undefined) },
-  }]],
-  ["/foo/5/5", [{
-    connid: "07",
-    client: { send: jest.fn(x => undefined) },
-  }]]
 ])
 
 let messageids = new Map([
-  ["/foo/1/2", [{
+  ["/foo/bar", [{
     region: "foo",
-    district: 1,
-    zone: 2,
+    tag: "bar",
     index: 3,
   }, {
     region: "foo",
-    district: 1,
-    zone: 2,
+    tag: "bar",
     index: 4,
   }]], 
-  ["/bar/4/3", [{
+  ["/bar/foo", [{
     region: "bar",
-    district: 4,
-    zone: 3,
+    tag: "foo",
     index: 2,
   }]],
-  ["/baz/5/5", [{
+  ["/baz/baz", [{
     region: "baz",
-    district: 5,
-    zone: 5,
+    tag: "baz",
     index: 5,
   }]],
 ])
@@ -77,137 +61,82 @@ describe("testing ws message handlers...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: [messageids.get("/foo/1/2")[0]],
+    args: [messageids.get("/foo/bar")[0]],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "delete-messages",
-          indices: [messageids.get("/foo/1/2")[0].index],
+          indices: [messageids.get("/foo/bar")[0].index],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": -1 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": -1 },
-        })
-      ]],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 2,
     args: [
-      messageids.get("/foo/1/2")[0],
-      messageids.get("/foo/1/2")[1],
+      messageids.get("/foo/bar")[0],
+      messageids.get("/foo/bar")[1],
     ],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "delete-messages",
           indices: [
-            messageids.get("/foo/1/2")[0].index,
-            messageids.get("/foo/1/2")[1].index,
+            messageids.get("/foo/bar")[0].index,
+            messageids.get("/foo/bar")[1].index,
           ],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": -2 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": -2 },
-        })
-      ]],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 3,
-    args: [messageids.get("/bar/4/3")[0]],
+    args: [messageids.get("/bar/foo")[0]],
     calls: new Map([
-      ["/foo/1/2", []],
-      ["/foo/1", []],
-      ["/foo", []],
-      ["/bar/4/3", [
+      ["/foo/bar", []],
+      ["/bar/foo", [
         JSON.stringify({
           type: "delete-messages",
-          indices: [messageids.get("/bar/4/3")[0].index],
+          indices: [messageids.get("/bar/foo")[0].index],
         })
       ]],
-      ["/bar", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "4": -1 },
-        })
-      ]],
-      ["/foo/5/5", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 4,
-    args: [messageids.get("/baz/5/5")[0]],
+    args: [messageids.get("/baz/baz")[0]],
     calls: new Map([
-      ["/foo/1/2", []],
-      ["/foo/1", []],
-      ["/foo", []],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
-    ])
+      ["/foo/bar", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
+    ]),
   }, {
     tag: 5,
     args: [
-      messageids.get("/foo/1/2")[0],
-      messageids.get("/foo/1/2")[1],
-      messageids.get("/bar/4/3")[0],
-      messageids.get("/baz/5/5")[0],
+      messageids.get("/foo/bar")[0],
+      messageids.get("/foo/bar")[1],
+      messageids.get("/bar/foo")[0],
+      messageids.get("/baz/baz")[0],
     ],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "delete-messages",
           indices: [
-            messageids.get("/foo/1/2")[0].index,
-            messageids.get("/foo/1/2")[1].index,
+            messageids.get("/foo/bar")[0].index,
+            messageids.get("/foo/bar")[1].index,
           ],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": -2 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": -2 },
-        })
-      ]],
-      ["/bar/4/3", [
+      ["/bar/foo", [
         JSON.stringify({
           type: "delete-messages",
-          indices: [messageids.get("/bar/4/3")[0].index],
+          indices: [messageids.get("/bar/foo")[0].index],
         })
       ]],
-      ["/bar", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "4": -1 },
-        })
-      ]],
-      ["/foo/5/5", []],
+      ["/baz/bar", []],
     ]),
   }]
   for ( let testcase of testcases ) {

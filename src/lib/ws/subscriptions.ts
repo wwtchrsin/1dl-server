@@ -35,36 +35,6 @@ export const listeners = new Map([
     serverMessages.deleteMessages(report.messageids)
     logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
   }],
-  ["msgcounts:districts", (messageJSON: string) => {
-    let TAG = "ws/channels/msgcounts:districts"
-    let message = parseJSON(messageJSON)
-    if ( message.error ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
-      return
-    }
-    if ( !message.data.region || !message.data.msgcounts ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
-      return
-    }
-    let report  = message.data as RI.DistrictMsgcountsUpdate
-    serverMessages.updateDistrictMsgcounts(report)
-    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
-  }],
-  ["msgcounts:zones", (messageJSON: string) => {
-    let TAG = "ws/channels/msgcounts:zones"
-    let message = parseJSON(messageJSON)
-    if ( message.error ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_JSON`)
-      return
-    }
-    if ( !message.data.districtid || !message.data.msgcounts ) {
-      logger.error({ message: messageJSON }, `${TAG}#WRONG_MESSAGE`)
-      return
-    }
-    let report = message.data as RI.ZoneMsgcountsUpdate
-    serverMessages.updateZoneMsgcounts(report)
-    logger.debug({ message: messageJSON }, `${TAG}#MESSAGE_RECEIVED`)
-  }],
   ["sessions:created", (messageJSON: string) => {
     let TAG = "ws/channels/sessions:created"
     let message = parseJSON(messageJSON)

@@ -3,40 +3,27 @@ import * as wsStorage from "../../../lib/ws/state-storage"
 import type { WebSocket } from "ws"
 
 let conns = new Map([
-  ["/foo/1/2", [{
+  ["/foo/bar", [{
     connid: "01",
     client: { send: jest.fn(x => undefined) },
   }, {
     connid: "02",
     client: { send: jest.fn(x => undefined) },
   }]],
-  ["/foo/1", [{
+  ["/bar/foo", [{
     connid: "03",
     client: { send: jest.fn(x => undefined) },
   }]],
-  ["/foo", [{
+  ["/baz/bar", [{
     connid: "04",
-    client: { send: jest.fn(x => undefined) },
-  }]],
-  ["/bar/4/3", [{
-    connid: "05",
-    client: { send: jest.fn(x => undefined) },
-  }]],
-  ["/bar", [{
-    connid: "06",
-    client: { send: jest.fn(x => undefined) },
-  }]],
-  ["/foo/5/5", [{
-    connid: "07",
     client: { send: jest.fn(x => undefined) },
   }]]
 ])
 
 let messages = new Map([
-  ["/foo/1/2", [{
+  ["/foo/bar", [{
     region: "foo",
-    district: 1,
-    zone: 2,
+    tag: "bar",
     index: 3,
     text: "text",
     color: "color",
@@ -45,8 +32,7 @@ let messages = new Map([
     timestamp: "1234567890",
   }, {
     region: "foo",
-    district: 1,
-    zone: 2,
+    tag: "bar",
     index: 4,
     text: "text",
     color: "color",
@@ -54,10 +40,9 @@ let messages = new Map([
     username: "name",
     timestamp: "1234567890",
   }]], 
-  ["/bar/4/3", [{
+  ["/bar/foo", [{
     region: "bar",
-    district: 4,
-    zone: 3,
+    tag: "foo",
     index: 2,
     text: "text",
     color: "color",
@@ -65,10 +50,9 @@ let messages = new Map([
     username: "name",
     timestamp: "1234567890",
   }]],
-  ["/baz/5/5", [{
+  ["/baz/baz", [{
     region: "baz",
-    district: 5,
-    zone: 5,
+    tag: "baz",
     index: 5,
     text: "text",
     color: "color",
@@ -97,142 +81,87 @@ describe("testing ws message handlers...", () => {
   })
   let testcases = [{
     tag: 1,
-    args: [messages.get("/foo/1/2")[0]],
+    args: [messages.get("/foo/bar")[0]],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "insert-messages",
-          messages: [messages.get("/foo/1/2")[0]],
+          messages: [messages.get("/foo/bar")[0]],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": 1 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": 1 },
-        })
-      ]],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 2,
     args: [
-      messages.get("/foo/1/2")[0],
-      messages.get("/foo/1/2")[1],
+      messages.get("/foo/bar")[0],
+      messages.get("/foo/bar")[1],
     ],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "insert-messages",
           messages: [
-            messages.get("/foo/1/2")[0],
-            messages.get("/foo/1/2")[1],
+            messages.get("/foo/bar")[0],
+            messages.get("/foo/bar")[1],
           ],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": 2 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": 2 },
-        })
-      ]],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 3,
-    args: [messages.get("/bar/4/3")[0]],
+    args: [messages.get("/bar/foo")[0]],
     calls: new Map([
-      ["/foo/1/2", []],
-      ["/foo/1", []],
-      ["/foo", []],
-      ["/bar/4/3", [
+      ["/foo/bar", []],
+      ["/bar/foo", [
         JSON.stringify({
           type: "insert-messages",
-          messages: [messages.get("/bar/4/3")[0]],
+          messages: [messages.get("/bar/foo")[0]],
         })
       ]],
-      ["/bar", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "4": 1 },
-        })
-      ]],
-      ["/foo/5/5", []],
+      ["/baz/bar", []],
     ]),
   }, {
     tag: 4,
-    args: [messages.get("/baz/5/5")[0]],
+    args: [messages.get("/baz/baz")[0]],
     calls: new Map([
-      ["/foo/1/2", []],
-      ["/foo/1", []],
-      ["/foo", []],
-      ["/bar/4/3", []],
-      ["/bar", []],
-      ["/foo/5/5", []],
+      ["/foo/bar", []],
+      ["/bar/foo", []],
+      ["/baz/bar", []],
     ])
   }, {
     tag: 5,
     args: [
-      messages.get("/foo/1/2")[0],
-      messages.get("/foo/1/2")[1],
-      messages.get("/bar/4/3")[0],
-      messages.get("/baz/5/5")[0],
+      messages.get("/foo/bar")[0],
+      messages.get("/foo/bar")[1],
+      messages.get("/bar/foo")[0],
+      messages.get("/baz/baz")[0],
     ],
     calls: new Map([
-      ["/foo/1/2", [
+      ["/foo/bar", [
         JSON.stringify({
           type: "insert-messages",
           messages: [
-            messages.get("/foo/1/2")[0],
-            messages.get("/foo/1/2")[1],
+            messages.get("/foo/bar")[0],
+            messages.get("/foo/bar")[1],
           ],
         })
       ]],
-      ["/foo/1", [
-        JSON.stringify({
-          type: "change-zone-msgcounts",
-          msgcounts: { "2": 2 },
-        })
-      ]],
-      ["/foo", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "1": 2 },
-        })
-      ]],
-      ["/bar/4/3", [
+      ["/bar/foo", [
         JSON.stringify({
           type: "insert-messages",
-          messages: [messages.get("/bar/4/3")[0]],
+          messages: [messages.get("/bar/foo")[0]],
         })
       ]],
-      ["/bar", [
-        JSON.stringify({
-          type: "change-district-msgcounts",
-          msgcounts: { "4": 1 },
-        })
-      ]],
-      ["/foo/5/5", []],
+      ["/baz/bar", []],
     ]),
   }]
   for ( let testcase of testcases ) {
     let { args, calls, tag } = testcase
-    test(`Function insetMessages. Test #${tag}`, () => {
+    test(`Function insertMessages. Test #${tag}`, () => {
       insertMessages(args)
       for ( let [location, calllist] of calls ) {
         let clients = conns.get(location)

@@ -21,16 +21,12 @@ export type Credentials = {
   password: string,
 }
 
-export type Districtid = {
+export type Location = {
   region: string,
-  district: string | number,
+  tag: string,
 }
 
-export type Zoneid = Districtid & {
-  zone: string | number,
-}
-
-export type Messageid = Zoneid & {
+export type Messageid = Location & {
   index: string | number,
 }
 
@@ -41,8 +37,7 @@ export type MessageContent = {
 
 export type UserMessage = {
   region: string,
-  district: number,
-  zone: number,
+  tag: string,
   index: number,
   text: string,
   color: string,
@@ -54,15 +49,4 @@ export type Message = UserMessage & {
   username: string,
 }
 
-export type ZoneMsgcount = {
-  zone: number,
-  msgcount: number,
-}
-
-export type DistrictMsgcount = {
-  district: number,
-  msgcount: number,
-}
-
-export type Msgcounts = Record<string | number, number>
 

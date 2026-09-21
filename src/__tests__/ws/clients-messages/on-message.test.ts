@@ -15,31 +15,13 @@ describe("testing ws message handlers...", () => {
         type: "set-location",
         location: {
           region: "foo",
+          tag: "bar",
         },
       }),
     },
     calls: {
       setConnLocation: [
-        [examples.uuid[0], "/foo"]
-      ],
-      deleteConnLocation: [],
-      reportError: [],
-    },
-  }, {
-    tag: 2,
-    args: {
-      connid: examples.uuid[0],
-      message: JSON.stringify({
-        type: "set-location",
-        location: {
-          region: "foo",
-          district: 4,
-        },
-      }),
-    },
-    calls: {
-      setConnLocation: [
-        [examples.uuid[0], "/foo/4"]
+        [examples.uuid[0], "/foo/bar"]
       ],
       deleteConnLocation: [],
       reportError: [],
@@ -70,7 +52,7 @@ describe("testing ws message handlers...", () => {
         type: "abcd",
         location: {
           region: "foo",
-          district: 4,
+          tag: "bar",
         },
       }),
     },

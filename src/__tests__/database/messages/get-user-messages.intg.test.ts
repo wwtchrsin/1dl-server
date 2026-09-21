@@ -22,8 +22,7 @@ let sortMessages = (messages: any[]) => {
 let toMessages = (messageIndices: number[]) => {
   return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
-    district: databaseMessages[messageIndex].district,
-    zone: databaseMessages[messageIndex].zone,
+    tag: databaseMessages[messageIndex].tag,
     index: databaseMessages[messageIndex].index,
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,

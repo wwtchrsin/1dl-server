@@ -4,7 +4,7 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
 import { examples, populateDatabase, databaseSessions, databaseMessages,
-  messagesByUser, sessionByUser, databaseEmptyZones, databaseCompleteUsers } 
+  messagesByUser, sessionByUser, databaseEmptyLocations, databaseCompleteUsers } 
   from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
@@ -39,8 +39,7 @@ let messageid = (uIndex: number, messageIndex: number) => {
   let message = databaseMessages[messagesByUser[userIndex][messageIndex]]
   return {
     region: message.region,
-    district: message.district,
-    zone: message.zone,
+    tag: message.tag,
     index: message.index,
   }
 }
@@ -50,8 +49,7 @@ let message = (uIndex: number, messageIndex: number) => {
   let message = databaseMessages[messagesByUser[userIndex][messageIndex]]
   return {
     region: message.region,
-    district: message.district,
-    zone: message.zone,
+    tag: message.tag,
     index: message.index,
     text: message.text,
     color: message.color,
@@ -156,9 +154,8 @@ describe("testing endpoints...", () => {
       args: {
         auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
-          region: databaseEmptyZones[0].region,
-          district: databaseEmptyZones[0].district,
-          zone: databaseEmptyZones[0].zone,
+          region: databaseEmptyLocations[0].region,
+          tag: databaseEmptyLocations[0].tag,
           index: limits.message.index.min,
         },
       },
@@ -176,8 +173,7 @@ describe("testing endpoints...", () => {
         auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
           region: "abcd",
-          district: databaseEmptyZones[0].district,
-          zone: databaseEmptyZones[0].zone,
+          tag: databaseEmptyLocations[0].tag,
           index: limits.message.index.min,
         },
       },
@@ -194,14 +190,13 @@ describe("testing endpoints...", () => {
       args: {
         auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
-          region: databaseEmptyZones[0].region,
-          district: limits.message.district.max + 1,
-          zone: databaseEmptyZones[0].zone,
+          region: databaseEmptyLocations[0].region,
+          tag: examples.tag.tooLong,
           index: limits.message.index.min,
         },
       },
       expres: {
-        error: "wrongValue.message.district",
+        error: "wrongValue.message.tag",
         message: undefined,
         status: 400,
       },
@@ -213,28 +208,8 @@ describe("testing endpoints...", () => {
       args: {
         auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
         messageid: {
-          region: databaseEmptyZones[0].region,
-          district: databaseEmptyZones[0].district,
-          zone: limits.message.zone.min - 1,
-          index: limits.message.index.min,
-        },
-      },
-      expres: {
-        error: "wrongValue.message.zone",
-        message: undefined,
-        status: 400,
-      },
-    }],
-    deletedRows: 0,
-  }, {
-    tag: 11,
-    actions: [{
-      args: {
-        auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
-        messageid: {
-          region: databaseEmptyZones[0].region,
-          district: databaseEmptyZones[0].district,
-          zone: databaseEmptyZones[0].zone,
+          region: databaseEmptyLocations[0].region,
+          tag: databaseEmptyLocations[0].tag,
           index: limits.message.index.max + 1,
         },
       },
@@ -246,7 +221,7 @@ describe("testing endpoints...", () => {
     }],
     deletedRows: 0,
   }, {
-    tag: 12,
+    tag: 11,
     actions: [{
      args: {
         auth: `Bearer ${env.serviceid}:${sessionid(2)}`, 
@@ -282,13 +257,13 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { actions, deletedRows, tag } = testcase
-    test(`DELETE /messages/r/d/zone/index. Test #${tag}`, async () => {
+    test(`DELETE /messages/region/tag/index. Test #${tag}`, async () => {
       let reportsPromise = getReports("messages:deleted", deletedRows)
       for ( let action of actions ) {
         let { args, expres } = action
         let { auth, messageid } = args
-        let { region, district, zone, index } = messageid
-        let url = `/api/v1/messages/${region}/${district}/${zone}/${index}`
+        let { region, tag, index } = messageid
+        let url = `/api/v1/messages/${region}/${tag}/${index}`
         let result = await testServer.delete(url).set("Authorization", auth)
         expect(result.statusCode).toBe(expres.status)
         expect(result.body).toBeDefined()
@@ -310,8 +285,7 @@ describe("testing endpoints...", () => {
         expect(reports[i].messageids).toBeDefined()
         expect(reports[i].messageids).toHaveLength(1)
         expect(reports[i].messageids[0].region).toBeDefined()
-        expect(reports[i].messageids[0].district).toBeDefined()
-        expect(reports[i].messageids[0].zone).toBeDefined()
+        expect(reports[i].messageids[0].tag).toBeDefined()
         expect(reports[i].messageids[0].index).toBeDefined()
         expect(reports[i].messageids[0].text).toBeUndefined()
         expect(reports[i].messageids[0].color).toBeUndefined()

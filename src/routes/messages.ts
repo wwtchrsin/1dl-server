@@ -1,17 +1,14 @@
 import { Router } from "express"
 import { verifyRequest } from "./middleware"
-import { createMessage, deleteMessage, getMessage, getMessages,
-  countDistrictMessages, countRegionMessages } from "../lib/database/messages"
-import { checkRegion, checkDistrictid, checkZoneid, checkMessageid,
-  checkMessageData } from "../lib/database/checkers"
-import * as redisCache from "../lib/redis/cache"
+import { createMessage, deleteMessage, getMessage, getMessages } from "../lib/database/messages"
+import { checkMessageid, checkMessageData, checkLocation } from "../lib/database/checkers"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
 import { readProfile, readUserid, completeMessage,
   extractMessageids } from "./miscs"
 import logger from "../lib/logger"
 import type { Request, Response } from "express"
-import type { Messageid, Zoneid, Districtid } from "../lib/database/interfaces"
+import type { Messageid, Location } from "../lib/database/interfaces"
 
 const createMessageAction = async (req: Request<Messageid>, res: Response) => {
   let TAG = "routes/messages/createMessage"
@@ -56,8 +53,6 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
     return
   }
   let msg = completeMessage(message.data, profile.data)
-  await redisCache.changeZoneMsgcount(req.params, 1)
-  await redisCache.changeDistrictMsgcount(req.params, 1)
   await publish("messages:created", { messages: [msg] })
   logger.debug(args, `${TAG}#DONE`)
   res.status(201).json({
@@ -95,119 +90,32 @@ const getMessageAction = async (req: Request<Messageid>, res: Response) => {
   })
 }
 
-const getMessagesAction = async (req: Request<Zoneid>, res: Response) => {
+const getMessagesAction = async (req: Request<Location>, res: Response) => {
   let TAG = "routes/messages/getMessages"
-  let checkError = checkZoneid(req.params)
+  let checkError = checkLocation(req.params)
   if ( checkError !== undefined ) {
     let status = getStatusCode(checkError)
-    logger.info({ zoneid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
+    logger.info({ location: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
     res.status(status).json({
       error: checkError,
       message: undefined,
     })
     return
   }
-  let messages = await getMessages(req.params as Zoneid)
+  let messages = await getMessages(req.params as Location)
   if ( messages.error !== undefined ) {
     let status = getStatusCode(messages.error)
-    logger.info({ zoneid: req.params }, `${TAG}#ERROR_DB_QUERY`)
+    logger.info({ location: req.params }, `${TAG}#ERROR_DB_QUERY`)
     res.status(status).json({
       error: messages.error,
       message: undefined,
     })
     return
   }
-  logger.debug({ zoneid: req.params }, `${TAG}#DONE`)
+  logger.debug({ location: req.params }, `${TAG}#DONE`)
   res.status(200).json({
     error: undefined,
     messages: messages.data,
-  })
-}
-
-const getDistrictStatsAction = async (req: Request<Districtid>, res: Response) => {
-  let TAG = "routes/messages/getDistrictStats"
-  let checkError = checkDistrictid(req.params)
-  if ( checkError !== undefined ) {
-    let status = getStatusCode(checkError)
-    logger.info({ districtid: req.params }, `${TAG}#ERROR_ARGS_CHECK`)
-    res.status(status).json({
-      error: checkError,
-      msgcounts: undefined,
-    })
-    return
-  }
-  let { region, district } = req.params as Districtid
-  let cache = await redisCache.getZoneMsgcounts({ region, district })
-  if ( cache.data ) {
-    logger.debug({ districtid: req.params }, `${TAG}#CACHED_VALUE_RETURNED`)
-    res.status(200).json({
-      error: undefined,
-      msgcounts: cache.data,
-    })
-    return
-  }
-  let msgcounts = await countDistrictMessages({ region, district })
-  if ( msgcounts.error !== undefined ) {
-    let status = getStatusCode(msgcounts.error)
-    logger.info({ districtid: req.params }, `${TAG}#ERROR_DB_QUERY`)
-    res.status(status).json({
-      error: msgcounts.error,
-      msgcounts: undefined,
-    })
-    return
-  }
-  let reportData = {
-    districtid: req.params as Districtid,
-    msgcounts: msgcounts.data,
-  }
-  await redisCache.updateZoneMsgcounts({ region, district }, msgcounts.data)
-  await publish("msgcounts:zones", reportData)
-  logger.debug({ districtid: req.params }, `${TAG}#DONE`)
-  res.status(200).json({
-    error: undefined,
-    msgcounts: msgcounts.data,
-  })
-}
-
-const getRegionStatsAction = async (req: Request, res: Response) => {
-  let TAG = "routes/messages/getRegionStats"
-  let region = req.params?.region
-  let checkError = checkRegion(region)
-  if ( checkError !== undefined ) {
-    let status = getStatusCode(checkError)
-    logger.info({ region }, `${TAG}#ERROR_ARGS_CHECK`)
-    res.status(status).json({
-      error: checkError,
-      districts: undefined,
-    })
-    return
-  }
-  let cache = await redisCache.getDistrictMsgcounts(region)
-  if ( cache.data ) {
-    logger.debug({ region }, `${TAG}#CACHED_VALUE_RETURNED`)
-    res.status(200).json({
-      error: undefined,
-      msgcounts: cache.data,
-    })
-    return
-  }
-  let msgcounts = await countRegionMessages(region)
-  if ( msgcounts.error !== undefined ) {
-    let status = getStatusCode(msgcounts.error)
-    logger.info({ region }, `${TAG}#ERROR_DB_QUERY`)
-    res.status(status).json({
-      error: msgcounts.error,
-      districts: undefined,
-    })
-    return
-  }
-  let reportData = { region: region, msgcounts: msgcounts.data }
-  await redisCache.updateDistrictMsgcounts(region, msgcounts.data)
-  await publish("msgcounts:districts", reportData)
-  logger.debug({ region }, `${TAG}#DONE`)
-  res.status(200).json({
-    error: undefined,
-    msgcounts: msgcounts.data,
   })
 }
 
@@ -244,8 +152,6 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
     return
   }
   let messageids = extractMessageids([req.params as Messageid])
-  await redisCache.changeZoneMsgcount(req.params as Messageid, -1)
-  await redisCache.changeDistrictMsgcount(req.params as Messageid, -1)
   await publish("messages:deleted", { messageids })
   logger.debug({ messageid: req.params }, `${TAG}#DONE`)
   res.status(200).json({
@@ -257,12 +163,10 @@ const deleteMessageAction = async (req: Request<Messageid>, res: Response) => {
 const router = Router()
 
 router.use(verifyRequest)
-router.get("/:region", getRegionStatsAction)
-router.get("/:region/:district", getDistrictStatsAction)
-router.get("/:region/:district/:zone", getMessagesAction)
-router.post("/:region/:district/:zone/:index", createMessageAction)
-router.get("/:region/:district/:zone/:index", getMessageAction)
-router.delete("/:region/:district/:zone/:index", deleteMessageAction)
+router.get("/:region/:tag", getMessagesAction)
+router.post("/:region/:tag/:index", createMessageAction)
+router.get("/:region/:tag/:index", getMessageAction)
+router.delete("/:region/:tag/:index", deleteMessageAction)
 
 export default router
 

@@ -7,10 +7,8 @@ const states = limits.user.state.values.map(r => `'${r}'`).join(", ")
 const sqlAddConstraints = `
   ALTER TABLE messages ADD CONSTRAINT region_check
     CHECK (region IN (${regions}));
-  ALTER TABLE messages ADD CONSTRAINT district_check
-    CHECK (district BETWEEN ${limits.message.district.min} AND ${limits.message.district.max});
-  ALTER TABLE messages ADD CONSTRAINT zone_check
-    CHECK (zone BETWEEN ${limits.message.zone.min} AND ${limits.message.zone.max});
+  ALTER TABLE messages ADD CONSTRAINT tag_check
+    CHECK (tag ~ '${limits.message.tag.pattern}');
   ALTER TABLE messages ADD CONSTRAINT index_check
     CHECK (index BETWEEN ${limits.message.index.min} AND ${limits.message.index.max});
   ALTER TABLE messages ALTER COLUMN text TYPE VARCHAR(${limits.message.text.maxLen}),
@@ -33,8 +31,7 @@ const sqlAddConstraints = `
 
 const sqlDeleteConstraints = `
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS region_check;
-  ALTER TABLE messages DROP CONSTRAINT IF EXISTS district_check;
-  ALTER TABLE messages DROP CONSTRAINT IF EXISTS zone_check;
+  ALTER TABLE messages DROP CONSTRAINT IF EXISTS tag_check;
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS index_check;
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS text_check;
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS color_check;
@@ -46,15 +43,14 @@ const sqlDeleteConstraints = `
 const sqlCreateTables = `
   CREATE TABLE IF NOT EXISTS messages (
     region VARCHAR NOT NULL,
-    district INTEGER NOT NULL,
-    zone INTEGER NOT NULL,
+    tag VARCHAR(${limits.message.tag.maxLen}) NOT NULL,
     index INTEGER NOT NULL,
     text VARCHAR(${limits.message.text.maxLen}) NOT NULL,
     color VARCHAR NOT NULL,
     userid UUID,
     timestamp BIGINT NOT NULL,
-    PRIMARY KEY(region, district, zone, index),
-    UNIQUE(region, district, zone, index)
+    PRIMARY KEY(region, tag, index),
+    UNIQUE(region, tag, index)
   );
   CREATE TABLE IF NOT EXISTS users (
     userid UUID NOT NULL PRIMARY KEY,

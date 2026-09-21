@@ -9,8 +9,7 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -25,8 +24,7 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[1],
       messageid: {
         region: examples.region.last,
-        district: `${limits.message.district.max}`,
-        zone: `${limits.message.zone.max}`,
+        tag: examples.tag.maxLen,
         index: `${limits.message.index.max}`,
       },
       content: {
@@ -41,8 +39,7 @@ describe("testing query validators...", () => {
       uuid: "abcd",
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -57,8 +54,7 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: "abcd",
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -73,8 +69,7 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min - 1}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.tooShort,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -82,15 +77,14 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.district",
+    expres: "wrongValue.message.tag",
   }, {
     tag: 6,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.max + 1}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.tooLong,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -98,15 +92,14 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.district",
+    expres: "wrongValue.message.tag",
   }, {
     tag: 7,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min - 1}`,
+        tag: examples.tag.wrongSymbols,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -114,32 +107,30 @@ describe("testing query validators...", () => {
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.zone",
+    expres: "wrongValue.message.tag",
   }, {
     tag: 8,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.max + 1}`,
-        index: `${limits.message.index.min}`,
+        tag: examples.tag.minLen,
+        index: `${limits.message.index.min - 1}`,
       },
       content: {
         text: examples.text.minLen,
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.zone",
+    expres: "wrongValue.message.index",
   }, {
     tag: 9,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
-        index: `${limits.message.index.min - 1}`,
+        tag: examples.tag.minLen,
+        index: `${limits.message.index.max + 1}`,
       },
       content: {
         text: examples.text.minLen,
@@ -153,28 +144,26 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
-        index: `${limits.message.index.max + 1}`,
+        tag: examples.tag.regLen,
+        index: `${limits.message.index.min}`,
       },
       content: {
-        text: examples.text.minLen,
+        text: examples.text.tooShort,
         color: examples.color.first,
       }
     },
-    expres: "wrongValue.message.index",
+    expres: "wrongValue.message.text",
   }, {
     tag: 11,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       },
       content: {
-        text: examples.text.tooShort,
+        text: examples.text.tooLong,
         color: examples.color.first,
       }
     },
@@ -185,12 +174,11 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       },
       content: {
-        text: examples.text.tooLong,
+        text: examples.text.wrongSymbols,
         color: examples.color.first,
       }
     },
@@ -201,12 +189,11 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       },
       content: {
-        text: examples.text.wrongSymbols,
+        text: examples.text.consecutiveSpaces,
         color: examples.color.first,
       }
     },
@@ -217,24 +204,7 @@ describe("testing query validators...", () => {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
-        index: `${limits.message.index.min}`,
-      },
-      content: {
-        text: examples.text.consecutiveSpaces,
-        color: examples.color.first,
-      }
-    },
-    expres: "wrongValue.message.text",
-  }, {
-    tag: 15,
-    args: {
-      uuid: examples.uuid[0],
-      messageid: {
-        region: examples.region.first,
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       },
       content: {
@@ -244,13 +214,12 @@ describe("testing query validators...", () => {
     },
     expres: "wrongValue.message.color",
   }, {
-    tag: 16,
+    tag: 15,
     args: {
       uuid: examples.uuid[0],
       messageid: {
         region: examples.region.some,
-        district: `${limits.message.district.min + 1}`,
-        zone: `${limits.message.zone.min + 1}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min + 1}`,
       },
       content: {

@@ -46,8 +46,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -65,8 +64,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[1][0])}`,
       args: [{
         region: limits.message.region.values[1],
-        district: `${limits.message.district.max}`,
-        zone: `${limits.message.zone.max}`,
+        tag: examples.tag.maxLen,
         index: `${limits.message.index.max}`,
       }, {
         text: examples.text.maxLen,
@@ -84,8 +82,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: "abcd",
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -103,15 +100,14 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min - 1}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.wrongSymbols,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValue.message.district",
+        error: "wrongValue.message.tag",
         status: 400,
       },
     }],
@@ -122,15 +118,14 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.max + 1}`,
+        tag: examples.tag.tooLong,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
         color: examples.color.first,
       }],
       expres: {
-        error: "wrongValue.message.zone",
+        error: "wrongValue.message.tag",
         status: 400,
       },
     }],
@@ -141,8 +136,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.max + 1}`,
       }, {
         text: examples.text.minLen,
@@ -160,8 +154,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.tooShort,
@@ -179,8 +172,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.minLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -198,8 +190,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[1][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -217,8 +208,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(inactiveUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -236,8 +226,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${examples.sessionid[0]}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -255,8 +244,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer abcd:${sessionid(inactiveUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -274,8 +262,7 @@ describe("testing endpoints...", () => {
       auth: () => "abcd",
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -293,8 +280,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -308,8 +294,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
@@ -327,8 +312,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -342,8 +326,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -361,8 +344,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -376,8 +358,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min}`,
       }, {
         text: examples.text.minLen,
@@ -391,8 +372,7 @@ describe("testing endpoints...", () => {
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
-        district: `${limits.message.district.min}`,
-        zone: `${limits.message.zone.min}`,
+        tag: examples.tag.regLen,
         index: `${limits.message.index.min + 1}`,
       }, {
         text: examples.text.minLen,
@@ -407,12 +387,12 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { actions, rowCount, tag } = testcase
-    test(`POST /messages/r/d/zone/index. Test #${tag}`, async () => {
+    test(`POST /messages/region/tag/index. Test #${tag}`, async () => {
       let reportsPromise = getReports(`messages:created`, rowCount)
       for ( let action of actions ) {
         let { auth, args, expres } = action
         let [ msgid, content ] = args
-        let url = `/api/v1/messages/${msgid.region}/${msgid.district}/${msgid.zone}/${msgid.index}`
+        let url = `/api/v1/messages/${msgid.region}/${msgid.tag}/${msgid.index}`
         let result = await testServer.post(url)
           .set("Authorization", auth()).send(content)
         expect(result.statusCode).toBe(expres.status)
@@ -421,8 +401,7 @@ describe("testing endpoints...", () => {
           expect(result.body.error).toBeUndefined()
           expect(result.body.message).toBeDefined()
           expect(result.body.message.region).toBe(msgid.region)
-          expect(`${result.body.message.district}`).toBe(msgid.district)
-          expect(`${result.body.message.zone}`).toBe(msgid.zone)
+          expect(result.body.message.tag).toBe(msgid.tag)
           expect(`${result.body.message.index}`).toBe(msgid.index)
           expect(result.body.message.text).toBe(content.text)
           expect(result.body.message.color).toBe(content.color)
@@ -441,8 +420,7 @@ describe("testing endpoints...", () => {
         expect(reports[i].messages).toBeDefined()
         expect(reports[i].messages).toHaveLength(1)
         expect(reports[i].messages[0].region).toBeDefined()
-        expect(reports[i].messages[0].district).toBeDefined()
-        expect(reports[i].messages[0].zone).toBeDefined()
+        expect(reports[i].messages[0].tag).toBeDefined()
         expect(reports[i].messages[0].index).toBeDefined()
         expect(reports[i].messages[0].text).toBeDefined()
         expect(reports[i].messages[0].color).toBeDefined()

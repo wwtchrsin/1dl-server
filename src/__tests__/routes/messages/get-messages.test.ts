@@ -3,8 +3,8 @@ import httpServer from "../../../http-server"
 import { pool, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits } from "../../../lib/database/limits"
-import { populateDatabase, databaseZones,
-  databaseMessages, messagesByZone, databaseEmptyZones } from "../../../lib/test-data"
+import { examples, populateDatabase, databaseLocations,
+  databaseMessages, messagesByLocation, databaseEmptyLocations } from "../../../lib/test-data"
 import env from "../../../lib/env"
 
 beforeAll(async () => {
@@ -28,8 +28,7 @@ let sortMessages = (messages: any[]) => {
 let messages = (messageIndices: number[]) => {
   return sortMessages(messageIndices.map((messageIndex) => ({
     region: databaseMessages[messageIndex].region,
-    district: databaseMessages[messageIndex].district,
-    zone: databaseMessages[messageIndex].zone,
+    tag: databaseMessages[messageIndex].tag,
     index: databaseMessages[messageIndex].index,
     text: databaseMessages[messageIndex].text,
     color: databaseMessages[messageIndex].color,
@@ -43,25 +42,25 @@ describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
     auth: `Bearer ${env.serviceid}:`,
-    args: databaseZones[0],
+    args: databaseLocations[0],
     expres: {
       status: 200,
       error: undefined,
-      messages: messages(messagesByZone[0]),
+      messages: messages(messagesByLocation[0]),
     },
   }, {
     tag: 2,
     auth: `Bearer ${env.serviceid}:`,
-    args: databaseZones[4],
+    args: databaseLocations[2],
     expres: {
       status: 200,
       error: undefined,
-      messages: messages(messagesByZone[4]),
+      messages: messages(messagesByLocation[2]),
     },
   }, {
     tag: 3,
     auth: `Bearer ${env.serviceid}:`,
-    args: databaseEmptyZones[2],
+    args: databaseEmptyLocations[2],
     expres: {
       status: 200,
       error: undefined,
@@ -72,8 +71,7 @@ describe("testing endpoints...", () => {
     auth: `Bearer ${env.serviceid}:`,
     args: {
       region: "abcd",
-      district: databaseZones[0].district,
-      zone: databaseZones[0].zone,
+      tag: databaseLocations[0].tag,
     },
     expres: {
       status: 400,
@@ -84,41 +82,27 @@ describe("testing endpoints...", () => {
     tag: 5,
     auth: `Bearer ${env.serviceid}:`,
     args: {
-      region: databaseZones[0].region,
-      district: limits.message.district.max + 1,
-      zone: databaseZones[0].zone,
+      region: databaseLocations[0].region,
+      tag: examples.tag.tooLong,
     },
     expres: {
       status: 400,
-      error: "wrongValue.message.district",
+      error: "wrongValue.message.tag",
       messages: undefined,
     },
   }, {
     tag: 6,
-    auth: `Bearer ${env.serviceid}:`,
-    args: {
-      region: databaseZones[0].region,
-      district: limits.message.district.max,
-      zone: "abcd",
-    },
-    expres: {
-      status: 400,
-      error: "wrongValue.message.zone",
-      messages: undefined,
-    },
-  }, {
-    tag: 7,
     auth: `Bearer abcd:`,
-    args: databaseZones[0],
+    args: databaseLocations[0],
     expres: {
       status: 401,
       error: "wrongValue.auth.serviceid",
       messages: undefined,
     },
   }, {
-    tag: 8,
+    tag: 7,
     auth: `abcd`,
-    args: databaseZones[0],
+    args: databaseLocations[0],
     expres: {
       status: 401,
       error: "wrongValue.auth.header",
@@ -127,9 +111,9 @@ describe("testing endpoints...", () => {
   }]
   for ( let testcase of testcases ) {
     let { args, expres, auth, tag } = testcase
-    test(`GET /messages/r/d/zone. Test #${tag}`, async () => {
-      let { region, district, zone } = args
-      let url = `/api/v1/messages/${region}/${district}/${zone}` 
+    test(`GET /messages/region/tag. Test #${tag}`, async () => {
+      let { region, tag } = args
+      let url = `/api/v1/messages/${region}/${tag}` 
       let result = await testServer.get(url).set("Authorization", auth)
       expect(result.statusCode).toBe(expres.status)
       expect(result.body).toBeDefined()

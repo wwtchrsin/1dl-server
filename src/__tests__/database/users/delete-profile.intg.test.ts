@@ -40,8 +40,7 @@ let getMessages = (userIndex: number) => {
     let message = databaseMessages[messageIndex]
     return {
       region: message.region,
-      district: message.district,
-      zone: message.zone,
+      tag: message.tag,
       index: message.index,
       text: message.text,
       color: message.color,

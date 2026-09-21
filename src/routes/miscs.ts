@@ -104,8 +104,7 @@ export const completeMessage = (userMessage: UserMessage, { puid, name }:
 export const extractMessageids = (messageids: Messageid[]): Messageid[] => {
   return messageids.map(messageid => ({
     region: messageid.region,
-    district: messageid.district,
-    zone: messageid.zone,
+    tag: messageid.tag,
     index: messageid.index,
   }))
 }
