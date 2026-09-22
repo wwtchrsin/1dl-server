@@ -24,6 +24,8 @@ SELECT 'CREATE DATABASE odl_project_test OWNER odl_project'
 
 GRANT ALL PRIVILEGES ON DATABASE odl_project TO odl_project;
 GRANT ALL PRIVILEGES ON DATABASE odl_project_test TO odl_project;
+CREATE SCHEMA IF NOT EXISTS public;
+GRANT ALL ON SCHEMA public TO odl_project;
 EOF
 
 echo "Done."
