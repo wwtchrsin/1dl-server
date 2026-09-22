@@ -8,6 +8,9 @@ import { examples, populateDatabase, databaseSessions,
 import env from "../../../lib/env"
 
 beforeAll(async () => {
+  if ( schema === "public" ) {
+    throw new Error("public schema selected for the test!")
+  }
   await pool.query(`CREATE SCHEMA IF NOT EXISTS ${schema}`)
   await pool.query(sql.resetTables)
   await pool.query(populateDatabase.addUsers)
