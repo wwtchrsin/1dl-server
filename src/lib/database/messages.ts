@@ -9,7 +9,7 @@ export const getMessages = async (location: Location):
     let TAG = "db/messages/getMessages"
     let { region, tag } = location
     let query = `
-      SELECT users.region as region, tag, index, text, color, 
+      SELECT users.region as region, tag, index, text, messages.color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 
@@ -35,7 +35,7 @@ export const getMessage = async (messageid: Messageid):
     let TAG = "db/messages/getMessage"
     let { region, tag, index } = messageid
     let query = `
-      SELECT messages.region as region, tag, index, text, color, 
+      SELECT messages.region as region, tag, index, text, messages.color, 
           users.puid as puid, name as username, messages.timestamp as timestamp  
         FROM messages, users WHERE
         messages.userid = users.userid AND 

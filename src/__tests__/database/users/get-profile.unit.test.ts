@@ -14,6 +14,7 @@ let userlist = new Map([[correctUserids[0], {
   region: examples.region.first,
   login: examples.login.correct[0],
   name: examples.name.correct[0],
+  color: null,
   state: "inactive",
   puid: examples.uuid[1],
   timestamp: "123456789",
@@ -22,6 +23,7 @@ let userlist = new Map([[correctUserids[0], {
   region: examples.region.last,
   login: examples.login.correct[1],
   name: examples.name.correct[1],
+  color: null,
   state: "inactive",
   puid: examples.uuid[3],
   timestamp: "123456789",
@@ -89,6 +91,7 @@ describe("testing database queries...", () => {
         expect(result.data.region).toBe(user.region)
         expect(result.data.login).toBe(user.login)
         expect(result.data.name).toBe(user.name)
+        expect(result.data.color).toBe(user.color)
         expect(result.data.state).toBe(user.state)
         expect(result.data.puid).toBe(user.puid)
         expect(result.data.timestamp).toBe(user.timestamp)

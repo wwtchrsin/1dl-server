@@ -203,6 +203,7 @@ export const databaseUsers = (() => {
       password: password,
       passwordHash: passwordHash,
       name: name,
+      color: null,
       state: state,
       puid: randomUUID(),
       timestamp: timestamp,
@@ -484,7 +485,7 @@ export const populateDatabase = (() => {
     let entry = `
       INSERT INTO users VALUES
         ('${user.userid}', '${user.region}', '${user.login}', '${user.passwordHash}',
-        '${user.name}', '${user.state}', '${user.puid}', ${user.timestamp});
+        '${user.name}', ${user.color}, '${user.state}', '${user.puid}', ${user.timestamp});
     `
     addUsers += entry
   }

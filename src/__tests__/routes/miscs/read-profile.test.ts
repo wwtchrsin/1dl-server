@@ -8,6 +8,7 @@ let profile = (userid: string) => ({
   region: examples.region.first,
   login: examples.login.correct[0],
   name: examples.name.correct[0],
+  color: null,
   state: "inactive",
   puid: examples.uuid[1],
   timestamp: "123456789",

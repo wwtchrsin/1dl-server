@@ -25,6 +25,8 @@ const sqlAddConstraints = `
     ALTER COLUMN name SET NOT NULL;
   ALTER TABLE users ADD CONSTRAINT name_check
     CHECK (name ~ '${limits.user.name.pattern}');
+  ALTER TABLE users ADD CONSTRAINT message_color_check
+    CHECK (color IN (${colors}));
   ALTER TABLE users ADD CONSTRAINT state_check
     CHECK (state IN (${states}));
 `
@@ -46,7 +48,7 @@ const sqlCreateTables = `
     tag VARCHAR(${limits.message.tag.maxLen}) NOT NULL,
     index INTEGER NOT NULL,
     text VARCHAR(${limits.message.text.maxLen}) NOT NULL,
-    color VARCHAR NOT NULL,
+    color VARCHAR(12) NOT NULL,
     userid UUID,
     timestamp BIGINT NOT NULL,
     PRIMARY KEY(region, tag, index),
@@ -58,7 +60,8 @@ const sqlCreateTables = `
     login VARCHAR(${limits.user.login.maxLen}) NOT NULL,
     password CHAR(${hashSizes.password * 2}) NOT NULL,
     name VARCHAR(${limits.user.name.maxLen}) NOT NULL,
-    state VARCHAR NOT NULL,
+    color VARCHAR(12),
+    state VARCHAR(16) NOT NULL,
     puid UUID NOT NULL,
     timestamp BIGINT NOT NULL,
     UNIQUE(userid),

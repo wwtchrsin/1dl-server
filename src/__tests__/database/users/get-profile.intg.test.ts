@@ -26,6 +26,7 @@ let profile = (userIndex: number) => {
     region: user.region,
     login: user.login,
     name: user.name,
+    color: user.color,
     state: user.state,
     puid: user.puid,
     timestamp: user.timestamp,

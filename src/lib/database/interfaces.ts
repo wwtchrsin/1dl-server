@@ -10,6 +10,7 @@ export type Profile = {
   region: string,
   login: string,
   name: string,
+  color: string | null,
   state: string,
   puid: string,
   timestamp: string,

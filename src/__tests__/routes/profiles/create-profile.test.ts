@@ -286,6 +286,7 @@ describe("testing endpoints...", () => {
           expect(result.body.profile.login).toBe(args.login)
           expect(result.body.profile.password).toBeUndefined()
           expect(result.body.profile.name).toBe(args.name)
+          expect(result.body.profile.color).toBeNull()
           expect(result.body.profile.state).toBeDefined()
           expect(result.body.profile.puid).toMatch(patterns.uuid)
           expect(result.body.profile.timestamp).toMatch(patterns.timestamp)

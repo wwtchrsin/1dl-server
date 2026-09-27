@@ -16,8 +16,11 @@ let loginCheckError = () => {
 }
 
 let requestReturnsUser = (query: string, queryParams: string[]) => {
-  let [userid, region, login, password, name, state, puid, timestamp] = queryParams
-  let user = { userid, region, login, name, state, puid, timestamp: `${timestamp}` }
+  let [userid, region, login, password, name, color, state, puid, timestamp] = queryParams
+  let user = { 
+    userid, region, login, name, color,
+    state, puid, timestamp: `${timestamp}`
+  }
   return Promise.resolve({ rows: [user] })
 }
 
@@ -127,6 +130,7 @@ describe("testing database queries...", () => {
         expect(result.data.region).toBe(args.data.region)
         expect(result.data.login).toBe(args.data.login)
         expect(result.data.name).toBe(args.data.name)
+        expect(result.data.color).toBeNull()
         expect(result.data.state).toBe(args.state)
         expect(result.data.puid).toMatch(patterns.uuid)
         expect(result.data.timestamp).toMatch(patterns.timestamp)

@@ -50,11 +50,11 @@ export const createProfile = async(userData: UserData, defaultState: string):
     let passwordHash = hashPassword(login, password)
     let query = `
       INSERT INTO users VALUES
-        ($1, $2, $3, $4, $5, $6, $7, $8)
-        RETURNING userid, region, login, name, state, puid, timestamp
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        RETURNING userid, region, login, name, color, state, puid, timestamp
     `
     let queryParams = [userid, region, login, passwordHash, name, 
-      defaultState, puid, getTimestamp()]
+      null, defaultState, puid, getTimestamp()]
     let result = await queryDatabase(query, queryParams)
     if ( result?.rows?.length !== 1 ) {
       logger.error(args, `${TAG}#ERROR_DB_QUERY`)
@@ -169,7 +169,7 @@ export const getProfile = async (userid: string):
   Promise<{ error: string | undefined, data: Profile | undefined }> => {
     let TAG = "db/users/getProfile"
     let query = `
-      SELECT userid, region, login, name, state, puid, timestamp
+      SELECT userid, region, login, name, color, state, puid, timestamp
         FROM users WHERE userid = $1
     `
     let result = await queryDatabase(query, [userid])
