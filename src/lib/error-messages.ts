@@ -210,6 +210,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to delete message",
     ru: "Невозможно удалить сообщение",
   },
+  updateProfileColor: {
+    en: "Impossible to update profile color",
+    ru: "Невозможно обновить цвет профиля",
+  },
 }
 
 export const databaseConflicts: Record<string, TextResource> = {

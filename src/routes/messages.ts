@@ -1,6 +1,7 @@
 import { Router } from "express"
 import { verifyRequest } from "./middleware"
 import { createMessage, deleteMessage, getMessage, getMessages } from "../lib/database/messages"
+import { updateProfileColor } from "../lib/database/users"
 import { checkMessageid, checkMessageData, checkLocation } from "../lib/database/checkers"
 import { publish } from "../lib/redis/conn"
 import { getStatusCode, getAuthStatus } from "../lib/error-messages"
@@ -51,6 +52,10 @@ const createMessageAction = async (req: Request<Messageid>, res: Response) => {
       message: undefined,
     })
     return
+  }
+  let update = await updateProfileColor(profile.data.userid, message.data.color)
+  if ( update.error !== undefined ) {
+    logger.info(args, `${TAG}#COLOR_UPDATE`)
   }
   let msg = completeMessage(message.data, profile.data)
   await publish("messages:created", { messages: [msg] })

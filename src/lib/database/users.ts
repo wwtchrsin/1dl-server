@@ -304,7 +304,22 @@ export const getUserid = async (sessionid: string):
     }
   }
 
-  
+  export const updateProfileColor = async (userid: string, color: string): 
+    Promise<{ error: string | undefined }> => {
+      let TAG = "db/users/updateProfileColor"
+      let query = "UPDATE users SET color = $2 WHERE userid = $1"
+      let result = await queryDatabase(query, [userid, color])
+      if ( !result || result.rowCount > 1 ) {
+        logger.error({ userid, color }, `${TAG}#ERROR_DB_QUERY`)
+        return { error: "databaseError.updateProfileColor" }
+      }
+      if ( result.rowCount === 0 ) {
+        logger.error({ userid, color }, `${TAG}#ERROR_NOT_FOUND`)
+        return { error: "databaseConflict.profileNotFound" }
+      }
+      logger.debug({ userid, color }, `${TAG}#DONE`)
+      return { error: undefined }
+    }
     
 
   

@@ -4,7 +4,7 @@ import { pool, queryDatabase, schema } from "../../../lib/database/conn"
 import { sql } from "../../../lib/database/schema"
 import { limits, patterns } from "../../../lib/database/limits"
 import { examples, populateDatabase, completeUsersByRegion,
-  inactiveUsersByRegion, sessionByUser, databaseSessions } 
+  inactiveUsersByRegion, sessionByUser, databaseSessions, databaseUsers } 
   from "../../../lib/test-data"
 import * as redisConn from "../../../lib/redis/conn"
 import { getReports } from "../../../lib/redis/tests"
@@ -46,6 +46,7 @@ describe("testing endpoints...", () => {
   let testcases = [{
     tag: 1,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -64,6 +65,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 2,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[1][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[1][0])}`,
       args: [{
         region: limits.message.region.values[1],
@@ -82,6 +84,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 3,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: "abcd",
@@ -100,6 +103,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 4,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -118,6 +122,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 5,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -136,6 +141,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 6,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -154,6 +160,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 7,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -172,6 +179,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 8,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -190,6 +198,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 9,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[1][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[1][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -208,6 +217,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 10,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(inactiveUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -226,6 +236,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 11,
     actions: [{
+      userid: undefined,
       auth: () => `Bearer ${env.serviceid}:${examples.sessionid[0]}`,
       args: [{
         region: limits.message.region.values[0],
@@ -244,6 +255,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 12,
     actions: [{
+      userid: databaseUsers[inactiveUsersByRegion[0][0]].userid,
       auth: () => `Bearer abcd:${sessionid(inactiveUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -262,6 +274,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 13,
     actions: [{
+      userid: undefined,
       auth: () => "abcd",
       args: [{
         region: limits.message.region.values[0],
@@ -280,6 +293,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 14,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -294,6 +308,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -312,6 +327,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 15,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -326,6 +342,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -344,6 +361,7 @@ describe("testing endpoints...", () => {
   }, {
     tag: 16,
     actions: [{
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -358,6 +376,7 @@ describe("testing endpoints...", () => {
         status: 201,
       },
     }, {
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -372,6 +391,7 @@ describe("testing endpoints...", () => {
         status: 409,
       },
     }, {
+      userid: databaseUsers[completeUsersByRegion[0][0]].userid,
       auth: () => `Bearer ${env.serviceid}:${sessionid(completeUsersByRegion[0][0])}`,
       args: [{
         region: limits.message.region.values[0],
@@ -393,7 +413,7 @@ describe("testing endpoints...", () => {
     test(`POST /messages/region/tag/index. Test #${tag}`, async () => {
       let reportsPromise = getReports(`messages:created`, rowCount)
       for ( let action of actions ) {
-        let { auth, args, expres } = action
+        let { userid, auth, args, expres } = action
         let [ msgid, content ] = args
         let url = `/api/v1/messages/${msgid.region}/${msgid.tag}/${msgid.index}`
         let result = await testServer.post(url)
@@ -412,6 +432,13 @@ describe("testing endpoints...", () => {
         } else {
           expect(result.body.error).toBe(expres.error)
           expect(result.body.message).toBeUndefined()
+        }
+        if ( expres.error === undefined && userid ) {
+          let query = "SELECT color FROM users WHERE userid = $1"
+          let profile = await queryDatabase(query, [userid])
+          expect(profile).toBeDefined()
+          expect(profile.rows).toHaveLength(1)
+          expect(profile.rows[0].color).toBe(content.color)
         }
       }
       let result = await queryDatabase("SELECT * FROM messages")
