@@ -149,7 +149,7 @@ describe("testing database queries...", () => {
           region: examples.region.first,
           login: examples.login.correct[1],
           password: examples.password.minLen,
-          name: examples.name.minLen,
+          name: examples.name.regLen,
         },
         state: "active",
       },
@@ -178,7 +178,7 @@ describe("testing database queries...", () => {
         },
         state: "active",
       },
-      expres: "databaseConflict.loginTaken",
+      expres: "databaseConflict.userExists",
     }],
   }, {
     tag: 10,
@@ -199,11 +199,36 @@ describe("testing database queries...", () => {
           region: examples.region.first,
           login: examples.login.correct[2],
           password: examples.password.minLen,
+          name: examples.name.regLen,
+        },
+        state: "active",
+      },
+      expres: "databaseConflict.userExists",
+    }, {
+      args: {
+        data: {
+          region: examples.region.first,
+          login: examples.login.correct[3],
+          password: examples.password.minLen,
+          name: examples.name.regLen,
+        },
+        state: "active",
+      },
+      expres: "success",
+    }],
+  }, {
+    tag: 11,
+    actions: [{
+      args: {
+        data: {
+          region: examples.region.first,
+          login: examples.login.correct[2],
+          password: examples.password.minLen,
           name: examples.name.minLen,
         },
         state: "active",
       },
-      expres: "databaseConflict.loginTaken",
+      expres: "success",
     }, {
       args: {
         data: {
@@ -211,6 +236,17 @@ describe("testing database queries...", () => {
           login: examples.login.correct[3],
           password: examples.password.minLen,
           name: examples.name.minLen,
+        },
+        state: "active",
+      },
+      expres: "databaseConflict.userExists",
+    }, {
+      args: {
+        data: {
+          region: examples.region.first,
+          login: examples.login.correct[3],
+          password: examples.password.minLen,
+          name: examples.name.regLen,
         },
         state: "active",
       },

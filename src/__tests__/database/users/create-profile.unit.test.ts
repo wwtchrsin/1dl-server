@@ -3,15 +3,15 @@ import * as conn from "../../../lib/database/conn"
 import { patterns } from "../../../lib/database/limits"
 import { examples } from "../../../lib/test-data"
 
-let loginDoesntExist = () => {
+let userDoesntExist = () => {
   return Promise.resolve({ error: undefined, data: false })
 }
 
-let loginExists = () => {
+let userExists = () => {
   return Promise.resolve({ error: undefined, data: true })
 }
 
-let loginCheckError = () => {
+let userCheckError = () => {
   return Promise.resolve({ error: "databaseError.checkUserExists", data: undefined })
 }
 
@@ -48,7 +48,7 @@ describe("testing database queries...", () => {
       state: "active",
     },
     mocks: {
-      loginExists: loginDoesntExist,
+      userExists: userDoesntExist,
       queryDatabase: requestReturnsUser,
     },
     expres: "success",
@@ -64,10 +64,10 @@ describe("testing database queries...", () => {
       state: "active",
     },
     mocks: {
-      loginExists: loginExists,
+      userExists: userExists,
       queryDatabase: requestReturnsUser,
     },
-    expres: "databaseConflict.loginTaken",
+    expres: "databaseConflict.userExists",
   }, {
     tag: 3,
     args: {
@@ -80,7 +80,7 @@ describe("testing database queries...", () => {
       state: "active",
     },
     mocks: {
-      loginExists: loginCheckError,
+      userExists: userCheckError,
       queryDatabase: requestReturnsUser,
     },
     expres: "databaseError.checkUserExists",
@@ -96,7 +96,7 @@ describe("testing database queries...", () => {
       state: "active",
     },
     mocks: {
-      loginExists: loginDoesntExist,
+      userExists: userDoesntExist,
       queryDatabase: requestReturnsError,
     },
     expres: "databaseError.createProfile",
@@ -112,7 +112,7 @@ describe("testing database queries...", () => {
       state: "active",
     },
     mocks: {
-      loginExists: loginDoesntExist,
+      userExists: userDoesntExist,
       queryDatabase: requestReturnsZeroUsers,
     },
     expres: "databaseError.createProfile",
@@ -120,7 +120,7 @@ describe("testing database queries...", () => {
   for ( let testcase of testcases ) {
     let { args, expres, tag, mocks } = testcase
     test(`Function createProfile. Unit Test #${tag}`, async () => {
-      jest.spyOn(users, "loginExists").mockImplementation(mocks.loginExists)
+      jest.spyOn(users, "userExists").mockImplementation(mocks.userExists)
       jest.spyOn(conn, "queryDatabase").mockImplementation(mocks.queryDatabase)
       let result = await users.createProfile(args.data, args.state)
       if ( expres === "success" ) {

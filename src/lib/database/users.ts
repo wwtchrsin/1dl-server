@@ -6,19 +6,19 @@ import { hashPassword, hashSession, generateToken, getTimestamp,
 import logger from "../logger"
 import type { UserData, Profile, Credentials, UserMessage } from "./interfaces"
 
-export const loginExists = async (login: string):
+export const userExists = async (login: string, name: string):
   Promise<{ error: string | undefined, data: boolean | undefined }> => {
-    let TAG = "db/users/loginExists"
-    let query = "SELECT login FROM users WHERE login = $1"
-    let result = await queryDatabase(query, [login])
+    let TAG = "db/users/userExists"
+    let query = "SELECT login, name FROM users WHERE login = $1 OR name = $2"
+    let result = await queryDatabase(query, [login, name])
     if ( result === undefined || result?.rows?.length > 1 ) {
-      logger.error({ login }, `${TAG}#ERROR_DB_QUERY`)
+      logger.error({ login, name }, `${TAG}#ERROR_DB_QUERY`)
       return {
         error: "databaseError.checkUserExists",
         data: undefined,
       }
     }
-    logger.debug({ login }, `${TAG}#DONE`)
+    logger.debug({ login, name }, `${TAG}#DONE`)
     return {
       error: undefined,
       data: result?.rows?.length === 1,
@@ -30,18 +30,18 @@ export const createProfile = async(userData: UserData, defaultState: string):
     let TAG = "db/users/createProfile"
     let args = { userData: redactPassword(userData), defaultState }
     let { region, login, password, name } = userData
-    let checkResult = await loginExists(login)
+    let checkResult = await userExists(login, name)
     if ( checkResult.error !== undefined ) {
-      logger.error(args, `${TAG}#ERROR_LOGIN_CHECK`)
+      logger.error(args, `${TAG}#ERROR_USER_CHECK`)
       return {
         error: checkResult.error,
         data: undefined,
       }
     }
     if ( checkResult.data !== false ) {
-      logger.info(args, `${TAG}#ERROR_LOGIN_TAKEN`)
+      logger.info(args, `${TAG}#ERROR_USER_EXISTS`)
       return {
-        error: "databaseConflict.loginTaken",
+        error: "databaseConflict.userExists",
         data: undefined,
       }
     }

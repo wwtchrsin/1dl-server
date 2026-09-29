@@ -178,7 +178,7 @@ describe("testing endpoints...", () => {
         deviceid: examples.sessionid[1],
       },
       expres: {
-        error: "databaseConflict.loginTaken",
+        error: "databaseConflict.userExists",
         status: 409,
       },
     }],

@@ -66,7 +66,8 @@ const sqlCreateTables = `
     timestamp BIGINT NOT NULL,
     UNIQUE(userid),
     UNIQUE(puid),
-    UNIQUE(login)
+    UNIQUE(login),
+    UNIQUE(name)
   );
   CREATE TABLE IF NOT EXISTS sessions (
     userid UUID NOT NULL,

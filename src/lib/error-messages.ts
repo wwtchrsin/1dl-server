@@ -229,9 +229,9 @@ export const databaseConflicts: Record<string, TextResource> = {
     en: "Message already exists",
     ru: "Сообщение уже существует",
   },
-  loginTaken: {
-    en: "The login is already taken",
-    ru: "Логин уже используется",
+  userExists: {
+    en: "User already exists",
+    ru: "Пользователь уже существует",
   },
   sessionNotFound: {
     en: "Session not found",
@@ -328,7 +328,7 @@ export const getStatusCode = (error: string | undefined, successCode: number = 2
           return 404
         }
         case "messageAlreadyExists":
-        case "loginTaken": {
+        case "userExists": {
           return 409
         }
       }
