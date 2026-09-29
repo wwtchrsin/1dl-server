@@ -2,6 +2,7 @@
 
 import app from "../http-server"
 import wsServer from "../ws-server"
+import worker from "../worker"
 import env from "../lib/env"
 import logger from "../lib/logger"
 
@@ -12,3 +13,8 @@ app.listen(env.http.port, () => {
 wsServer.listen(env.ws.port)
 
 logger.info(`1dl-project ws server running on port ${env.ws.port}`)
+
+worker().start(env.worker.interval)
+
+logger.info(`1dl-project server worker started`)
+

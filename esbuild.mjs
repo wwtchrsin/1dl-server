@@ -9,7 +9,8 @@ let tasks = [
     entryPoints: [
       join(__dirname, "src", "bin", "http.ts"),
       join(__dirname, "src", "bin", "ws.ts"),
-      join(__dirname, "src", "bin", "dev.ts")
+      join(__dirname, "src", "bin", "dev.ts"),
+      join(__dirname, "src", "bin", "worker.ts"),
     ]
   },
   {

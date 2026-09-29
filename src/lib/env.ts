@@ -31,10 +31,17 @@ const env = {
   lifetime: {
     message: Number(process.env.MESSAGE_LIFETIME)
   },
+  worker: {
+    interval: Number(process.env.WORKER_INTERVAL)
+  },
 }
 
 if ( isNaN(env.lifetime.message) ) {
   env.lifetime.message = 86400
+}
+
+if ( isNaN(env.worker.interval) ) {
+  env.worker.interval = 60
 }
 
 if ( isNaN(env.http.port) || isNaN(env.ws.port) ||
