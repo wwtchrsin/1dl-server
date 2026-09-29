@@ -184,6 +184,9 @@ export const inactiveUsersByRegion = (() => {
   return result
 })()
 
+export const userTimestampMin = 1234567000
+export const userTimestampMax = userTimestampMin + regionByUser.length - 1
+
 export const databaseUsers = (() => {
   let result = []
   for ( let i=0; i < regionByUser.length; i++ ) {
@@ -195,7 +198,7 @@ export const databaseUsers = (() => {
     let passwordHash = hashPassword(login, password)
     let isActive = databaseActiveUsers.includes(i)
     let state = isActive ? "active" : "inactive"
-    let timestamp = "12345670" + ("0" + i).slice(-2)
+    let timestamp = `${userTimestampMin + i}`
     result.push({
       userid: randomUUID(),
       region: region,
@@ -235,6 +238,9 @@ export const sessionByUser = (() => {
   return result
 })()
 
+export const sessionTimestampMin = 1234567100
+export const sessionTimestampMax = sessionTimestampMin + userBySession.length - 1
+
 export const databaseSessions = (() => {
   let result = []
   for ( let i=0; i < userBySession.length; i++ ) {
@@ -243,7 +249,7 @@ export const databaseSessions = (() => {
     let sessionid = randomBytes(sessionidSize).toString("hex")
     let deviceid = randomBytes(sessionidSize).toString("hex")
     let sessionidHash = hashSession(sessionid)
-    let timestamp = "12345671" + ("0" + i).slice(-2)
+    let timestamp = `${sessionTimestampMin + i}`
     result.push({
       userid: userid,
       sessionid: sessionid,
@@ -456,6 +462,9 @@ export const messagesByRegion = (() => {
   return result
 })()
 
+export const messageTimestampMin = 1234567200
+export const messageTimestampMax = messageTimestampMin + locationByMessage.length - 1
+
 export const databaseMessages = (() => {
   let result = []
   for ( let i=0; i < locationByMessage.length; i++ ) {
@@ -463,7 +472,7 @@ export const databaseMessages = (() => {
     let user = databaseUsers[userByMessage[i]]
     let text = examples.text.correct[i % examples.text.correct.length] + " " + i
     let color = limits.message.color.values[i % limits.message.color.values.length]
-    let timestamp = "12345672" + ("0" + i).slice(-2)
+    let timestamp = `${messageTimestampMin + i}`
     result.push({
       region: location.region,
       tag: location.tag,

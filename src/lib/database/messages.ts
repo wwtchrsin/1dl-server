@@ -64,7 +64,7 @@ export const getMessage = async (messageid: Messageid):
   }
 
 export const getUserMessages = async (userid: string): 
-  Promise<{ error: string | undefined, data: UserMessage[] }> => {
+  Promise<{ error: string | undefined, data: UserMessage[] | undefined }> => {
     let TAG = "db/messages/getUserMessages"
     let query = `
       SELECT region, tag, index, text, color, timestamp
@@ -158,7 +158,28 @@ export const deleteMessage = async (userid: string, messageid: Messageid):
     }
   }
     
-    
+export const deleteMessagesByTime = async (timestamp: number):
+  Promise<{ error: string | undefined, data: Messageid[] | undefined }> => {
+    let TAG = "db/messages/deleteMessagesByTime"
+    let query = `
+      DELETE FROM messages 
+        WHERE timestamp <= $1
+        RETURNING region, tag, index
+    `
+    let result = await queryDatabase(query, [timestamp])
+    if ( result === undefined ) {
+      logger.error({ timestamp }, `${TAG}#ERROR_DB_QUERY`)
+      return {
+        error: "databaseError.deleteMessagesByTime",
+        data: undefined,
+      }
+    }
+    logger.debug({ timestamp }, `${TAG}#DONE`)
+    return {
+      error: undefined,
+      data: result.rows
+    }
+  }
 
     
   

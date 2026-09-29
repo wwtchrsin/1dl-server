@@ -214,6 +214,10 @@ export const databaseErrors: Record<string, TextResource> = {
     en: "Impossible to update profile color",
     ru: "Невозможно обновить цвет профиля",
   },
+  deleteMessagesByTime: {
+    en: "Impossible to find and delete messages by time",
+    ru: "Невозможно найти и удалить сообщения по времени",
+  }
 }
 
 export const databaseConflicts: Record<string, TextResource> = {
