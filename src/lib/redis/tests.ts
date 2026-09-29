@@ -6,13 +6,9 @@ export const clearRedis = async () => {
   if ( keys.length ) await client.del(keys)
 }
 
-export const getReports = async (channel: string, reportsNum: number, timeout: number = 2000) => {
+export const getReports = async (channel: string, reportsNum: number, timeout: number = 300) => {
   let subscriber = await getSubscriber()
   return new Promise<any[]>((res) => {
-    if ( reportsNum === 0 ) {
-      res([])
-      return
-    }
     let reports = []
     subscriber.subscribe(`${redisns}:${channel}`, (messageString: string) => {
       let message = JSON.parse(messageString)
@@ -25,6 +21,6 @@ export const getReports = async (channel: string, reportsNum: number, timeout: n
     setTimeout(() => {
       subscriber.unsubscribe(`${redisns}:${channel}`)
       res([])
-    }, timeout)
+    }, timeout * reportsNum)
   })
 }

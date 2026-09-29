@@ -27,7 +27,14 @@ const env = {
   pinoLogLevel: process.env.PINO_LOGLEVEL ?? "error",
   users: {
     defaultState: process.env.USER_DEFAULT_STATE ?? "active",
-  }
+  },
+  lifetime: {
+    message: Number(process.env.MESSAGE_LIFETIME)
+  },
+}
+
+if ( isNaN(env.lifetime.message) ) {
+  env.lifetime.message = 86400
 }
 
 if ( isNaN(env.http.port) || isNaN(env.ws.port) ||
