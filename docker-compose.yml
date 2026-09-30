@@ -60,7 +60,7 @@ services:
   
   ws:
     build: .
-    command: dist/ws.js
+    command: node dist/ws.js
     restart: unless-stopped
     ports:
       - "${WS_PORT}:8100"
@@ -89,6 +89,38 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+
+  worker:
+      build: .
+      command: node dist/worker.js
+      restart: unless-stopped
+      environment:
+        - NODE_ENV=${NODE_ENV:-dev}
+        - HTTP_PORT=3100
+        - WS_PORT=8100
+        - WS_PING_INTERVAL=${WS_PING_INTERVAL}
+        - PG_HOST=postgres
+        - PG_POST=5432
+        - PG_USER=${PG_USER}
+        - PG_PASSWORD=${PG_PASSWORD}
+        - PG_DBNAME=${PG_DBNAME}
+        - PG_SCHEMA=${PG_SCHEMA}
+        - REDIS_PASSWORD=${REDIS_PASSWORD}
+        - REDIS_HOST=redis
+        - REDIS_PORT=6379
+        - REDIS_DATABASE=${REDIS_DATABASE}
+        - REDIS_NAMESPACE=${REDIS_NAMESPACE}
+        - HASH_SALT=${HASH_SALT}
+        - PINO_LOGLEVEL=${PINO_LOGLEVEL}
+        - USER_DEFAULT_STATE=${USER_DEFAULT_STATE}
+        - SERVICE_ID=${SERVICE_ID}
+      depends_on:
+        postgres:
+          condition: service_healthy
+        redis:
+          condition: service_healthy
+
+
 volumes:
   postgres_data:
   redis_data:
