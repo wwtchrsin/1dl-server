@@ -11,6 +11,7 @@ sharing the same tag are limited.
 * Node.js (version >= 20)
 * PostgreSQL (version >= 16)
 * Redis (version >= 6)
+
 Alternatively, you can run the server inside a docker container 
 (In this case, you only need Docker installed).
 
@@ -18,11 +19,10 @@ Alternatively, you can run the server inside a docker container
 In the root directory of the project, create a `.env` file containing
 the environment variables. Use the `.env.example` file as a base, defining 
 the following entries:
-* `PG_PASSWORD` (Database password)
+* `PG_PASSWORD`: Database password
 * `REDIS_PASSWORD`
 * `HASH_SALT`
-* `SERVICE_ID`
-`SERVICE_ID` is used to connect the backend and frontend of the app.
+* `SERVICE_ID`: used to connect the backend and frontend of the app.
 Make sure `SERVICE_ID` on the server matches `SERVICE_ID` in the client.
 To install the server on your machine, perform the following command:
 ```bash
