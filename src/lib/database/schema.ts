@@ -39,6 +39,7 @@ const sqlDeleteConstraints = `
   ALTER TABLE messages DROP CONSTRAINT IF EXISTS color_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS login_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS name_check;
+  ALTER TABLE users DROP CONSTRAINT IF EXISTS message_color_check;
   ALTER TABLE users DROP CONSTRAINT IF EXISTS state_check;
 `
 

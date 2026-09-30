@@ -6,4 +6,3 @@ together. Tags are also used to search for and access entries: any user can view
 entry as long as they know its tag. Moreover, any user can save their entries using any tag, including tags already used by other users (however, users cannot delete 
 entries created by others). Both the lifetime of entries and the number of entries 
 sharing the same tag are limited.
-
