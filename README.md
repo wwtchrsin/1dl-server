@@ -24,7 +24,7 @@ the following entries:
 * `HASH_SALT`
 * `SERVICE_ID`: used to connect the backend and frontend of the app.
 Make sure `SERVICE_ID` on the server matches `SERVICE_ID` in the client.
-To install the server on your machine, perform the following command:
+To install the server on your machine, run the following command:
 ```bash
 npm install
 ```
