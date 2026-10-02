@@ -33,7 +33,7 @@ services:
     ports:
       - "${HTTP_PORT}:3100"
     environment:
-      - NODE_ENV=${NODE_ENV:-dev}
+      - NODE_ENV=production
       - HTTP_PORT=3100
       - WS_PORT=8100
       - WS_PING_INTERVAL=${WS_PING_INTERVAL}
@@ -49,7 +49,7 @@ services:
       - REDIS_DATABASE=${REDIS_DATABASE}
       - REDIS_NAMESPACE=${REDIS_NAMESPACE}
       - HASH_SALT=${HASH_SALT}
-      - PINO_LOGLEVEL=${PINO_LOGLEVEL}
+      - PINO_LOGLEVEL=error
       - USER_DEFAULT_STATE=${USER_DEFAULT_STATE}
       - SERVICE_ID=${SERVICE_ID}
     depends_on:
